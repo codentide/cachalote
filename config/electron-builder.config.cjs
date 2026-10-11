@@ -563,7 +563,10 @@ module.exports = {
       NSDocumentsFolderUsageDescription:
         "Application requests access to the user's Documents folder.",
       NSDownloadsFolderUsageDescription:
-        "Application requests access to the user's Downloads folder."
+        "Application requests access to the user's Downloads folder.",
+      // Cachalote: display name only. CFBundleName must stay 'Orca': Electron derives the
+      // helper app names from it ('Orca Helper.app') and aborts at launch otherwise.
+      CFBundleDisplayName: 'Cachalote'
     },
     // Why: local macOS validation builds should launch without Apple release
     // credentials. Hardened runtime + notarization stay enabled only on the
