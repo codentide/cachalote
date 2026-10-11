@@ -36,6 +36,7 @@ import type {
   UpdateInstallTrigger
 } from './updater-state'
 
+import { CACHALOTE_AUTO_UPDATE_DISABLED } from '../cachalote/cachalote-flags'
 export type UpdaterSetupOptions = {
   getMainWindow?: () => BrowserWindow | null
   getLastUpdateCheckAt?: () => number | null
@@ -174,6 +175,10 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
       return
     }
 
+    // Cachalote: same early exit as an unpackaged build; see cachalote-flags.ts.
+    if (CACHALOTE_AUTO_UPDATE_DISABLED) {
+      return
+    }
     const autoUpdater = this.getAutoUpdater()
     configureMacShipItScheduling()
     // Start automatic downloads after Orca publishes the offer and finishes release checks.
