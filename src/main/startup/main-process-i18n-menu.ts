@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { ensureMainI18n, setMainUiLanguage } from '../i18n/main-i18n'
 import {
   registerAppMenu,
@@ -18,7 +18,6 @@ import {
 } from './main-window-actions'
 import { ensureAutoUpdaterConfigured } from '../window/attach-main-window-services'
 import { logStartupMilestone } from './startup-diagnostics'
-import { CACHALOTE_APP_NAME } from '../../shared/cachalote/cachalote-name'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   const store = state.store
@@ -29,7 +28,7 @@ export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   await setMainUiLanguage(store.getSettings().uiLanguage)
   logStartupMilestone('i18n-ready')
   registerAppMenu({
-    appMenuLabel: state.devInstanceIdentity?.name ?? CACHALOTE_APP_NAME,
+    appMenuLabel: state.devInstanceIdentity?.name ?? app.name,
     ...(state.isServeMode ? { onQuit: quitFromUserCommand } : {}),
     onCheckForUpdates: (options) => {
       ensureAutoUpdaterConfigured()

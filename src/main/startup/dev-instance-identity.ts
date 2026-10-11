@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import path from 'node:path'
 import type { AppIdentity } from '../../shared/app-identity'
+import { CACHALOTE_APP_NAME } from '../../shared/cachalote/cachalote-name'
 
 const BASE_APP_NAME = 'Orca'
 const BASE_APP_USER_MODEL_ID = 'com.stablyai.orca'
@@ -67,7 +68,8 @@ export function getDevInstanceIdentity(
 ): DevInstanceIdentity {
   if (!isDev) {
     return {
-      name: BASE_APP_NAME,
+      // Cachalote: visible name (window title, app menu); appName stays 'Orca' for the Keychain key.
+      name: CACHALOTE_APP_NAME,
       appName: BASE_APP_NAME,
       isDev: false,
       devLabel: null,

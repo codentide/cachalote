@@ -11,7 +11,13 @@ export function createAppMenuQuitItem(
 ): Electron.MenuItemConstructorOptions {
   const exitLabel = macAppName === undefined ? translateMain('menu.exit', 'Exit') : undefined
   if (!onQuit) {
-    return { role: 'quit', ...(exitLabel ? { label: exitLabel } : {}) }
+    // Cachalote: name the native Quit after the app menu; the role (and Orca's quit guard) stays.
+    const quitLabel =
+      exitLabel ??
+      (macAppName
+        ? translateMain('menu.quitApp', `Quit ${macAppName}`, { appName: macAppName })
+        : undefined)
+    return { role: 'quit', ...(quitLabel ? { label: quitLabel } : {}) }
   }
   return {
     label:
