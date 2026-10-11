@@ -900,3 +900,12 @@ module.exports.mac.extendInfo = {
   ...module.exports.mac.extendInfo,
   CFBundleDisplayName: 'Cachalote'
 }
+
+// Cachalote: macOS shows the localized CFBundleName in the menu bar and Mission Control, while
+// Electron resolves its helpers from the raw Info.plist value, which must stay 'Orca'.
+module.exports.mac.extraFiles.push(
+  ...['en', 'es', 'es_419'].map((locale) => ({
+    from: 'resources/build/cachalote/InfoPlist.strings',
+    to: `Resources/${locale}.lproj/InfoPlist.strings`
+  }))
+)
