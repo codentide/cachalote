@@ -19,7 +19,7 @@ import {
 } from './main-window-actions'
 import { ensureAutoUpdaterConfigured } from '../window/attach-main-window-services'
 import { logStartupMilestone } from './startup-diagnostics'
-import { CACHALOTE_APP_NAME } from '../cachalote/cachalote-flags'
+import { CACHALOTE_APP_NAME } from '../../shared/cachalote/cachalote-name'
 import { browserManager } from '../browser/browser-manager'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
