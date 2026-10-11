@@ -17,6 +17,8 @@ import { useShortcutLabel } from '../hooks/useShortcutLabel'
 import { useAppStore } from '../store'
 import { hasCustomTitleBar, isMac } from './app-window-chrome'
 import type { AppChromeLayout } from './use-app-chrome-layout'
+// Cachalote: visible app name in the titlebar.
+import { CACHALOTE_APP_NAME } from '../../../shared/cachalote/cachalote-name'
 
 /**
  * The titlebar's left cluster: window chrome padding, app name, sidebar toggle, and the
@@ -69,13 +71,8 @@ export function TitlebarLeftControls({ layout }: { layout: AppChromeLayout }): R
         {layout.showSidebar && !hasCustomTitleBar && layout.showTitlebarAppName && (
           <ContextMenu>
             <ContextMenuTrigger asChild>
-              <div
-                className="titlebar-app-name"
-                aria-label={translate('auto.App.5096cbbc86', 'Orca')}
-              >
-                <span className="titlebar-app-name-main">
-                  {translate('auto.App.5096cbbc86', 'Orca')}
-                </span>
+              <div className="titlebar-app-name" aria-label={CACHALOTE_APP_NAME}>
+                <span className="titlebar-app-name-main">{CACHALOTE_APP_NAME}</span>
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent>

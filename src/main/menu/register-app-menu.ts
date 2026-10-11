@@ -152,14 +152,18 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
   const macAppMenu: Electron.MenuItemConstructorOptions = {
     label: options.appMenuLabel ?? app.name,
     submenu: [
-      // Cachalote: role labels default to app.name ('Orca'); follow the visible menu label instead.
-      { role: 'about', label: `About ${options.appMenuLabel ?? app.name}` },
+      // Cachalote: macOS ignores labels on native roles, so About/Hide are explicit actions named after the menu.
+      { label: `About ${options.appMenuLabel ?? app.name}`, click: () => app.showAboutPanel() },
       checkForUpdatesItem,
       settingsItem,
       { type: 'separator' },
       { role: 'services' },
       { type: 'separator' },
-      { role: 'hide', label: `Hide ${options.appMenuLabel ?? app.name}` },
+      {
+        label: `Hide ${options.appMenuLabel ?? app.name}`,
+        accelerator: 'Command+H',
+        click: () => app.hide()
+      },
       { role: 'hideOthers' },
       { role: 'unhide' },
       { type: 'separator' },
