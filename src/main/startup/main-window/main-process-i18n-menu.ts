@@ -21,7 +21,7 @@ import { ensureAutoUpdaterConfigured } from '../../updater/lifecycle/main-window
 import { logStartupMilestone } from '../diagnostics/startup-diagnostics'
 import { browserManager } from '../../browser/guest-lifecycle/manager/browser-manager'
 // Cachalote: the visible app name in the macOS menu bar.
-import { CACHALOTE_APP_NAME } from '../../cachalote/cachalote-flags'
+import { CACHALOTE_APP_NAME } from '../../../shared/cachalote/cachalote-name'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   const store = state.store
