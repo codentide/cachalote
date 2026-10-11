@@ -597,7 +597,12 @@ module.exports = {
       ...orcadTemplateMacSignIgnore,
       ...macTerminalHostSignIgnore
     ],
-    extendInfo: macUsageDescriptions,
+    extendInfo: {
+      ...macUsageDescriptions,
+      // Cachalote: display name only. CFBundleName must stay 'Orca': Electron derives the
+      // helper app names from it ('Orca Helper.app') and aborts at launch otherwise.
+      CFBundleDisplayName: 'Cachalote'
+    },
     // Why: local macOS validation builds should launch without Apple release
     // credentials. Hardened runtime + notarization stay enabled only on the
     // explicit release path so production artifacts remain strict while dev
