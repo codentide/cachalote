@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { BrowserWindow } from 'electron'
 import { setMainUiLanguage } from '../../i18n/main-i18n'
 import {
   registerAppMenu,
@@ -20,6 +20,8 @@ import {
 import { ensureAutoUpdaterConfigured } from '../../updater/lifecycle/main-window-updater'
 import { logStartupMilestone } from '../diagnostics/startup-diagnostics'
 import { browserManager } from '../../browser/guest-lifecycle/manager/browser-manager'
+// Cachalote: the visible app name in the macOS menu bar.
+import { CACHALOTE_APP_NAME } from '../../cachalote/cachalote-flags'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   const store = state.store
@@ -29,7 +31,7 @@ export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   await setMainUiLanguage(store.getSettings().uiLanguage)
   logStartupMilestone('i18n-ready')
   registerAppMenu({
-    appMenuLabel: state.devInstanceIdentity?.name ?? app.name,
+    appMenuLabel: state.devInstanceIdentity?.name ?? CACHALOTE_APP_NAME,
     ...getAppMenuQuitHandlers(),
     onCheckForUpdates: (options) => {
       ensureAutoUpdaterConfigured()
