@@ -22,6 +22,7 @@ import { UpdaterDownloadInstall } from './updater-download-install'
 import { configureMacShipItScheduling } from './macos-shipit-scheduling'
 import { handleElectronUpdaterProxyLogin } from './electron-updater-proxy-session'
 import type { PreQuitCleanupFailureMode, UpdateInstallMode } from './updater-state'
+import { CACHALOTE_AUTO_UPDATE_DISABLED } from '../cachalote/cachalote-flags'
 
 export type UpdaterSetupOptions = {
   getLastUpdateCheckAt?: () => number | null
@@ -137,6 +138,10 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
     }
 
     if (!app.isPackaged) {
+      return
+    }
+    // Cachalote: same early exit as an unpackaged build; see cachalote-flags.ts.
+    if (CACHALOTE_AUTO_UPDATE_DISABLED) {
       return
     }
 

@@ -892,3 +892,11 @@ function findInstalledMacSigningIdentity(keychainFile) {
   } catch {}
   return null
 }
+
+// Cachalote: display name only. CFBundleName must stay 'Orca': Electron derives the helper app
+// names from it ('Orca Helper.app') and aborts at launch otherwise. Set after upstream's config, so
+// none of its lines change.
+module.exports.mac.extendInfo = {
+  ...module.exports.mac.extendInfo,
+  CFBundleDisplayName: 'Cachalote'
+}
