@@ -18,7 +18,7 @@ import {
 } from './main-window-actions'
 import { ensureAutoUpdaterConfigured } from '../window/attach-main-window-services'
 import { logStartupMilestone } from './startup-diagnostics'
-import { CACHALOTE_APP_NAME } from '../cachalote/cachalote-flags'
+import { CACHALOTE_APP_NAME } from '../../shared/cachalote/cachalote-name'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   const store = state.store
