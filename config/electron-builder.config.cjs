@@ -645,7 +645,13 @@ module.exports = {
       {
         from: 'native/keyboard-layout-macos/.build/release/orca-keyboard-layout',
         to: 'MacOS/orca-keyboard-layout'
-      }
+      },
+      // Cachalote: macOS shows the localized CFBundleName in the menu bar and Mission Control,
+      // while Electron resolves its helpers from the raw Info.plist value, which must stay 'Orca'.
+      ...['en', 'es', 'es_419'].map((locale) => ({
+        from: 'resources/build/cachalote/InfoPlist.strings',
+        to: `Resources/${locale}.lproj/InfoPlist.strings`
+      }))
     ],
     target: [
       {
