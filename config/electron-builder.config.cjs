@@ -909,3 +909,6 @@ module.exports.mac.extraFiles.push(
     to: `Resources/${locale}.lproj/InfoPlist.strings`
   }))
 )
+
+// Cachalote: own app icon (Icon Composer project in resources/build/cachalote/icon.icon).
+module.exports.mac.icon = 'resources/build/cachalote/icon.icns'
