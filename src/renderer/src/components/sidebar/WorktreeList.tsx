@@ -30,6 +30,8 @@ import { useSidebarExternalWorktreeCards } from './worktree-list/listing/use-ext
 import { useSidebarHostVisibleScope } from './worktree-list/listing/use-host-visible-scope'
 import { useSidebarRevealRequests } from './worktree-list/navigation/use-reveal-requests'
 import { useSidebarSectionRows } from './worktree-list/listing/use-section-rows'
+// Cachalote: name prompt for worktree groups.
+import { WorktreeGroupNameDialog } from '../../cachalote/worktree-groups/WorktreeGroupNameDialog'
 import { useSidebarWorktreeFilters } from './worktree-list/listing/use-filters'
 import { useSidebarWorktreeSelection } from './worktree-list/navigation/use-selection'
 import { useSidebarWorktreeSortOrder } from './worktree-list/listing/use-sort-order'
@@ -267,6 +269,8 @@ const WorktreeList = React.memo(function WorktreeList({
 
   return (
     <>
+      {/* Cachalote */}
+      <WorktreeGroupNameDialog />
       <SidebarWorktreeListDialogs
         dialogs={projectGroupDialogs}
         repos={repos}

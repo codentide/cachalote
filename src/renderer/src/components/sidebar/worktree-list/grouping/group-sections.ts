@@ -30,6 +30,8 @@ import type {
   WorktreeGroupBy
 } from './row-types'
 import { orderMainWorktreeFirst } from './section-order'
+// Cachalote: feature groups.
+import type { WorktreeGroupsView } from '../../../../cachalote/worktree-groups/worktree-groups-store'
 
 /** Everything section emission reads that stays fixed for one buildRows call. */
 export type SectionAppendContext = {
@@ -50,6 +52,8 @@ export type SectionAppendContext = {
   worktreeMap: Map<string, Worktree>
   nestLineage: boolean
   cyclicLineageIds: ReadonlySet<string>
+  // Cachalote
+  worktreeGroups?: WorktreeGroupsView
 }
 
 export function appendOrderedGroups(
@@ -73,7 +77,9 @@ export function appendOrderedGroups(
     lineageById,
     worktreeMap,
     nestLineage,
-    cyclicLineageIds
+    cyclicLineageIds,
+    // Cachalote
+    worktreeGroups
   } = ctx
   for (const [key, group] of groupsToAppend) {
     const isCollapsed = collapsedGroups.has(key)
@@ -208,7 +214,9 @@ export function appendOrderedGroups(
         sectionKey: key,
         hostContextLabelByRepoId,
         hostContextLabelByWorktreeIdentity,
-        cyclicLineageIds
+        cyclicLineageIds,
+        // Cachalote
+        worktreeGroups
       })
       for (const pair of folderPairs) {
         result.push(buildFolderWorkspaceRow(pair, projectGroupDepth))

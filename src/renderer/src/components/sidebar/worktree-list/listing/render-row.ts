@@ -28,5 +28,9 @@ export function getRenderRowKey(row: RenderRow): string {
   if (row.type === 'folder-workspace') {
     return `folder-workspace:${getFolderWorkspaceHostIdentity(row.folderWorkspace)}`
   }
+  // Cachalote
+  if (row.type === 'cachalote-worktree-group') {
+    return `cachalote-group:${row.key}`
+  }
   return `wt:${row.rowKey}`
 }

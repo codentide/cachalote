@@ -22,6 +22,8 @@ import { addHostSectionRows } from '../../host-section-rows'
 import { orderHostSectionOptions } from '../../host-section-order'
 import { buildSidebarHostOptions } from '../../sidebar-host-options'
 import { selectPendingWorktreeCreationKeys } from './pending-worktree-creation-keys'
+// Cachalote: feature groups.
+import { useWorktreeGroupsStore } from '../../../../cachalote/worktree-groups/worktree-groups-store'
 
 type SectionRowsArgs = {
   groupBy: WorktreeGroupBy
@@ -80,6 +82,10 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
   const runtimeStatusByEnvironmentId = useAppStore((s) => s.runtimeStatusByEnvironmentId)
   const workspaceHostOrder = useAppStore((s) => s.workspaceHostOrder)
   const setWorkspaceHostOrder = useAppStore((s) => s.setWorkspaceHostOrder)
+  // Cachalote: data-only view so actions never rebuild the rows.
+  const worktreeGroups = useWorktreeGroupsStore(
+    useShallow((s) => ({ groups: s.groups, membership: s.membership, collapsed: s.collapsed }))
+  )
 
   // Why: manual header order is bound to state.repos; Recent/Smart derive order from the sorted worktree stream.
   const repoOrder = useMemo(
@@ -179,7 +185,9 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
         args.visibleFolderWorkspacesForRows,
         hostLabelById,
         defaultHostId,
-        args.pinnedDisplayPolicy
+        args.pinnedDisplayPolicy,
+        // Cachalote
+        worktreeGroups
       ),
     [
       args.groupBy,
@@ -202,7 +210,9 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
       args.newExternalWorktreesInboxByRepo,
       pendingCreations,
       hostLabelById,
-      args.pinnedDisplayPolicy
+      args.pinnedDisplayPolicy,
+      // Cachalote
+      worktreeGroups
     ]
   )
   const orderedHostOptions = useMemo(

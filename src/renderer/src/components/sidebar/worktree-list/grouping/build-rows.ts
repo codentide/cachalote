@@ -44,6 +44,8 @@ import type {
 } from './row-types'
 import { getRenderedNaturalAnchorRepoIds, withRepoSectionDisplayLabels } from './section-order'
 import { buildOrderedGroups } from './worktree-grouping'
+// Cachalote: feature groups.
+import type { WorktreeGroupsView } from '../../../../cachalote/worktree-groups/worktree-groups-store'
 
 export function buildRows(
   groupBy: WorktreeGroupBy,
@@ -70,7 +72,9 @@ export function buildRows(
   folderWorkspaces: readonly FolderWorkspace[] = [],
   hostLabelById?: ReadonlyMap<string, string>,
   defaultHostId: ExecutionHostId = LOCAL_EXECUTION_HOST_ID,
-  pinnedDisplayPolicy: PinnedWorktreeDisplayPolicy = getPinnedWorktreeDisplayPolicy(settings)
+  pinnedDisplayPolicy: PinnedWorktreeDisplayPolicy = getPinnedWorktreeDisplayPolicy(settings),
+  // Cachalote: last positional param so upstream signature changes stay mergeable.
+  worktreeGroups?: WorktreeGroupsView
 ): Row[] {
   const result: Row[] = []
   const projectIndex = buildProjectGroupingIndex(projectGrouping)
@@ -183,7 +187,9 @@ export function buildRows(
           groupDepth: 0,
           sectionKey: ALL_GROUP_KEY,
           hostContextLabelByWorktreeIdentity: mixedWorktreeHostContextLabels,
-          cyclicLineageIds
+          cyclicLineageIds,
+          // Cachalote
+          worktreeGroups
         })
         for (const pair of [...renderableFolderWorkspaces].sort((left, right) =>
           compareFolderWorkspacesForDisplay(left.folderWorkspace, right.folderWorkspace)
@@ -229,7 +235,9 @@ export function buildRows(
     lineageById,
     worktreeMap,
     nestLineage,
-    cyclicLineageIds
+    cyclicLineageIds,
+    // Cachalote
+    worktreeGroups
   }
 
   if (groupBy !== 'repo' || projectGroups.length === 0) {

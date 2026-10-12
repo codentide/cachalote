@@ -1,4 +1,6 @@
 import { defaultRangeExtractor } from '@tanstack/react-virtual'
+// Cachalote: feature group row height.
+import { CACHALOTE_WORKTREE_GROUP_ROW_HEIGHT } from '../../../../cachalote/worktree-groups/worktree-group-rows'
 import type { Range, VirtualItem } from '@tanstack/react-virtual'
 import { PINNED_GROUP_KEY, getWorktreeLineageGroupKey } from '../grouping/group-keys'
 import { getRenderRowKey } from '../listing/render-row'
@@ -98,6 +100,10 @@ export function estimateRenderRowSize(
   }
   if (row?.type === 'folder-workspace') {
     return FOLDER_WORKSPACE_ROW_HEIGHT
+  }
+  // Cachalote
+  if (row?.type === 'cachalote-worktree-group') {
+    return CACHALOTE_WORKTREE_GROUP_ROW_HEIGHT
   }
   return 116
 }

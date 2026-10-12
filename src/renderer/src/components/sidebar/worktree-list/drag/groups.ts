@@ -19,7 +19,9 @@ export function getWorktreeDragGroups(rows: HostSectionRow[]): WorktreeDragGroup
       row.type === 'imported-worktrees-card' ||
       row.type === 'new-external-worktrees-inbox' ||
       row.type === 'pending-creation' ||
-      row.type === 'folder-workspace'
+      row.type === 'folder-workspace' ||
+      // Cachalote: its members follow as ordinary rows of this section.
+      row.type === 'cachalote-worktree-group'
     ) {
       continue
     }

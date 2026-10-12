@@ -6,6 +6,9 @@ import { getSidebarLineageParent } from '../../worktree-lineage-projection'
 import { getWorktreeLineageGroupKey } from './group-keys'
 import type { NoticeHostContext } from './host-labels'
 import type { RenderableFolderWorkspace } from './folder-workspace-lanes'
+// Cachalote: feature groups.
+import { appendWorktreeGroupRows } from '../../../../cachalote/worktree-groups/worktree-group-rows'
+import type { WorktreeGroupsView } from '../../../../cachalote/worktree-groups/worktree-groups-store'
 import type {
   FolderWorkspaceRow,
   ImportedWorktreesCardCandidate,
@@ -98,7 +101,8 @@ function buildWorktreeRow(
 
 export function appendWorktreeRows(
   result: Row[],
-  worktrees: Worktree[],
+  // Cachalote: renamed so grouped members can be split off below.
+  sectionWorktrees: Worktree[],
   repoMap: Map<string, Repo>,
   lineageById: Record<string, WorktreeLineage>,
   _worktreeMap: Map<string, Worktree>,
@@ -110,6 +114,8 @@ export function appendWorktreeRows(
     hostContextLabelByRepoId?: ReadonlyMap<string, string>
     hostContextLabelByWorktreeIdentity?: ReadonlyMap<string, string>
     cyclicLineageIds: ReadonlySet<string>
+    // Cachalote
+    worktreeGroups?: WorktreeGroupsView
   }
 ): void {
   const {
@@ -121,6 +127,28 @@ export function appendWorktreeRows(
     hostContextLabelByWorktreeIdentity,
     cyclicLineageIds
   } = options
+  // Cachalote: feature groups render first; everything below sees only ungrouped worktrees.
+  const worktrees = appendWorktreeGroupRows({
+    result,
+    worktrees: sectionWorktrees,
+    sectionKey,
+    groupDepth,
+    view: options.worktreeGroups,
+    buildMemberRow: (worktree, isLast) =>
+      buildWorktreeRow(worktree, repoMap, {
+        rowKey: `${sectionKey}:${getWorktreeHostIdentity(worktree)}`,
+        sectionKey,
+        depth: 1,
+        groupDepth,
+        lineageTrail: [!isLast],
+        isLastLineageChild: isLast,
+        lineageChildCount: 0,
+        lineageCollapsed: false,
+        hostContextLabel:
+          hostContextLabelByWorktreeIdentity?.get(getWorktreeHostIdentity(worktree)) ??
+          hostContextLabelByRepoId?.get(worktree.repoId)
+      })
+  })
   if (!nestLineage) {
     for (const worktree of worktrees) {
       result.push(
