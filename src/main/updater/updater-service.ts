@@ -14,6 +14,9 @@ import type { ReleaseBuildListOptions } from './releases/updater-release-build-c
 import { UpdaterSetup, type UpdaterSetupOptions } from './lifecycle/updater-setup'
 import type { UpdateInstallMode } from './lifecycle/updater-state'
 
+// Cachalote: user-initiated checks run cachalote-sync instead of upstream's feed.
+import { CACHALOTE_AUTO_UPDATE_DISABLED } from '../cachalote/cachalote-flags'
+import { runCachaloteUpdateCheck } from '../cachalote/cachalote-self-update'
 const updater = new UpdaterSetup()
 
 export function resolveUpdateInstallMode(isServeMode: boolean): UpdateInstallMode {
@@ -52,6 +55,11 @@ export function checkForUpdates(): void {
 }
 
 export function checkForUpdatesFromMenu(options?: UpdateCheckOptions): void {
+  // Cachalote: every entry point (app menu, tray, sidebar help menu, Settings) lands here.
+  if (CACHALOTE_AUTO_UPDATE_DISABLED) {
+    runCachaloteUpdateCheck()
+    return
+  }
   updater.checkForUpdatesFromMenu(options)
 }
 
