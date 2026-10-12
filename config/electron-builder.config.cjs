@@ -589,7 +589,8 @@ module.exports = {
         rank: 'Alternate'
       }))
     ],
-    icon: 'resources/build/icon.icns',
+    // Cachalote: own app icon (Icon Composer project in resources/build/cachalote/icon.icon).
+    icon: 'resources/build/cachalote/icon.icns',
     entitlements: 'resources/build/entitlements.mac.plist',
     entitlementsInherit: 'resources/build/entitlements.mac.plist',
     signIgnore: [
