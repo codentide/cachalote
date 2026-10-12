@@ -22,8 +22,6 @@ import { logStartupMilestone } from '../diagnostics/startup-diagnostics'
 import { browserManager } from '../../browser/guest-lifecycle/manager/browser-manager'
 // Cachalote: the visible app name in the macOS menu bar.
 import { CACHALOTE_APP_NAME } from '../../../shared/cachalote/cachalote-name'
-import { CACHALOTE_AUTO_UPDATE_DISABLED } from '../../cachalote/cachalote-flags'
-import { runCachaloteUpdateCheck } from '../../cachalote/cachalote-self-update'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   const store = state.store
@@ -36,11 +34,6 @@ export async function initializeMainProcessI18nAndMenu(): Promise<void> {
     appMenuLabel: state.devInstanceIdentity?.name ?? CACHALOTE_APP_NAME,
     ...getAppMenuQuitHandlers(),
     onCheckForUpdates: (options) => {
-      // Cachalote: updates come from cachalote-sync, not upstream's feed.
-      if (CACHALOTE_AUTO_UPDATE_DISABLED) {
-        runCachaloteUpdateCheck()
-        return
-      }
       ensureAutoUpdaterConfigured()
       runUserInitiatedUpdateCheck(options)
     },
