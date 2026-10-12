@@ -6,7 +6,7 @@ import type { Worktree } from '../../worktree/types'
 
 /** What the sidebar row plan reads about worktree groups; the renderer store's view satisfies it. */
 export type WorktreeGroupsRowView = {
-  groups: Readonly<Record<string, { name: string }>>
+  groups: Readonly<Record<string, { name: string; color?: string }>>
   /** worktree id → group id */
   membership: Readonly<Record<string, string>>
   /** group ids collapsed in every section they appear in */
@@ -20,6 +20,8 @@ export type CachaloteWorktreeGroupRow = {
   sectionKey: string
   groupId: string
   name: string
+  /** Workspace-status palette key; undefined keeps the muted icon. */
+  color: string | undefined
   count: number
   collapsed: boolean
   groupDepth: number
@@ -93,6 +95,7 @@ export function spliceWorktreeGroupRows(
       sectionKey: options.sectionKey,
       groupId,
       name: view.groups[groupId]?.name ?? '',
+      color: view.groups[groupId]?.color,
       count: members.length,
       collapsed,
       groupDepth: options.groupDepth,

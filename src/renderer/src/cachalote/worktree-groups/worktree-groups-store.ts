@@ -2,7 +2,11 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { createBrowserUuid } from '@/lib/browser-uuid'
 
-export type WorktreeGroup = { id: string; name: string }
+/** `color` is a workspace-status color id; groups saved before colors existed have none. */
+export type WorktreeGroup = { id: string; name: string; color?: string }
+
+// Vivid status colors only, so a new group never looks like a neutral or "done" lane.
+export const WORKTREE_GROUP_COLOR_ROTATION = ['blue', 'violet', 'emerald', 'amber', 'rose', 'sky']
 
 /** What the sidebar row builder reads; kept separate from actions so rows rebuild only on data changes. */
 export type WorktreeGroupsView = {
@@ -25,6 +29,7 @@ type WorktreeGroupsState = WorktreeGroupsView & {
   addToGroup: (groupId: string, worktreeIds: readonly string[]) => void
   removeFromGroup: (worktreeIds: readonly string[]) => void
   renameGroup: (groupId: string, name: string) => void
+  setGroupColor: (groupId: string, color: string) => void
   toggleCollapsed: (groupId: string) => void
 }
 
@@ -61,7 +66,14 @@ export const useWorktreeGroupsStore = create<WorktreeGroupsState>()(
           for (const worktreeId of worktreeIds) {
             membership[worktreeId] = id
           }
-          const groups = { ...state.groups, [id]: { id, name: name.trim() || 'Untitled group' } }
+          const color =
+            WORKTREE_GROUP_COLOR_ROTATION[
+              Object.keys(state.groups).length % WORKTREE_GROUP_COLOR_ROTATION.length
+            ]
+          const groups = {
+            ...state.groups,
+            [id]: { id, name: name.trim() || 'Untitled group', color }
+          }
           return { membership, ...pruneEmptyGroups({ ...state, groups, membership }) }
         })
         return id
@@ -92,6 +104,11 @@ export const useWorktreeGroupsStore = create<WorktreeGroupsState>()(
           return group && trimmed
             ? { groups: { ...state.groups, [groupId]: { ...group, name: trimmed } } }
             : state
+        }),
+      setGroupColor: (groupId, color) =>
+        set((state) => {
+          const group = state.groups[groupId]
+          return group ? { groups: { ...state.groups, [groupId]: { ...group, color } } } : state
         }),
       toggleCollapsed: (groupId) =>
         set((state) => {
