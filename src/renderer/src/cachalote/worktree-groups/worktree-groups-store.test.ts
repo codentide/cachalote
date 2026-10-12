@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { useWorktreeGroupsStore } from './worktree-groups-store'
+import { WORKTREE_GROUP_COLOR_ROTATION, useWorktreeGroupsStore } from './worktree-groups-store'
 
 beforeEach(() => {
   useWorktreeGroupsStore.setState({
@@ -14,7 +14,11 @@ describe('worktree groups store', () => {
   it('creates a group around the given worktrees', () => {
     const id = useWorktreeGroupsStore.getState().createGroup('  Checkout  ', ['app', 'backend'])
     const state = useWorktreeGroupsStore.getState()
-    expect(state.groups[id]).toEqual({ id, name: 'Checkout' })
+    expect(state.groups[id]).toEqual({
+      id,
+      name: 'Checkout',
+      color: WORKTREE_GROUP_COLOR_ROTATION[0]
+    })
     expect(state.membership).toEqual({ app: id, backend: id })
   })
 
@@ -46,5 +50,23 @@ describe('worktree groups store', () => {
     const id = useWorktreeGroupsStore.getState().createGroup('Checkout', ['app'])
     useWorktreeGroupsStore.getState().renameGroup(id, '   ')
     expect(useWorktreeGroupsStore.getState().groups[id]?.name).toBe('Checkout')
+  })
+
+  it('gives each new group the next color in the rotation', () => {
+    const store = useWorktreeGroupsStore.getState()
+    const first = store.createGroup('First', ['app'])
+    const second = useWorktreeGroupsStore.getState().createGroup('Second', ['backend'])
+    const { groups } = useWorktreeGroupsStore.getState()
+    expect(groups[first]?.color).toBe(WORKTREE_GROUP_COLOR_ROTATION[0])
+    expect(groups[second]?.color).toBe(WORKTREE_GROUP_COLOR_ROTATION[1])
+  })
+
+  it('changes a group color and ignores unknown groups', () => {
+    const id = useWorktreeGroupsStore.getState().createGroup('Checkout', ['app'])
+    useWorktreeGroupsStore.getState().setGroupColor(id, 'rose')
+    useWorktreeGroupsStore.getState().setGroupColor('missing', 'rose')
+    const { groups } = useWorktreeGroupsStore.getState()
+    expect(groups[id]?.color).toBe('rose')
+    expect(groups.missing).toBeUndefined()
   })
 })
