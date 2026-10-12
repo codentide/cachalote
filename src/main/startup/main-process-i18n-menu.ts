@@ -20,8 +20,6 @@ import {
 import { ensureAutoUpdaterConfigured } from '../window/attach-main-window-services'
 import { logStartupMilestone } from './startup-diagnostics'
 import { CACHALOTE_APP_NAME } from '../../shared/cachalote/cachalote-name'
-import { CACHALOTE_AUTO_UPDATE_DISABLED } from '../cachalote/cachalote-flags'
-import { runCachaloteUpdateCheck } from '../cachalote/cachalote-self-update'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   const store = state.store
@@ -35,11 +33,6 @@ export async function initializeMainProcessI18nAndMenu(): Promise<void> {
     appMenuLabel: state.devInstanceIdentity?.name ?? CACHALOTE_APP_NAME,
     ...(state.isServeMode ? { onQuit: quitFromUserCommand } : {}),
     onCheckForUpdates: (options) => {
-      // Cachalote: updates come from cachalote-sync, not upstream's feed.
-      if (CACHALOTE_AUTO_UPDATE_DISABLED) {
-        runCachaloteUpdateCheck()
-        return
-      }
       ensureAutoUpdaterConfigured()
       runUserInitiatedUpdateCheck(options)
     },
