@@ -23,6 +23,7 @@ import { UpdaterDownloadInstall } from './updater-download-install'
 import { configureMacShipItScheduling } from './macos-shipit-scheduling'
 import type { PreQuitCleanupFailureMode, UpdateInstallMode } from './updater-state'
 import { CACHALOTE_AUTO_UPDATE_DISABLED } from '../cachalote/cachalote-flags'
+import { startCachaloteBackgroundChecks } from '../cachalote/cachalote-self-update'
 
 export type UpdaterSetupOptions = {
   getLastUpdateCheckAt?: () => number | null
@@ -146,6 +147,7 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
     }
     // Cachalote: same early exit as an unpackaged build; see cachalote-flags.ts.
     if (CACHALOTE_AUTO_UPDATE_DISABLED) {
+      startCachaloteBackgroundChecks()
       return
     }
 
