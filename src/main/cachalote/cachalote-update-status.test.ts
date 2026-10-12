@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   hasCachaloteUpdate,
+  toCachaloteUpdateState,
   parseInstalledBuildSha,
   parseSyncCheck,
   type CachaloteUpdateStatus
@@ -55,5 +56,51 @@ describe('hasCachaloteUpdate', () => {
     expect(hasCachaloteUpdate({ ...base, upstream: { kind: 'error' }, pendingCommits: null })).toBe(
       false
     )
+  })
+})
+
+describe('toCachaloteUpdateState', () => {
+  const base: CachaloteUpdateStatus = {
+    installedVersion: '1.4.224-local.1.abcdef1',
+    upstream: { kind: 'current' },
+    pendingCommits: []
+  }
+
+  it('reports up to date with the installed version', () => {
+    expect(toCachaloteUpdateState(base)).toEqual({
+      kind: 'current',
+      version: '1.4.224-local.1.abcdef1'
+    })
+  })
+
+  it('reports an unreachable upstream when nothing else is pending', () => {
+    expect(toCachaloteUpdateState({ ...base, upstream: { kind: 'error' } })).toEqual({
+      kind: 'unreachable'
+    })
+  })
+
+  it('lists own changes as readable titles next to the new release', () => {
+    expect(
+      toCachaloteUpdateState({
+        ...base,
+        upstream: { kind: 'new', tag: 'v1.4.230' },
+        pendingCommits: ['3d93ed5d74 feat(cachalote): color for worktree groups']
+      })
+    ).toEqual({
+      kind: 'available',
+      release: 'v1.4.230',
+      changes: ['Color for worktree groups'],
+      upstreamUnreachable: false
+    })
+  })
+
+  it('still offers own changes when upstream could not be checked', () => {
+    expect(
+      toCachaloteUpdateState({
+        ...base,
+        upstream: { kind: 'error' },
+        pendingCommits: ['abcdef1 fix: thing']
+      })
+    ).toMatchObject({ kind: 'available', release: null, upstreamUnreachable: true })
   })
 })
