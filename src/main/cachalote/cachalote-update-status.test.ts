@@ -1,0 +1,59 @@
+import { describe, expect, it } from 'vitest'
+import {
+  hasCachaloteUpdate,
+  parseInstalledBuildSha,
+  parseSyncCheck,
+  type CachaloteUpdateStatus
+} from './cachalote-update-status'
+
+describe('parseInstalledBuildSha', () => {
+  it('reads the sha a local build stamps on its version', () => {
+    expect(parseInstalledBuildSha('1.4.224-local.1791740258780.91ff1f4056e4')).toBe('91ff1f4056e4')
+  })
+
+  it('returns null for release and dev versions', () => {
+    expect(parseInstalledBuildSha('1.4.224')).toBeNull()
+    expect(parseInstalledBuildSha(null)).toBeNull()
+  })
+})
+
+describe('parseSyncCheck', () => {
+  it('maps the documented exit codes', () => {
+    expect(parseSyncCheck(0, 'Al día: Orca 1.4.224')).toEqual({ kind: 'current' })
+    expect(parseSyncCheck(10, 'Release nuevo: v1.4.230 (instalada: 1.4.224)')).toEqual({
+      kind: 'new',
+      tag: 'v1.4.230'
+    })
+    expect(parseSyncCheck(1, '')).toEqual({ kind: 'error' })
+  })
+
+  it('treats a new-release exit without a tag as a failure', () => {
+    expect(parseSyncCheck(10, 'garbled')).toEqual({ kind: 'error' })
+  })
+})
+
+describe('hasCachaloteUpdate', () => {
+  const base: CachaloteUpdateStatus = {
+    installedVersion: '1.4.224-local.1.abcdef1',
+    upstream: { kind: 'current' },
+    pendingCommits: []
+  }
+
+  it('is false when upstream is current and nothing is pending', () => {
+    expect(hasCachaloteUpdate(base)).toBe(false)
+  })
+
+  it('offers an update for own commits even without a new release', () => {
+    expect(hasCachaloteUpdate({ ...base, pendingCommits: ['3d93ed5d74 color'] })).toBe(true)
+  })
+
+  it('offers an update for a new upstream release', () => {
+    expect(hasCachaloteUpdate({ ...base, upstream: { kind: 'new', tag: 'v1.4.230' } })).toBe(true)
+  })
+
+  it('does not offer one when the only signal is a failed check', () => {
+    expect(hasCachaloteUpdate({ ...base, upstream: { kind: 'error' }, pendingCommits: null })).toBe(
+      false
+    )
+  })
+})
