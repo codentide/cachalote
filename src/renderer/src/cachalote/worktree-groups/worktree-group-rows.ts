@@ -9,6 +9,7 @@ export type CachaloteWorktreeGroupRow = {
   sectionKey: string
   groupId: string
   name: string
+  color: string | undefined
   count: number
   collapsed: boolean
   groupDepth: number
@@ -54,6 +55,7 @@ export function appendWorktreeGroupRows(args: {
       sectionKey,
       groupId,
       name: view.groups[groupId]!.name,
+      color: view.groups[groupId]!.color,
       count: members.length,
       collapsed,
       groupDepth,

@@ -15,7 +15,7 @@ function memberRow(item: Worktree, isLast: boolean): WorktreeRow {
 }
 
 const view: WorktreeGroupsView = {
-  groups: { checkout: { id: 'checkout', name: 'Feature checkout' } },
+  groups: { checkout: { id: 'checkout', name: 'Feature checkout', color: 'violet' } },
   membership: { app: 'checkout', backend: 'checkout' },
   collapsed: {}
 }
@@ -49,6 +49,7 @@ describe('appendWorktreeGroupRows', () => {
     expect(result[0]).toMatchObject({
       key: 'status:in-progress:cachalote-group:checkout',
       name: 'Feature checkout',
+      color: 'violet',
       count: 2,
       worktreeIds: ['app', 'backend']
     })
