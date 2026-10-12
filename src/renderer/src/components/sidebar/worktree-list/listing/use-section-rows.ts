@@ -1,3 +1,5 @@
+// Cachalote: feature groups.
+import { useWorktreeGroupsStore } from '../../../../cachalote/worktree-groups/worktree-groups-store'
 import { useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useAppStore } from '@/store'
@@ -79,6 +81,10 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
   const wslHostServerFilesMissing = useAppStore((s) => s.wslHostServerFiles === 'missing')
   const workspaceHostOrder = useAppStore((s) => s.workspaceHostOrder)
   const setWorkspaceHostOrder = useAppStore((s) => s.setWorkspaceHostOrder)
+  // Cachalote: data-only view so actions never rebuild the rows.
+  const worktreeGroups = useWorktreeGroupsStore(
+    useShallow((s) => ({ groups: s.groups, membership: s.membership, collapsed: s.collapsed }))
+  )
 
   // Why: manual header order is bound to state.repos; Recent/Smart derive order from the sorted worktree stream.
   const repoOrder = useMemo(
@@ -173,6 +179,8 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
         hostLabelById,
         defaultHostId,
         pinnedDisplayPolicy: args.pinnedDisplayPolicy,
+        // Cachalote: worktree groups
+        worktreeGroups,
         filterRepoIds: args.filterRepoIds
       }),
     [
@@ -195,6 +203,8 @@ export function useSidebarSectionRows(args: SectionRowsArgs) {
       pendingCreations,
       hostLabelById,
       args.pinnedDisplayPolicy,
+      // Cachalote: worktree groups
+      worktreeGroups,
       args.filterRepoIds
     ]
   )

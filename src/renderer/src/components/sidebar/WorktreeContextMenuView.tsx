@@ -45,6 +45,8 @@ import {
   shouldUseNativeContextMenu
 } from './worktree-context-menu-policy'
 import { CLOSE_ALL_CONTEXT_MENUS_EVENT } from '@/lib/close-all-context-menus'
+// Cachalote: feature groups.
+import { WorktreeGroupMenuItems } from '../../cachalote/worktree-groups/WorktreeGroupMenuItems'
 
 export default function WorktreeContextMenuView({ model }: { model: WorktreeContextMenuModel }) {
   const {
@@ -99,7 +101,9 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
     suppressOpeningPointerEvent,
     validParentWorktreeId,
     worktree,
-    workspaceStatuses
+    workspaceStatuses,
+    // Cachalote
+    activeContextWorktrees
   } = model
   const deleteShortcut = useOptionalShortcutLabel('workspace.delete')
   return (
@@ -253,6 +257,8 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
                 </>
               ) : null}
               <DropdownMenuSeparator />
+              {/* Cachalote: feature groups, above the parent-worktree actions. */}
+              <WorktreeGroupMenuItems targets={activeContextWorktrees} disabled={isDeleting} />
               <DropdownMenuItem
                 onSelect={handleOpenParentPicker}
                 disabled={isWorktreeParentPickerDisabled({ isDeleting, eligibleParentCount })}

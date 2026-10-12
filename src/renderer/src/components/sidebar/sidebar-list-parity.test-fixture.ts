@@ -312,6 +312,9 @@ export function projectParityRows(
       case 'imported-worktrees-card':
       case 'new-external-worktrees-inbox':
         return []
+      // Cachalote: worktree groups
+      case 'cachalote-worktree-group':
+        return [`CACHALOTE_GROUP ${row.key} count=${row.count}${row.collapsed ? ' collapsed' : ''}`]
     }
   })
 }
