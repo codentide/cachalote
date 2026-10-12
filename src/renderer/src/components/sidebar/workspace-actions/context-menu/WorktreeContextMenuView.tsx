@@ -36,6 +36,8 @@ import {
 import { CLOSE_ALL_CONTEXT_MENUS_EVENT } from '@/lib/overlay-interaction/close-all-context-menus'
 import { WorktreeHandToBotMenuItem } from '@/components/bots/hand-to-bot/WorktreeHandToBotMenuItem'
 
+// Cachalote: feature groups.
+import { WorktreeGroupMenuItems } from '../../../../cachalote/worktree-groups/WorktreeGroupMenuItems'
 export default function WorktreeContextMenuView({ model }: { model: WorktreeContextMenuModel }) {
   const {
     children,
@@ -202,6 +204,8 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
             onAssignWorkspaceStatus={handleAssignWorkspaceStatus}
             workspaceStatuses={workspaceStatuses}
           />
+          {/* Cachalote: feature groups, below the workspace status. */}
+          <WorktreeGroupMenuItems targets={model.activeContextWorktrees} disabled={isDeleting} />
           {!isMultiContext && (
             <WorktreeHandToBotMenuItem worktree={worktree} disabled={isDeleting} />
           )}

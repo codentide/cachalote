@@ -11,6 +11,11 @@ import {
 } from '../lineage/worktree-occurrence-plan'
 import type { NoticeHostContext } from '../hosts/host-labels'
 import type { RenderableFolderWorkspace } from '../folders/folder-workspace-lanes'
+// Cachalote: worktree groups
+import {
+  spliceWorktreeGroupRows,
+  type WorktreeGroupsRowView
+} from '../../cachalote/worktree-groups/worktree-group-rows'
 import type {
   FolderWorkspaceRow,
   ImportedWorktreesCardCandidate,
@@ -78,6 +83,8 @@ export function appendWorktreeRows(
     hostContextLabelByWorktreeIdentity?: ReadonlyMap<string, string>
     /** Occurrences that are folder workspaces render as folder rows. */
     folderPairByIdentity?: ReadonlyMap<string, RenderableFolderWorkspace>
+    // Cachalote: worktree groups
+    worktreeGroups?: WorktreeGroupsRowView
   }
 ): void {
   const lineageRanges = buildWorktreeLineageRanges(plan)
@@ -93,6 +100,8 @@ export function appendWorktreeRows(
   const occurrences = getExpandedWorktreeOccurrences(sectionOccurrences, (worktree) =>
     options.collapsedGroups.has(getWorktreeLineageGroupKey(worktree))
   )
+  // Cachalote: grouped worktrees render first, under their group; the loop below sees the rest.
+  spliceWorktreeGroupRows(result, occurrences, repoMap, options)
   for (const occurrence of occurrences) {
     const worktree = occurrence.row
     const folderPair = options.folderPairByIdentity?.get(getWorktreeHostIdentity(worktree))
