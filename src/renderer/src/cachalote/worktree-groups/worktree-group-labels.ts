@@ -11,7 +11,8 @@ const LABELS = {
   remove: { es: 'Sacar del grupo de worktrees', en: 'Remove from Worktree Group' },
   rename: { es: 'Renombrar grupo', en: 'Rename Group' },
   ungroup: { es: 'Desagrupar', en: 'Ungroup' },
-  save: { es: 'Guardar', en: 'Save' }
+  save: { es: 'Guardar', en: 'Save' },
+  color: { es: 'Color', en: 'Color' }
 } as const
 
 function uiLanguage(): string {
