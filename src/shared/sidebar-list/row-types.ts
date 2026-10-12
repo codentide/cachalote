@@ -5,6 +5,8 @@ import type { Repo } from '../repo-types'
 import type { DetectedWorktree, WorkspaceStatus, Worktree } from '../worktree/types'
 import type { ExecutionHostId } from '../execution-host'
 import type { PRGroupKey } from '../workspace-view/workspace-pr-groups'
+// Cachalote: feature group row.
+import type { CachaloteWorktreeGroupRow } from '../cachalote/worktree-groups/worktree-group-rows'
 
 export type WorktreeGroupBy = 'none' | 'workspace-status' | 'repo' | 'pr-status'
 /** A row's own registration of its repo; the same repo id can be registered on several hosts. */
@@ -119,3 +121,5 @@ export type Row =
   | NewExternalWorktreesInboxRow
   | PendingCreationRow
   | FolderWorkspaceRow
+  // Cachalote
+  | CachaloteWorktreeGroupRow

@@ -131,6 +131,15 @@ export function serializeSidebarRow(
         field('depth', row.depth),
         field('groupDepth', row.groupDepth)
       ])
+    // Cachalote: worktree groups
+    case 'cachalote-worktree-group':
+      return line('CACHALOTE_GROUP', [
+        field('key', row.key),
+        field('groupId', row.groupId),
+        field('count', row.count),
+        field('collapsed', row.collapsed),
+        field('ids', `[${row.worktreeIds.join(',')}]`)
+      ])
   }
 }
 

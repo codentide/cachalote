@@ -27,6 +27,8 @@ import type {
   Row,
   WorktreeGroupBy
 } from './row-types'
+// Cachalote: worktree groups
+import type { WorktreeGroupsRowView } from '../cachalote/worktree-groups/worktree-group-rows'
 
 /** Everything section emission reads that stays fixed for one planSidebarRows call. */
 export type SectionAppendContext = {
@@ -45,6 +47,8 @@ export type SectionAppendContext = {
   mixedWorktreeHostContextLabels: Map<string, string> | undefined
   noticeHostContextLabelByRepoId: Map<string, NoticeHostContext> | undefined
   occurrencePlan: WorktreeOccurrencePlan<Worktree>
+  // Cachalote: worktree groups
+  worktreeGroups?: WorktreeGroupsRowView
 }
 
 export function appendOrderedGroups(
@@ -184,6 +188,8 @@ export function appendOrderedGroups(
         groupDepth: projectGroupDepth,
         sectionKey: key,
         hostContextLabelByRepoId,
+        // Cachalote: worktree groups
+        worktreeGroups: ctx.worktreeGroups,
         hostContextLabelByWorktreeIdentity: mixedWorktreeHostContextLabels
       })
       for (const pair of folderPairs) {

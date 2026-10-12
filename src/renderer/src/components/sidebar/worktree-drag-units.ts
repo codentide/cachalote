@@ -14,6 +14,8 @@ type WorktreeDragUnitRow =
   | { type: 'new-external-worktrees-inbox' }
   | { type: 'pending-creation' }
   | { type: 'folder-workspace' }
+  // Cachalote
+  | { type: 'cachalote-worktree-group'; worktreeIds: readonly string[]; collapsed: boolean }
 
 export function getWorktreeDragUnitGroups(
   rows: readonly WorktreeDragUnitRow[]
@@ -39,6 +41,24 @@ export function getWorktreeDragUnitGroups(
       row.type === 'pending-creation' ||
       row.type === 'folder-workspace'
     ) {
+      continue
+    }
+    // Cachalote: a feature group drags as one unit; its depth-1 members attach to it below.
+    if (row.type === 'cachalote-worktree-group') {
+      if (!current) {
+        current = { key: ALL_GROUP_KEY, units: [] }
+        groups.push({
+          key: current.key,
+          units: current.units,
+          worktreeIds: current.units.map((unit) => unit.worktreeId)
+        })
+      }
+      if (row.worktreeIds[0]) {
+        current.units.push({
+          worktreeId: row.worktreeIds[0],
+          worktreeIds: row.collapsed ? [...row.worktreeIds] : []
+        })
+      }
       continue
     }
     if (row.sectionKey === PINNED_GROUP_KEY && naturalWorktreeIds.has(row.worktree.id)) {

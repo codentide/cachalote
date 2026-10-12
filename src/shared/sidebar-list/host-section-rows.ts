@@ -68,6 +68,9 @@ function getRowHostId(row: Row, defaultHostId: ExecutionHostId): ExecutionHostId
       return getFolderWorkspaceHostId(row.folderWorkspace, row.projectGroup, defaultHostId)
     case 'header':
       return row.repo ? getRepoHostId(row.repo, defaultHostId) : null
+    // Cachalote: a feature group can span hosts; its members carry their own.
+    case 'cachalote-worktree-group':
+      return null
   }
 }
 
