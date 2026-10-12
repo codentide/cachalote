@@ -26,8 +26,8 @@ const TEXT = {
     en: 'Upstream could not be checked; only your changes will be installed.'
   },
   warning: {
-    es: 'El build tarda unos minutos. Al terminar, Cachalote se cierra y se reabre: los agentes que estén corriendo en sus terminales se cortan.',
-    en: 'The build takes a few minutes. When it finishes, Cachalote quits and reopens: agents running in its terminals are interrupted.'
+    es: 'El build tarda unos minutos. Al terminar, Cachalote se reinicia sola; las terminales y sus agentes siguen corriendo.',
+    en: 'The build takes a few minutes. When it finishes, Cachalote restarts by itself; terminals and their agents keep running.'
   },
   update: { es: 'Actualizar', en: 'Update' },
   dismiss: { es: 'Cerrar', en: 'Dismiss' }
