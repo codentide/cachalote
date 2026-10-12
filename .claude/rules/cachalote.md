@@ -32,7 +32,11 @@ cortos, lint, tests, naming.
    `rg "Cachalote:"` al resolver un conflicto.
 4. **Un commit por feature,** con prefijo `feat(cachalote): …`, y un cuerpo que
    explique el porqué. Ese commit es lo que se re-aplica en cada release.
-5. **No tocar `CLAUDE.md` ni `AGENTS.md` de upstream.** Las reglas del fork van en
+5. **Assets que reemplazan a los de upstream:** `resources/icon.png` (ícono del Dock al
+   arrancar) es la ballena. Si un rebase marca conflicto ahí, quedarse con el nuestro
+   (se regenera desde `resources/build/cachalote/icon.icns`). La fuente del ícono es
+   `resources/build/cachalote/icon.icon` (Icon Composer), compilada con `xcrun actool`.
+6. **No tocar `CLAUDE.md` ni `AGENTS.md` de upstream.** Las reglas del fork van en
    `.claude/rules/`.
 
 ## Identidad de la app: no se cambia
