@@ -3,6 +3,12 @@ import type { UpdateStatus } from '../../shared/update-status-types'
 import { prepareAndInvokeUpdaterInstall } from '../renderer-restart-wiring'
 import { awaitBeforeUnloadCheckpoint, updaterQuitAbortRelay } from '../preload-runtime-support'
 import type { PreloadApi } from '../api-types'
+// Cachalote: update card channels.
+import {
+  CACHALOTE_UPDATE_START_CHANNEL,
+  CACHALOTE_UPDATE_STATE_CHANNEL,
+  type CachaloteUpdateState
+} from '../../shared/cachalote/cachalote-update-state'
 
 export const updaterApi = {
   getStatus: () => ipcRenderer.invoke('updater:getStatus'),
@@ -22,6 +28,15 @@ export const updaterApi = {
       () => ipcRenderer.invoke('updater:quitAndInstall'),
       awaitBeforeUnloadCheckpoint
     ),
+
+  // Cachalote
+  cachaloteStart: () => ipcRenderer.invoke(CACHALOTE_UPDATE_START_CHANNEL),
+  onCachaloteState: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, state: CachaloteUpdateState) =>
+      callback(state)
+    ipcRenderer.on(CACHALOTE_UPDATE_STATE_CHANNEL, listener)
+    return () => ipcRenderer.removeListener(CACHALOTE_UPDATE_STATE_CHANNEL, listener)
+  },
 
   onStatus: (callback) => {
     const listener = (_event: Electron.IpcRendererEvent, status: UpdateStatus) => callback(status)
