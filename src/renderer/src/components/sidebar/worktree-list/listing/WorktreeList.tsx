@@ -1,3 +1,5 @@
+// Cachalote: name prompt for worktree groups.
+import { WorktreeGroupNameDialog } from '../../../../cachalote/worktree-groups/WorktreeGroupNameDialog'
 import { useAppStoreWithHostStatuses } from '@/store/slices/runtime-status/views/use-runtime-status-view'
 import React, { useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom'
@@ -299,6 +301,8 @@ const WorktreeList = React.memo(function WorktreeList({
             projectsCollapseTarget
           )
         : null}
+      {/* Cachalote */}
+      <WorktreeGroupNameDialog />
       <SidebarWorktreeListDialogs
         dialogs={projectGroupDialogs}
         repos={repos}

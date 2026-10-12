@@ -29,6 +29,8 @@ import type {
   Row,
   WorktreeGroupBy
 } from '../row-types'
+// Cachalote: worktree groups
+import type { WorktreeGroupsRowView } from '../../cachalote/worktree-groups/worktree-group-rows'
 
 /** Everything section emission reads that stays fixed for one planSidebarRows call. */
 export type SectionAppendContext = {
@@ -48,6 +50,8 @@ export type SectionAppendContext = {
   noticeHostContextLabelByRepoId: Map<string, NoticeHostContext> | undefined
   occurrencePlan: WorktreeOccurrencePlan<Worktree>
   folderPairByIdentity?: ReadonlyMap<string, RenderableFolderWorkspace>
+  // Cachalote: worktree groups
+  worktreeGroups?: WorktreeGroupsRowView
 }
 
 function getProjectHeaderHostScope(
@@ -194,6 +198,8 @@ export function appendOrderedGroups(
         groupDepth: projectGroupDepth,
         sectionKey: key,
         hostContextLabelByRepoId,
+        // Cachalote: worktree groups
+        worktreeGroups: ctx.worktreeGroups,
         hostContextLabelByWorktreeIdentity: mixedWorktreeHostContextLabels,
         folderPairByIdentity: ctx.folderPairByIdentity
       })
