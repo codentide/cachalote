@@ -27,6 +27,16 @@ export function parseSyncCheck(code: number | null, stdout: string): UpstreamChe
   return code === 10 && tag ? { kind: 'new', tag } : { kind: 'error' }
 }
 
+/**
+ * Identity of an update worth surfacing unprompted, or null. Only a new upstream release qualifies:
+ * own commits are made on purpose, so they wait for a manual check instead of nagging mid-work.
+ */
+export function backgroundUpdateKey(state: CachaloteUpdateState): string | null {
+  return state.kind === 'available' && state.release
+    ? [state.release, ...state.changes].join('\n')
+    : null
+}
+
 export function hasCachaloteUpdate(status: CachaloteUpdateStatus): boolean {
   return status.upstream.kind === 'new' || (status.pendingCommits?.length ?? 0) > 0
 }
