@@ -13,6 +13,9 @@ import type { ReleaseBuild, ReleaseChannel } from '../shared/release-channel'
 import type { ReleaseBuildListOptions } from './updater-release-build-cache'
 import { UpdaterSetup, type UpdaterSetupOptions } from './updater/updater-setup'
 import type { PreQuitCleanupFailureMode, UpdateInstallMode } from './updater/updater-state'
+// Cachalote: user-initiated checks run cachalote-sync instead of upstream's feed.
+import { CACHALOTE_AUTO_UPDATE_DISABLED } from './cachalote/cachalote-flags'
+import { runCachaloteUpdateCheck } from './cachalote/cachalote-self-update'
 
 // Keep one service instance so all public API calls share updater state and event listeners.
 const updater = new UpdaterSetup()
@@ -55,6 +58,11 @@ export function checkForUpdates(): void {
 }
 
 export function checkForUpdatesFromMenu(options?: UpdateCheckOptions): void {
+  // Cachalote: every entry point (app menu, tray, sidebar help menu, Settings) lands here.
+  if (CACHALOTE_AUTO_UPDATE_DISABLED) {
+    runCachaloteUpdateCheck()
+    return
+  }
   updater.checkForUpdatesFromMenu(options)
 }
 
