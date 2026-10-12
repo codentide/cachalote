@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  backgroundUpdateKey,
   hasCachaloteUpdate,
   toCachaloteUpdateState,
   parseInstalledBuildSha,
@@ -102,5 +103,31 @@ describe('toCachaloteUpdateState', () => {
         pendingCommits: ['abcdef1 fix: thing']
       })
     ).toMatchObject({ kind: 'available', release: null, upstreamUnreachable: true })
+  })
+})
+
+describe('backgroundUpdateKey', () => {
+  it('surfaces a new upstream release, keyed by release and changes', () => {
+    expect(
+      backgroundUpdateKey({
+        kind: 'available',
+        release: 'v1.4.230',
+        changes: ['Color'],
+        upstreamUnreachable: false
+      })
+    ).toBe('v1.4.230\nColor')
+  })
+
+  it('stays quiet for own commits alone and for every non-update state', () => {
+    expect(
+      backgroundUpdateKey({
+        kind: 'available',
+        release: null,
+        changes: ['Color'],
+        upstreamUnreachable: false
+      })
+    ).toBeNull()
+    expect(backgroundUpdateKey({ kind: 'current', version: '1.4.224' })).toBeNull()
+    expect(backgroundUpdateKey({ kind: 'unreachable' })).toBeNull()
   })
 })

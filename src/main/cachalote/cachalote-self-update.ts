@@ -8,6 +8,7 @@ import {
   type CachaloteUpdateState
 } from '../../shared/cachalote/cachalote-update-state'
 import {
+  backgroundUpdateKey,
   parseInstalledBuildSha,
   parseSyncCheck,
   toCachaloteUpdateState,
@@ -19,6 +20,9 @@ const REPO = path.join(homedir(), 'code/personal/cachalote')
 const INSTALLED_PLIST = '/Applications/Cachalote.app/Contents/Info.plist'
 const JOB = 'com.marcodelboccio.cachalote-self-update'
 const LOG = path.join(homedir(), 'Library/Logs/cachalote-self-update.log')
+// Leaves startup alone, then follows roughly the cadence of upstream's own update checks.
+const BACKGROUND_FIRST_CHECK_MS = 60_000
+const BACKGROUND_INTERVAL_MS = 6 * 60 * 60_000
 
 // The card lives in the main window; popouts simply ignore the channel.
 function publish(state: CachaloteUpdateState): void {
@@ -118,6 +122,37 @@ export function runCachaloteUpdateCheck(): void {
     console.error('[cachalote] update check failed', error)
     publish({ kind: 'failed', message: errorMessage(error) })
   })
+}
+
+let backgroundChecksStarted = false
+// The last update surfaced unprompted: a dismissed card stays dismissed until something changes.
+let lastBackgroundKey: string | null = null
+
+async function backgroundCheck(): Promise<void> {
+  if (await isUpdateRunning()) {
+    return
+  }
+  const state = toCachaloteUpdateState(await readStatus())
+  const key = backgroundUpdateKey(state)
+  if (key && key !== lastBackgroundKey) {
+    lastBackgroundKey = key
+    publish(state)
+  }
+}
+
+/** Silent periodic checks in the installed app; the card appears only for a new upstream release. */
+export function startCachaloteBackgroundChecks(): void {
+  if (backgroundChecksStarted || process.platform !== 'darwin') {
+    return
+  }
+  backgroundChecksStarted = true
+  const run = (): void => {
+    backgroundCheck().catch((error: unknown) => {
+      console.warn('[cachalote] background update check failed', error)
+    })
+  }
+  setTimeout(run, BACKGROUND_FIRST_CHECK_MS).unref()
+  setInterval(run, BACKGROUND_INTERVAL_MS).unref()
 }
 
 /** The card's Update button; re-registered with the rest of the updater IPC. */
