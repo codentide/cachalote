@@ -32,6 +32,8 @@ import {
 } from './app-root-surface-settings'
 import type { FloatingWorkspacePanelState } from './use-floating-workspace-panel'
 import type { OnboardingGate } from './use-onboarding-and-feature-tips'
+// Cachalote: update card.
+import { CachaloteUpdateCard } from '../cachalote/update/CachaloteUpdateCard'
 
 const QuickOpen = lazy(() => import('../components/QuickOpen'))
 const WorkspaceCleanupDialog = lazy(
@@ -288,6 +290,8 @@ export const AppRootSurfaces = memo(function AppRootSurfaces(props: {
         </Suspense>
       ) : null}
       <NotificationCardStack>
+        {/* Cachalote: own update flow (cachalote-sync); upstream's card stays idle. */}
+        <CachaloteUpdateCard />
         {shouldMountUpdateCard ? (
           <Suspense fallback={null}>
             <OverlayBoundary boundaryId="overlay.update-card" resetKey={activeView}>

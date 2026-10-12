@@ -21,6 +21,8 @@ import {
   type UpdateInstallMode,
   type UpdaterSetupOptions
 } from '../updater'
+// Cachalote: the update card's Update button.
+import { registerCachaloteUpdateHandlers } from '../cachalote/cachalote-self-update'
 
 const UPDATER_SETUP_FALLBACK_MS = 15_000
 
@@ -136,6 +138,8 @@ export function scheduleMainWindowAutoUpdaterSetup(
 }
 
 export function registerUpdaterHandlers(_store: Store): void {
+  // Cachalote
+  registerCachaloteUpdateHandlers()
   ipcMain.removeHandler('updater:getStatus')
   ipcMain.removeHandler('updater:getVersion')
   ipcMain.removeHandler('updater:check')
