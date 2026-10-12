@@ -6,6 +6,8 @@ import { NotificationCardStack } from '../../components/notifications/Notificati
 import { StarNagCard } from '../../components/star-nag/StarNagCard'
 import { WorkspaceCleanupRunCard } from '../../components/workspace-cleanup/removal/run/WorkspaceCleanupRunCard'
 import { OverlayBoundary } from './app-root-surface-boundaries'
+// Cachalote: update card.
+import { CachaloteUpdateCard } from '../../cachalote/update/CachaloteUpdateCard'
 
 const AgentCliUpdateCard = lazy(() =>
   import('../../components/agent-cli-update/AgentCliUpdateCard').then((module) => ({
@@ -46,6 +48,8 @@ export function AppNotificationCards({
 }): JSX.Element {
   return (
     <NotificationCardStack>
+      {/* Cachalote: own update flow (cachalote-sync); upstream's card stays idle. */}
+      <CachaloteUpdateCard />
       {chatUiHereCornerCardOpen ? (
         <Suspense fallback={null}>
           <OverlayBoundary boundaryId="overlay.chat-ui-here-corner-card" resetKey={activeView}>

@@ -1,3 +1,4 @@
+import type { CachaloteUpdateState } from '../../../shared/cachalote/cachalote-update-state'
 import type {
   LinuxPackageInstallInstructions,
   ReleaseBuildListResult,
@@ -26,5 +27,8 @@ export type UpdaterApi = {
   ) => Promise<ReleaseBuildListResult>
 
   onStatus: (callback: (status: UpdateStatus) => void) => () => void
+  // Cachalote: optional so the web client's updater API needs no stub.
+  onCachaloteState?: (callback: (state: CachaloteUpdateState) => void) => () => void
+  cachaloteStart?: () => Promise<void>
   onClearDismissal: (callback: () => void) => () => void
 }
