@@ -27,6 +27,8 @@ import {
 import type { PreQuitCleanupFailureMode, UpdateInstallMode } from './updater-state'
 import type { UpdaterSetupOptions } from './updater-setup'
 
+// Cachalote: the update card's Update button.
+import { registerCachaloteUpdateHandlers } from '../../cachalote/cachalote-self-update'
 const UPDATER_SETUP_FALLBACK_MS = 15_000
 
 // Manual checks may precede deferred setup; entry points must configure first.
@@ -144,6 +146,8 @@ export function scheduleMainWindowAutoUpdaterSetup(
 }
 
 export function registerUpdaterHandlers(_store: Store): void {
+  // Cachalote
+  registerCachaloteUpdateHandlers()
   ipcMain.removeHandler('updater:getStatus')
   ipcMain.removeHandler('updater:getVersion')
   ipcMain.removeHandler('updater:check')

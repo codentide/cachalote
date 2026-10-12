@@ -5,6 +5,8 @@ import { CodexSharedSettingsNoticeCard } from '../../components/terminal-pane/pr
 import { NotificationCardStack } from '../../components/notifications/NotificationCardStack'
 import { StarNagCard } from '../../components/star-nag/StarNagCard'
 import { OverlayBoundary } from './app-root-surface-boundaries'
+// Cachalote: update card.
+import { CachaloteUpdateCard } from '../../cachalote/update/CachaloteUpdateCard'
 
 const ChatUiHereCornerCard = lazy(() =>
   import('../../components/feature-tips/ChatUiHereCornerCard').then((module) => ({
@@ -36,6 +38,8 @@ export function AppNotificationCards({
 }): JSX.Element {
   return (
     <NotificationCardStack>
+      {/* Cachalote: own update flow (cachalote-sync); upstream's card stays idle. */}
+      <CachaloteUpdateCard />
       {chatUiHereCornerCardOpen ? (
         <Suspense fallback={null}>
           <OverlayBoundary boundaryId="overlay.chat-ui-here-corner-card" resetKey={activeView}>
