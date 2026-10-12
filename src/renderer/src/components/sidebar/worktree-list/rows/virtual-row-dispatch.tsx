@@ -39,6 +39,8 @@ import { renderWorktreeSectionHeaderRow } from './SectionHeader'
 import type { SectionHeaderRowContext } from './section-header-row-context'
 import type { WorktreeRowDragState } from '../drag/row-state'
 import type { Translate } from '@/i18n/use-translate'
+// Cachalote: feature group row.
+import { WorktreeGroupRow } from '../../../../cachalote/worktree-groups/WorktreeGroupRow'
 
 export type WorktreeVirtualRowContext = {
   renderRows: RenderRow[]
@@ -237,6 +239,24 @@ export function renderWorktreeVirtualRow(
       vItem,
       measureVirtualRowElement: ctx.measureVirtualRowElement
     })
+  }
+
+  // Cachalote
+  if (row.type === 'cachalote-worktree-group') {
+    return (
+      <div
+        key={vItem.key}
+        role="presentation"
+        data-worktree-virtual-row
+        data-worktree-virtual-row-key={String(vItem.key)}
+        data-index={vItem.index}
+        ref={ctx.measureVirtualRowElement}
+        className="absolute left-0 right-0 top-0"
+        style={{ transform: getVirtualRowTransform(vItem.start) }}
+      >
+        <WorktreeGroupRow row={row} isGrouped={ctx.groupBy !== 'none'} />
+      </div>
+    )
   }
 
   if (row.type === 'folder-workspace') {

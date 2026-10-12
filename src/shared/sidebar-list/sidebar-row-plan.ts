@@ -8,6 +8,8 @@ import type { WorkspaceStatusDefinition, Worktree } from '../worktree/types'
 import type { ExecutionHostId } from '../execution-host'
 import { ALL_GROUP_KEY, PINNED_GROUP_KEY } from './group-keys'
 import { appendOrderedGroups, type SectionAppendContext } from './group-sections'
+// Cachalote: worktree groups
+import type { WorktreeGroupsRowView } from '../cachalote/worktree-groups/worktree-group-rows'
 
 import {
   getLaneHostWorktreeCounts,
@@ -86,6 +88,8 @@ export type SidebarRowPlanInputs = {
   hostLabelById?: ReadonlyMap<string, string>
   defaultHostId: ExecutionHostId
   pinnedDisplayPolicy: PinnedWorktreeDisplayPolicy
+  // Cachalote: worktree groups
+  worktreeGroups?: WorktreeGroupsRowView
   filterRepoIds: readonly string[]
 }
 
@@ -268,6 +272,8 @@ export function planSidebarRows(inputs: SidebarRowPlanInputs) {
         })
         if (!collapsedGroups.has(ALL_GROUP_KEY)) {
           appendWorktreeRows(result, repoOf, occurrencePlan, {
+            // Cachalote: worktree groups
+            worktreeGroups: inputs.worktreeGroups,
             collapsedGroups,
             groupDepth: 0,
             sectionKey: ALL_GROUP_KEY,
@@ -280,6 +286,8 @@ export function planSidebarRows(inputs: SidebarRowPlanInputs) {
     }
 
     const sectionContext: SectionAppendContext = {
+      // Cachalote: worktree groups
+      worktreeGroups: inputs.worktreeGroups,
       result,
       groupBy,
       collapsedGroups,
