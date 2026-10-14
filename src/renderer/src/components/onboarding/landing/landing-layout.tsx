@@ -1,6 +1,7 @@
 import { ShortcutKeyCombo } from '../../ui/ShortcutKeyCombo'
 import type { ShortcutKeyComboDetails } from '@/lib/keyboard/useShortcutLabel'
-import logo from '../../../../../../resources/logo.svg'
+// Cachalote: whale logo instead of Orca's; the name comes from the translation catalog.
+import logo from '../../../cachalote/brand/cachalote-logo.svg'
 import { useTranslate } from '@/i18n/use-translate'
 
 export type LandingShortcutItem = {
