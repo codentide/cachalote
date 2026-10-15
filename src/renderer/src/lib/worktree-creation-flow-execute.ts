@@ -23,6 +23,8 @@ import {
   type WorktreeCreationStructuredSessionResult
 } from '@/lib/worktree-creation-structured-session'
 import { completeWorktreeCreation } from '@/lib/worktree-creation-completion'
+// Cachalote: file the created worktree under the composer's worktree group.
+import { applyComposerWorktreeGroup } from '../cachalote/worktree-groups/composer-worktree-group'
 import { showWorktreeCreationReadyToast } from '@/lib/worktree-creation-ready-toast'
 import { mountCreatedWorktreeStartupTabsInBackground } from '@/lib/worktree-creation-background-mount'
 import { ensureWebRuntimeWorktreeTerminalAfterWake } from '@/lib/web-runtime-worktree-terminal-after-wake'
@@ -154,6 +156,7 @@ export async function executeWorktreeCreation(
     }
     return
   }
+  applyComposerWorktreeGroup(creationId, worktree.id) // Cachalote: composer worktree group
   await attachEphemeralVmRuntimeToWorkspace(preparedRequest, worktree.id)
 
   const backendSpawned = result.startupTerminal?.spawned === true
