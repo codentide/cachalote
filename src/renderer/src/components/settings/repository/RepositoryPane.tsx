@@ -18,6 +18,9 @@ import { SettingsGroup } from '../section-layout/SettingsGroup'
 import { RepositoryRemoveProjectButton } from './RepositoryRemoveProjectButton'
 import type { SettingsProjectRemovalScope } from '../navigation/settings-project-list'
 import { matchesSettingsSearch } from '../search/settings-search'
+// Cachalote: per-project branch name format.
+import { BranchFormatSettingsSection } from '../../../cachalote/branch-format/BranchFormatSettingsSection'
+import { BRANCH_FORMAT_SEARCH_ENTRY } from '../../../cachalote/branch-format/branch-format-settings'
 import { useAppStore } from '@/store/index'
 import { getRepositoryIconSectionId } from './repository-settings-targets'
 import { RepositoryIconPicker } from './identity/RepositoryIconPicker'
@@ -378,6 +381,12 @@ export function RepositoryPane({
     !isFolder &&
     (forceFullPaneForRepoMatch || matchesSettingsSearch(searchQuery, sparsePresetEntries)) ? (
       <SparsePresetSettingsSection key={`sparse-presets:${repo.id}`} repoId={repo.id} />
+    ) : null,
+    // Cachalote: per-project branch name format.
+    !isFolder &&
+    (forceFullPaneForRepoMatch ||
+      matchesSettingsSearch(searchQuery, BRANCH_FORMAT_SEARCH_ENTRY)) ? (
+      <BranchFormatSettingsSection key={`cachalote-branch-format:${repo.id}`} repo={repo} />
     ) : null,
     !isFolder && (forceFullPaneForRepoMatch || matchesSettingsSearch(searchQuery, mcpEntries)) ? (
       <McpConfigSection key={`mcp-configs:${selectedHostId}:${repo.id}`} repo={repo} />
