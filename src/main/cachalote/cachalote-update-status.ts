@@ -55,3 +55,47 @@ export function toCachaloteUpdateState(status: CachaloteUpdateStatus): Cachalote
     upstreamUnreachable: status.upstream.kind === 'error'
   }
 }
+
+/** Printed by the update job after cachalote-sync, so the app can tell how the run ended. */
+export const UPDATE_RESULT_MARKER = '### cachalote-update result: '
+const RUN_HEADER = /^=== .+ ===$/
+const SYNC_ERROR_PREFIX = 'cachalote-sync: '
+const BUILDER_ERROR_PREFIX = '⨯ '
+
+export type UpdateRunOutcome =
+  | { kind: 'ok' }
+  | { kind: 'failed'; reason: string | null }
+  | { kind: 'unknown' }
+
+function findLastLine(lines: readonly string[], matches: (line: string) => boolean): string | null {
+  for (let index = lines.length - 1; index >= 0; index--) {
+    const line = lines[index]!
+    if (matches(line)) {
+      return line
+    }
+  }
+  return null
+}
+
+/** How the last run in the update log ended; `reason` is cachalote-sync's message plus the builder's error. */
+export function parseUpdateRunOutcome(logTail: string): UpdateRunOutcome {
+  const lines = logTail.split('\n')
+  const header = findLastLine(lines, (line) => RUN_HEADER.test(line))
+  const run = header === null ? lines : lines.slice(lines.lastIndexOf(header) + 1)
+  const result = findLastLine(run, (line) => line.startsWith(UPDATE_RESULT_MARKER))
+    ?.slice(UPDATE_RESULT_MARKER.length)
+    .trim()
+  if (result === 'ok') {
+    return { kind: 'ok' }
+  }
+  const syncError = findLastLine(run, (line) => line.startsWith(SYNC_ERROR_PREFIX))
+    ?.slice(SYNC_ERROR_PREFIX.length)
+    .trim()
+  const builderError = findLastLine(run, (line) =>
+    line.trimStart().startsWith(BUILDER_ERROR_PREFIX)
+  )
+    ?.trim()
+    .slice(BUILDER_ERROR_PREFIX.length)
+  const reason = [syncError, builderError].filter(Boolean).join(' — ') || null
+  return result === 'failed' || reason ? { kind: 'failed', reason } : { kind: 'unknown' }
+}

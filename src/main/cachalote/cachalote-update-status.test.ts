@@ -5,6 +5,8 @@ import {
   toCachaloteUpdateState,
   parseInstalledBuildSha,
   parseSyncCheck,
+  parseUpdateRunOutcome,
+  UPDATE_RESULT_MARKER,
   type CachaloteUpdateStatus
 } from './cachalote-update-status'
 
@@ -129,5 +131,51 @@ describe('backgroundUpdateKey', () => {
     ).toBeNull()
     expect(backgroundUpdateKey({ kind: 'current', version: '1.4.224' })).toBeNull()
     expect(backgroundUpdateKey({ kind: 'unreachable' })).toBeNull()
+  })
+})
+
+describe('parseUpdateRunOutcome', () => {
+  const earlierRun = [
+    '=== Wed Oct 14 20:43:10 -05 2026 ===',
+    'cachalote-sync: an older failure that must not leak into the next run',
+    `${UPDATE_RESULT_MARKER}failed`
+  ]
+
+  it('reads a successful last run', () => {
+    const log = [
+      ...earlierRun,
+      '=== Thu Oct 15 10:28:45 -05 2026 ===',
+      '→ pnpm install',
+      `${UPDATE_RESULT_MARKER}ok`
+    ]
+    expect(parseUpdateRunOutcome(log.join('\n'))).toEqual({ kind: 'ok' })
+  })
+
+  it('reports the sync message and the builder error of a failed run', () => {
+    const log = [
+      ...earlierRun,
+      '=== Thu Oct 15 10:28:45 -05 2026 ===',
+      '  ⨯ [verify-packaged-daemon-entry] the x64 terminal host did not serve a PTY: no daemon token',
+      'cachalote-sync: falló el build; la app instalada no se tocó',
+      `${UPDATE_RESULT_MARKER}failed`
+    ]
+    expect(parseUpdateRunOutcome(log.join('\n'))).toEqual({
+      kind: 'failed',
+      reason:
+        'falló el build; la app instalada no se tocó — [verify-packaged-daemon-entry] the x64 terminal host did not serve a PTY: no daemon token'
+    })
+  })
+
+  it('treats a failed result without details as a failure with no reason', () => {
+    const log = ['=== Thu Oct 15 10:28:45 -05 2026 ===', `${UPDATE_RESULT_MARKER}failed`]
+    expect(parseUpdateRunOutcome(log.join('\n'))).toEqual({ kind: 'failed', reason: null })
+  })
+
+  it('does not know how a run without result or errors ended', () => {
+    expect(
+      parseUpdateRunOutcome(['=== Thu Oct 15 10:28:45 -05 2026 ===', '→ pnpm install'].join('\n'))
+    ).toEqual({
+      kind: 'unknown'
+    })
   })
 })
