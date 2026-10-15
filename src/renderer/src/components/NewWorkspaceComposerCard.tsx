@@ -26,6 +26,8 @@ import type { TuiAgent } from '../../../shared/tui-agent'
 import { NewWorkspaceComposerAdvancedSection } from './new-workspace/NewWorkspaceComposerAdvancedSection'
 // Cachalote: pick the worktree group while creating.
 import { ComposerWorktreeGroupField } from '../cachalote/worktree-groups/ComposerWorktreeGroupField'
+// Cachalote: branch name from the project's template.
+import { ComposerBranchFormatField } from '../cachalote/branch-format/ComposerBranchFormatField'
 import { NewWorkspaceComposerAgentSection } from './new-workspace/NewWorkspaceComposerAgentSection'
 import { NewWorkspaceComposerFooter } from './new-workspace/NewWorkspaceComposerFooter'
 import { NewWorkspaceComposerNameSection } from './new-workspace/NewWorkspaceComposerNameSection'
@@ -329,6 +331,8 @@ export default function NewWorkspaceComposerCard(
           selectedProjectName={selectedProjectName}
         />
         <NewWorkspaceComposerNameSection {...props} onNamePlainEnter={handleNamePlainEnter} />
+        {/* Cachalote: branch name from the project's template. */}
+        {props.selectedRepoIsGit ? <ComposerBranchFormatField {...props} /> : null}
         {/* Cachalote: only worktree creations go through the group binding. */}
         {props.selectedRepoIsGit ? <ComposerWorktreeGroupField /> : null}
         <NewWorkspaceComposerAgentSection
