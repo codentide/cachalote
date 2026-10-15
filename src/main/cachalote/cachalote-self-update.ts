@@ -1,4 +1,5 @@
 import { BrowserWindow, ipcMain } from 'electron'
+import { open } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import path from 'node:path'
 import { runProcess } from '@orca/process-host'
@@ -11,7 +12,9 @@ import {
   backgroundUpdateKey,
   parseInstalledBuildSha,
   parseSyncCheck,
+  parseUpdateRunOutcome,
   toCachaloteUpdateState,
+  UPDATE_RESULT_MARKER,
   type CachaloteUpdateStatus
 } from './cachalote-update-status'
 
@@ -23,6 +26,9 @@ const LOG = path.join(homedir(), 'Library/Logs/cachalote-self-update.log')
 // Leaves startup alone, then follows roughly the cadence of upstream's own update checks.
 const BACKGROUND_FIRST_CHECK_MS = 60_000
 const BACKGROUND_INTERVAL_MS = 6 * 60 * 60_000
+const JOB_POLL_MS = 15_000
+// The last run's lines; a failed build log runs to a few thousand lines.
+const LOG_TAIL_BYTES = 256 * 1024
 
 // The card lives in the main window; popouts simply ignore the channel.
 function publish(state: CachaloteUpdateState): void {
@@ -87,7 +93,7 @@ async function startUpdate(): Promise<void> {
   const notifyFailure = `osascript -e 'display notification "${LOG}" with title "Cachalote update failed"'`
   const script = [
     `echo "=== $(date) ==="`,
-    `cachalote-sync || ${notifyFailure}`,
+    `if cachalote-sync; then echo "${UPDATE_RESULT_MARKER}ok"; else echo "${UPDATE_RESULT_MARKER}failed"; ${notifyFailure}; fi`,
     `launchctl remove ${JOB}`
   ].join('; ')
   const result = await runProcess({
@@ -100,10 +106,60 @@ async function startUpdate(): Promise<void> {
   }
 }
 
+async function readLogTail(): Promise<string> {
+  const file = await open(LOG, 'r')
+  try {
+    const { size } = await file.stat()
+    const length = Math.min(size, LOG_TAIL_BYTES)
+    const buffer = Buffer.alloc(length)
+    await file.read(buffer, 0, length, size - length)
+    return buffer.toString('utf8')
+  } finally {
+    await file.close()
+  }
+}
+
+let jobWatch: NodeJS.Timeout | null = null
+
+async function reportFinishedJob(): Promise<void> {
+  const outcome = parseUpdateRunOutcome(await readLogTail().catch(() => ''))
+  // On success the swap quits this app; anything else would otherwise leave the card spinning.
+  if (outcome.kind !== 'ok') {
+    const reason =
+      outcome.kind === 'failed' && outcome.reason
+        ? outcome.reason
+        : 'cachalote-sync ended without a result'
+    publish({ kind: 'failed', message: `${reason} (${LOG.replace(homedir(), '~')})` })
+  }
+}
+
+/** Follows a running update job until it ends, then reports a failure on the card. */
+function watchUpdateJob(): void {
+  if (jobWatch) {
+    return
+  }
+  jobWatch = setInterval(() => {
+    void isUpdateRunning()
+      .then((running) => {
+        if (running || !jobWatch) {
+          return
+        }
+        clearInterval(jobWatch)
+        jobWatch = null
+        return reportFinishedJob()
+      })
+      .catch((error: unknown) => {
+        console.warn('[cachalote] update job watch failed', error)
+      })
+  }, JOB_POLL_MS)
+  jobWatch.unref()
+}
+
 async function checkForUpdate(): Promise<void> {
   publish({ kind: 'checking' })
   if (await isUpdateRunning()) {
     publish({ kind: 'running' })
+    watchUpdateJob()
     return
   }
   publish(toCachaloteUpdateState(await readStatus()))
@@ -162,6 +218,7 @@ export function registerCachaloteUpdateHandlers(): void {
     try {
       await startUpdate()
       publish({ kind: 'started' })
+      watchUpdateJob()
     } catch (error) {
       publish({ kind: 'failed', message: errorMessage(error) })
     }
