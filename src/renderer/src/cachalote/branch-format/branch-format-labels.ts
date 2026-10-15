@@ -5,11 +5,11 @@ const LABELS = {
   field: { es: 'Formato de rama', en: 'Branch format' },
   settingsTitle: { es: 'Formato de rama', en: 'Branch format' },
   settingsDescription: {
-    es: 'Plantilla para nombrar las ramas de los worktrees nuevos de este proyecto. {{task-id}} sale del nombre (AX-1234); el resto son las variables de abajo.',
-    en: "Template for naming this project's new worktree branches. {{task-id}} comes from the name (AX-1234); the rest are the variables below."
+    es: 'Plantilla para nombrar las ramas de los worktrees nuevos de este proyecto. {task-id} es un campo del diálogo de crear (si lo dejás vacío, sale del nombre: AX-1234); el resto son las variables de abajo.',
+    en: "Template for naming this project's new worktree branches. {task-id} is a field in the create dialog (left empty, it comes from the name: AX-1234); the rest are the variables below."
   },
   template: { es: 'Plantilla', en: 'Template' },
-  templatePlaceholder: { es: '{{type}}/{{task-id}}', en: '{{type}}/{{task-id}}' },
+  templatePlaceholder: { es: '{type}/{task-id}', en: '{type}/{task-id}' },
   preview: { es: 'Vista previa', en: 'Preview' },
   formatOff: {
     es: 'Sin plantilla: Orca nombra la rama como siempre.',
@@ -21,6 +21,9 @@ const LABELS = {
   },
   variables: { es: 'Variables de este proyecto', en: "This project's variables" },
   variableName: { es: 'Nombre', en: 'Name' },
+  variableKind: { es: 'Tipo', en: 'Type' },
+  kindSelect: { es: 'Lista', en: 'List' },
+  kindText: { es: 'Texto', en: 'Text' },
   variableOptions: { es: 'Opciones, separadas por coma', en: 'Options, comma-separated' },
   addVariable: { es: 'Agregar variable', en: 'Add variable' },
   removeVariable: { es: 'Quitar variable', en: 'Remove variable' },
@@ -37,6 +40,10 @@ const LABELS = {
   'reserved-name': {
     es: 'task-id ya existe: sale del nombre del worktree.',
     en: 'task-id is built in: it comes from the worktree name.'
+  },
+  'missing-options': {
+    es: 'Una lista necesita al menos una opción.',
+    en: 'A list needs at least one option.'
   },
   'invalid-option': {
     es: 'Cada opción va sin espacios ni barras (letras, números, . _ -).',

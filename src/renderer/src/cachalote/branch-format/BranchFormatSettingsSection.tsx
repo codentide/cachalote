@@ -2,6 +2,13 @@ import { useState } from 'react'
 import { GitBranch, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { createBrowserUuid } from '@/lib/browser-uuid'
 import type { Repo } from '../../../../shared/repo-types'
 import { renderBranchName } from './branch-format'
@@ -13,6 +20,7 @@ import {
   undefinedTemplateVariables,
   variableRowsFrom,
   type ProjectBranchFormat,
+  type VariableKind,
   type VariableRow
 } from './branch-format-settings'
 
@@ -29,7 +37,11 @@ function draftFrom(format: ProjectBranchFormat): Draft {
 }
 
 function rowsText(rows: readonly VariableRow[]): string {
-  return JSON.stringify(rows.map(({ name, options }) => ({ name, options })))
+  return JSON.stringify(rows.map(({ name, kind, options }) => ({ name, kind, options })))
+}
+
+function isVariableKind(value: string): value is VariableKind {
+  return value === 'select' || value === 'text'
 }
 
 export function BranchFormatSettingsSection({ repo }: { repo: Repo }): React.JSX.Element {
@@ -50,8 +62,11 @@ export function BranchFormatSettingsSection({ repo }: { repo: Repo }): React.JSX
   const undefinedNames = undefinedTemplateVariables(draft.template, knownVariables)
   const hasTemplate = draft.template.trim() !== ''
   const previewValues = Object.fromEntries(
-    // Defined variables fall back to '' when empty; undefined ones render as '' too.
-    Object.entries(knownVariables).map(([name, options]) => [name, options[0] ?? ''])
+    // A text variable previews as its own name; undefined variables render as ''.
+    Object.entries(knownVariables).map(([name, spec]) => [
+      name,
+      spec.kind === 'select' ? (spec.options[0] ?? '') : name
+    ])
   )
 
   const updateRow = (id: string, patch: Partial<VariableRow>): void =>
@@ -129,14 +144,34 @@ export function BranchFormatSettingsSection({ repo }: { repo: Repo }): React.JSX
                   placeholder="country"
                   spellCheck={false}
                 />
-                <Input
-                  className="min-w-0 flex-1"
-                  value={row.options}
-                  onChange={(event) => updateRow(row.id, { options: event.target.value })}
-                  aria-label={branchFormatLabel('variableOptions')}
-                  placeholder="co, mx, us"
-                  spellCheck={false}
-                />
+                <Select
+                  value={row.kind}
+                  onValueChange={(kind) => {
+                    if (isVariableKind(kind)) {
+                      updateRow(row.id, { kind })
+                    }
+                  }}
+                >
+                  <SelectTrigger size="sm" aria-label={branchFormatLabel('variableKind')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="select">{branchFormatLabel('kindSelect')}</SelectItem>
+                    <SelectItem value="text">{branchFormatLabel('kindText')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                {row.kind === 'select' ? (
+                  <Input
+                    className="min-w-0 flex-1"
+                    value={row.options}
+                    onChange={(event) => updateRow(row.id, { options: event.target.value })}
+                    aria-label={branchFormatLabel('variableOptions')}
+                    placeholder="co, mx, us"
+                    spellCheck={false}
+                  />
+                ) : (
+                  <div className="flex-1" />
+                )}
                 <Button
                   type="button"
                   variant="ghost"
@@ -165,7 +200,10 @@ export function BranchFormatSettingsSection({ repo }: { repo: Repo }): React.JSX
           onClick={() =>
             setDraft((current) => ({
               ...current,
-              rows: [...current.rows, { name: '', options: '', id: createBrowserUuid() }]
+              rows: [
+                ...current.rows,
+                { name: '', kind: 'select', options: '', id: createBrowserUuid() }
+              ]
             }))
           }
         >
