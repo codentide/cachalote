@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { GitBranch } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import {
@@ -11,7 +11,12 @@ import {
 import { useAppStore } from '@/store'
 import type { NewWorkspaceComposerCardProps } from '../../components/new-workspace/new-workspace-composer-card-props'
 import { BRANCH_FORMAT_SEEDS } from './branch-format-config'
-import { renderBranchName, templateVariables } from './branch-format'
+import {
+  renderBranchName,
+  TASK_ID_VARIABLE,
+  taskIdFromName,
+  templatePlaceholders
+} from './branch-format'
 import { useBranchFormatChoicesStore } from './branch-format-choices-store'
 import { branchFormatLabel } from './branch-format-labels'
 import { useBranchFormatProjectsStore } from './branch-format-projects-store'
@@ -60,25 +65,29 @@ function BranchFormatRows({
   const labelId = useId()
   const savedChoices = useBranchFormatChoicesStore((s) => s.choices[repoId])
   const setChoice = useBranchFormatChoicesStore((s) => s.setChoice)
+  // Typed per worktree, so never remembered: the task id and free-text variables.
+  const [taskId, setTaskId] = useState('')
+  const [texts, setTexts] = useState<Record<string, string>>({})
   const appliedBranchRef = useRef<string | undefined>(undefined)
 
-  const variables = templateVariables(format.template)
+  const placeholders = templatePlaceholders(format.template)
   const values: Record<string, string> = {}
-  for (const variable of variables) {
-    const options = format.variables[variable]
-    const saved = savedChoices?.[variable]
-    values[variable] =
-      options && options.length > 0
-        ? saved && options.includes(saved)
-          ? saved
-          : (options[0] ?? '')
-        : (saved ?? '')
+  for (const variable of placeholders) {
+    const spec = format.variables[variable]
+    if (spec?.kind === 'select') {
+      const saved = savedChoices?.[variable]
+      values[variable] = saved && spec.options.includes(saved) ? saved : (spec.options[0] ?? '')
+    } else if (variable !== TASK_ID_VARIABLE) {
+      values[variable] = texts[variable] ?? ''
+    }
   }
   // Only a new branch named from typed text: picked PRs, issues and branches name themselves.
   const active =
     smartNameSelection === null &&
     (smartNameMode === undefined || smartNameMode === 'smart' || smartNameMode === 'text')
-  const branch = active ? renderBranchName({ template: format.template, name, values }) : null
+  const branch = active
+    ? renderBranchName({ template: format.template, name, values, taskId })
+    : null
 
   useEffect(() => {
     // A branch typed by hand under Advanced wins until it is cleared.
@@ -99,9 +108,22 @@ function BranchFormatRows({
         {branchFormatLabel('field')}
       </span>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
-        {variables.map((variable) => {
-          const options = format.variables[variable]
-          return options && options.length > 0 ? (
+        {placeholders.map((variable) => {
+          const spec = format.variables[variable]
+          if (variable === TASK_ID_VARIABLE) {
+            return (
+              <Input
+                key={variable}
+                aria-label={variable}
+                placeholder={taskIdFromName(name) || variable}
+                value={taskId}
+                onChange={(event) => setTaskId(event.target.value)}
+                spellCheck={false}
+                className="w-32"
+              />
+            )
+          }
+          return spec?.kind === 'select' ? (
             <Select
               key={variable}
               value={values[variable]}
@@ -111,7 +133,7 @@ function BranchFormatRows({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {options.map((option) => (
+                {spec.options.map((option) => (
                   <SelectItem key={option} value={option}>
                     {option}
                   </SelectItem>
@@ -124,7 +146,10 @@ function BranchFormatRows({
               aria-label={variable}
               placeholder={variable}
               value={values[variable]}
-              onChange={(event) => setChoice(repoId, variable, event.target.value)}
+              onChange={(event) =>
+                setTexts((current) => ({ ...current, [variable]: event.target.value }))
+              }
+              spellCheck={false}
               className="w-32"
             />
           )
