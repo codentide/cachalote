@@ -1,7 +1,7 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import { homedir } from 'node:os'
 import path from 'node:path'
-import { runProcess } from '../../shared/child-process/run-process'
+import { runProcess } from '@orca/process-host'
 import {
   CACHALOTE_UPDATE_START_CHANNEL,
   CACHALOTE_UPDATE_STATE_CHANNEL,
