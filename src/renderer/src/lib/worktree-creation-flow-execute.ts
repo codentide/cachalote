@@ -1,3 +1,5 @@
+// Cachalote: file the created worktree under the composer's worktree group.
+import { applyComposerWorktreeGroup } from '../cachalote/worktree-groups/composer-worktree-group'
 import { prepareWorktreeCreationHooks } from '@/lib/worktree-creation-hook-preparation'
 import { toast } from 'sonner'
 import { useAppStore } from '@/store'
@@ -158,6 +160,7 @@ export async function executeWorktreeCreation(
     }
     return
   }
+  applyComposerWorktreeGroup(creationId, worktree.id) // Cachalote: composer worktree group
   await attachEphemeralVmRuntimeToWorkspace(preparedRequest, worktree.id)
 
   const backendSpawned = result.startupTerminal?.spawned === true
