@@ -12,7 +12,11 @@ const LABELS = {
   rename: { es: 'Renombrar grupo', en: 'Rename Group' },
   ungroup: { es: 'Desagrupar', en: 'Ungroup' },
   save: { es: 'Guardar', en: 'Save' },
-  color: { es: 'Color', en: 'Color' }
+  color: { es: 'Color', en: 'Color' },
+  composerField: { es: 'Grupo de worktrees', en: 'Worktree group' },
+  noGroup: { es: 'Sin grupo', en: 'No group' },
+  newGroupOption: { es: 'Nuevo grupo…', en: 'New group…' },
+  groupName: { es: 'Nombre del grupo', en: 'Group name' }
 } as const
 
 function uiLanguage(): string {
