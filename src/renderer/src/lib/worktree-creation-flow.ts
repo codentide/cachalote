@@ -7,6 +7,8 @@ import {
 } from '@/lib/pending-worktree-creation'
 import { createBrowserUuid } from '@/lib/browser-uuid'
 import { executeWorktreeCreation } from '@/lib/worktree-creation-flow-execute'
+// Cachalote: the composer's worktree group follows the creation it started.
+import { bindComposerWorktreeGroup } from '../cachalote/worktree-groups/composer-worktree-group'
 import {
   getInitialWorktreeCreationPhase,
   getWorktreeCreationIndeterminate
@@ -79,6 +81,7 @@ export function runBackgroundWorktreeCreation(request: WorktreeCreationRequest):
   // Why: crypto.randomUUID is undefined in non-secure browser contexts (LAN web
   // client over plain HTTP). createBrowserUuid falls back to getRandomValues.
   const creationId = createBrowserUuid()
+  bindComposerWorktreeGroup(creationId) // Cachalote: worktree group chosen in the composer
   revealPendingCreation(creationId, request, getInitialWorktreeCreationPhase(request))
   startWorktreeCreation(creationId, request)
   return creationId
