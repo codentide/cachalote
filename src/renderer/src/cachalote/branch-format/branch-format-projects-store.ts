@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import type { ProjectBranchFormat } from './branch-format-settings'
+import { migrateStoredProjects, type ProjectBranchFormat } from './branch-format-settings'
 
 type BranchFormatProjectsState = {
   /** repo id → the project's saved format; projects without one use their seed. */
@@ -25,7 +25,9 @@ export const useBranchFormatProjectsStore = create<BranchFormatProjectsState>()(
     }),
     {
       name: 'cachalote:branch-format-projects',
-      version: 1,
+      // v2: `{var}` placeholders and typed variables (v1: `{{var}}` and bare option lists).
+      version: 2,
+      migrate: (persisted) => ({ projects: migrateStoredProjects(persisted) }),
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ projects: state.projects })
     }
