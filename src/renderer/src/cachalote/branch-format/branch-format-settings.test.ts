@@ -1,14 +1,22 @@
 import { describe, expect, it } from 'vitest'
 import {
+  migrateStoredProjects,
   parseVariableRows,
   resolveProjectBranchFormat,
   undefinedTemplateVariables,
   variableRowsFrom,
-  type ProjectBranchFormat
+  type ProjectBranchFormat,
+  type VariableRow
 } from './branch-format-settings'
 
-const seed: ProjectBranchFormat = { template: '{{type}}/{{task-id}}', variables: { type: ['fix'] } }
-const own: ProjectBranchFormat = { template: '{{task-id}}', variables: {} }
+const seed: ProjectBranchFormat = {
+  template: '{type}/{task-id}',
+  variables: { type: { kind: 'select', options: ['fix'] } }
+}
+const own: ProjectBranchFormat = { template: '{task-id}', variables: {} }
+
+const select = (name: string, options: string): VariableRow => ({ name, kind: 'select', options })
+const text = (name: string, options = ''): VariableRow => ({ name, kind: 'text', options })
 
 describe('resolveProjectBranchFormat', () => {
   const resolve = (
@@ -40,55 +48,57 @@ describe('resolveProjectBranchFormat', () => {
 })
 
 describe('parseVariableRows', () => {
-  it('trims and dedupes options', () => {
-    expect(parseVariableRows([{ name: ' type ', options: ' feat , fix,feat, ' }])).toEqual({
+  it('trims and dedupes the options of a select row', () => {
+    expect(parseVariableRows([select(' type ', ' feat , fix,feat, ')])).toEqual({
       ok: true,
-      variables: { type: ['feat', 'fix'] }
+      variables: { type: { kind: 'select', options: ['feat', 'fix'] } }
+    })
+  })
+
+  it('parses a text row and ignores its options', () => {
+    expect(parseVariableRows([text('env', 'not, valid/options x')])).toEqual({
+      ok: true,
+      variables: { env: { kind: 'text' } }
     })
   })
 
   it('ignores fully empty rows', () => {
-    expect(
-      parseVariableRows([
-        { name: '', options: '' },
-        { name: ' ', options: ' , ' },
-        { name: 'type', options: 'fix' }
-      ])
-    ).toEqual({ ok: true, variables: { type: ['fix'] } })
-  })
-
-  it('accepts a variable with no options', () => {
-    expect(parseVariableRows([{ name: 'scope', options: '' }])).toEqual({
+    expect(parseVariableRows([select('', ''), select(' ', ' , '), select('type', 'fix')])).toEqual({
       ok: true,
-      variables: { scope: [] }
+      variables: { type: { kind: 'select', options: ['fix'] } }
     })
   })
 
   it('flags the built-in task-id as reserved', () => {
-    expect(parseVariableRows([{ name: 'task-id', options: 'a' }])).toEqual({
+    expect(parseVariableRows([select('task-id', 'a')])).toEqual({
       ok: false,
       errors: { 0: 'reserved-name' }
     })
   })
 
   it.each(['Country', '1x', 'my var'])('rejects the name %s', (name) => {
-    expect(parseVariableRows([{ name, options: 'a' }])).toEqual({
+    expect(parseVariableRows([select(name, 'a')])).toEqual({
       ok: false,
       errors: { 0: 'invalid-name' }
     })
   })
 
   it('flags only the second occurrence of a name', () => {
-    expect(
-      parseVariableRows([
-        { name: 'type', options: 'a' },
-        { name: 'type', options: 'b' }
-      ])
-    ).toEqual({ ok: false, errors: { 1: 'duplicate-name' } })
+    expect(parseVariableRows([select('type', 'a'), select('type', 'b')])).toEqual({
+      ok: false,
+      errors: { 1: 'duplicate-name' }
+    })
+  })
+
+  it('flags a select with no options', () => {
+    expect(parseVariableRows([select('type', ' , ')])).toEqual({
+      ok: false,
+      errors: { 0: 'missing-options' }
+    })
   })
 
   it.each(['co, m x', 'feat/x'])('rejects the options %s', (options) => {
-    expect(parseVariableRows([{ name: 'type', options }])).toEqual({
+    expect(parseVariableRows([select('type', options)])).toEqual({
       ok: false,
       errors: { 0: 'invalid-option' }
     })
@@ -96,17 +106,24 @@ describe('parseVariableRows', () => {
 
   it('reports every bad row by index and is not ok', () => {
     const result = parseVariableRows([
-      { name: 'type', options: 'a' },
-      { name: 'Bad', options: 'a' },
-      { name: 'task-id', options: '' }
+      select('type', 'a'),
+      select('Bad', 'a'),
+      select('task-id', ''),
+      select('scope', '')
     ])
-    expect(result).toEqual({ ok: false, errors: { 1: 'invalid-name', 2: 'reserved-name' } })
+    expect(result).toEqual({
+      ok: false,
+      errors: { 1: 'invalid-name', 2: 'reserved-name', 3: 'missing-options' }
+    })
   })
 })
 
 describe('variableRowsFrom', () => {
-  it('round-trips through parseVariableRows', () => {
-    const variables = { type: ['feature', 'fix'], country: ['co', 'mx'], scope: [] }
+  it('round-trips a select and a text variable through parseVariableRows', () => {
+    const variables: ProjectBranchFormat['variables'] = {
+      type: { kind: 'select', options: ['feature', 'fix'] },
+      env: { kind: 'text' }
+    }
     expect(parseVariableRows(variableRowsFrom(variables))).toEqual({ ok: true, variables })
   })
 })
@@ -114,11 +131,55 @@ describe('variableRowsFrom', () => {
 describe('undefinedTemplateVariables', () => {
   it('lists template variables missing from the project, never task-id', () => {
     expect(
-      undefinedTemplateVariables('{{type}}/{{country}}/{{task-id}}', { type: ['fix'] })
-    ).toEqual(['country'])
+      undefinedTemplateVariables('{type}/{env}/{task-id}', {
+        type: { kind: 'select', options: ['fix'] }
+      })
+    ).toEqual(['env'])
   })
 
   it('is empty when every variable is defined', () => {
-    expect(undefinedTemplateVariables('{{type}}/{{task-id}}', { type: [] })).toEqual([])
+    expect(undefinedTemplateVariables('{type}/{task-id}', { type: { kind: 'text' } })).toEqual([])
+  })
+})
+
+describe('migrateStoredProjects', () => {
+  it('migrates a v1 entry to {var} placeholders and typed variables', () => {
+    const persisted = {
+      projects: {
+        r1: {
+          template: '{{type}}/{{task-id}}',
+          variables: { type: ['feature', 'fix'], note: [] }
+        }
+      }
+    }
+    expect(migrateStoredProjects(persisted)).toEqual({
+      r1: {
+        template: '{type}/{task-id}',
+        variables: {
+          type: { kind: 'select', options: ['feature', 'fix'] },
+          note: { kind: 'text' }
+        }
+      }
+    })
+  })
+
+  it('keeps an entry that is already in the v2 shape', () => {
+    const entry: ProjectBranchFormat = {
+      template: '{type}/{env}/{task-id}',
+      variables: { type: { kind: 'select', options: ['feat'] }, env: { kind: 'text' } }
+    }
+    expect(migrateStoredProjects({ projects: { r1: entry } })).toEqual({ r1: entry })
+  })
+
+  it('drops entries without a string template', () => {
+    expect(
+      migrateStoredProjects({
+        projects: { bad: { variables: {} }, worse: { template: 3 }, nil: null }
+      })
+    ).toEqual({})
+  })
+
+  it.each([null, 'nope'])('returns {} for the non-object persisted value %s', (persisted) => {
+    expect(migrateStoredProjects(persisted)).toEqual({})
   })
 })
