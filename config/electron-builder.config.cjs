@@ -934,3 +934,13 @@ function findInstalledMacSigningIdentity(keychainFile) {
   } catch {}
   return null
 }
+
+// Cachalote: cachalote-sync builds only the slice it installs (CACHALOTE_MAC_ARCHS=arm64 on Apple
+// Silicon). The x64 slice is never installed, and under Rosetta its terminal host boots past the
+// afterPack check's timeout.
+if (process.env.CACHALOTE_MAC_ARCHS) {
+  const cachaloteMacArchs = process.env.CACHALOTE_MAC_ARCHS.split(',')
+  for (const target of module.exports.mac.target) {
+    target.arch = cachaloteMacArchs
+  }
+}
