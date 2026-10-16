@@ -32,6 +32,8 @@ import { ProviderDetailsMenu } from './usage/ProviderDetailsMenu'
 import { AntigravityUsageMenu } from './usage/AntigravityUsageMenu'
 import { CLOSE_ALL_CONTEXT_MENUS_EVENT } from '@/lib/overlay-interaction/close-all-context-menus'
 import { ProviderSegment, UsageOverflowChip, isUsageUrgent } from './usage/StatusBarProviderSegment'
+// Cachalote: Sonar slots.
+import { LiveStatusSegment } from '../../cachalote/live/LiveStatusSegment'
 import {
   UsageUnitLabel,
   getUsageUnitLabelState,
@@ -343,6 +345,8 @@ export function StatusBarSurface({
             {showPorts ? (
               <PortsStatusSegment compact={compact} iconOnly={segmentsIconOnly} />
             ) : null}
+            {/* Cachalote: Sonar slots. */}
+            <LiveStatusSegment compact={compact} iconOnly={segmentsIconOnly} />
             {showSsh ? <SshStatusSegment compact={compact} iconOnly={segmentsIconOnly} /> : null}
           </React.Suspense>
           {showFloatingTerminalToggle && (

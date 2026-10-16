@@ -91,6 +91,8 @@ import type {
   SparsePresetsApi,
   WorktreeApi
 } from './api/workspaces/worktree-api'
+// Cachalote: Sonar slots.
+import type { CachaloteLiveApi } from '../shared/cachalote/live/live-ipc'
 
 // Flattens contracts that share one PreloadApi key: an intersection is not type-identical to the flat shape.
 type Merged<T> = { [K in keyof T]: T[K] }
@@ -150,6 +152,8 @@ export type PreloadApi = {
   slackHandOff: SlackHandOffApi
   skills: SkillsApi
   pet: PetApi
+  // Cachalote: Sonar slots; absent in the web client.
+  cachaloteLive?: CachaloteLiveApi
   appIcon: AppIconApi
   browser: BrowserApi
   browserPasswords: BrowserPasswordsApi

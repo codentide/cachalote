@@ -38,6 +38,8 @@ import { WorktreeHandToBotMenuItem } from '@/components/bots/hand-to-bot/Worktre
 
 // Cachalote: feature groups.
 import { WorktreeGroupMenuItems } from '../../../../cachalote/worktree-groups/WorktreeGroupMenuItems'
+// Cachalote: Sonar slots.
+import { LiveMenuItems } from '../../../../cachalote/live/LiveMenuItems'
 export default function WorktreeContextMenuView({ model }: { model: WorktreeContextMenuModel }) {
   const {
     children,
@@ -206,6 +208,8 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
           />
           {/* Cachalote: feature groups, below the workspace status. */}
           <WorktreeGroupMenuItems targets={model.activeContextWorktrees} disabled={isDeleting} />
+          {/* Cachalote: Sonar slots. */}
+          <LiveMenuItems targets={model.activeContextWorktrees} disabled={isDeleting} />
           {!isMultiContext && (
             <WorktreeHandToBotMenuItem worktree={worktree} disabled={isDeleting} />
           )}
