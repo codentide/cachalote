@@ -11,6 +11,8 @@ import { TruncatedSidebarLabel } from './truncated-sidebar-label'
 import { getDirectoryName } from './worktree-card-model'
 import type { WorktreeCardPresentation } from './worktree-card-presentation'
 import type { WorktreeCardController } from './use-worktree-card-controller'
+// Cachalote: Sonar pill.
+import { LivePill } from '../../cachalote/live/LivePill'
 
 export function WorktreeCardMetaRow({
   card,
@@ -103,6 +105,8 @@ export function WorktreeCardMetaRow({
       {showMetaRowDetails && (
         <div className="ml-auto flex shrink-0 items-center gap-1 pr-1.5">{detailsAndPorts}</div>
       )}
+      {/* Cachalote: Sonar pill. */}
+      <LivePill worktreeId={worktree.id} pushRight={!showMetaRowDetails} />
     </div>
   )
 }

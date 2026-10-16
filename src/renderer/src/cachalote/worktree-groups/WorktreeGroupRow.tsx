@@ -15,6 +15,7 @@ import { getWorktreeCardContentIndent } from '../../components/sidebar/worktree-
 import type { CachaloteWorktreeGroupRow } from './worktree-group-rows'
 import { useWorktreeGroupsStore } from './worktree-groups-store'
 import { AFTER_MENU_CLOSE_MS, worktreeGroupLabel } from './worktree-group-labels'
+import { LiveGroupMenuItem, LiveGroupSummary } from '../live/LiveGroupSummary'
 
 export function WorktreeGroupRow({
   row,
@@ -68,6 +69,7 @@ export function WorktreeGroupRow({
           <span className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">
             {row.name}
           </span>
+          <LiveGroupSummary groupId={row.groupId} />
           <span className="shrink-0 text-xs tabular-nums">{row.count}</span>
         </div>
       </ContextMenuTrigger>
@@ -90,6 +92,7 @@ export function WorktreeGroupRow({
             ))}
           </ContextMenuSubContent>
         </ContextMenuSub>
+        <LiveGroupMenuItem groupId={row.groupId} />
         <ContextMenuSeparator />
         <ContextMenuItem onSelect={ungroup}>{worktreeGroupLabel('ungroup')}</ContextMenuItem>
       </ContextMenuContent>
