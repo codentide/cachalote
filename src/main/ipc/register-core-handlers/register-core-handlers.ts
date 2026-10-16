@@ -1,3 +1,5 @@
+// Cachalote: Sonar slots.
+import { registerCachaloteLiveHandlers } from '../../cachalote/live/live-handlers'
 import { app } from 'electron'
 import { ORCA_LAYOUT_OWNER_IS_MAIN } from '../../../shared/layout-owner-switch'
 import { registerAppHandlers } from '../app'
@@ -250,6 +252,8 @@ export function registerCoreHandlers(
   registerEmulatorVideoStreamHandlers()
   registerWorkspaceSpaceHandlers(store)
   registerWorkspacePortHandlers(store)
+  // Cachalote: Sonar slots.
+  registerCachaloteLiveHandlers(store, runtime)
   registerLocalhostWorktreeLabelHandlers(store)
   registerFilesystemHandlers(store, commitMessageAgentEnv)
   registerFilesystemWatcherHandlers()

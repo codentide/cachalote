@@ -52,6 +52,8 @@ import { computerUsePermissionsApi } from './api/computer-use-permissions-bridge
 import { shellApi } from './api/shell-bridge'
 import { skillsApi } from './api/skills-bridge'
 import { petApi } from './api/pet-bridge'
+// Cachalote: Sonar slots.
+import { cachaloteLiveApi } from './api/cachalote-live-bridge'
 import { browserApi } from './api/browser-bridge'
 import { emulatorApi } from './api/emulator-bridge'
 import { hooksApi } from './api/hooks-bridge'
@@ -154,6 +156,8 @@ const api = {
   shell: shellApi,
   skills: skillsApi,
   pet: petApi,
+  // Cachalote: Sonar slots.
+  cachaloteLive: cachaloteLiveApi,
   browser: browserApi,
   emulator: emulatorApi,
   hooks: hooksApi,

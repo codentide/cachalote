@@ -20,6 +20,9 @@ import { matchesSettingsSearch } from '../settings-search'
 // Cachalote: per-project branch name format.
 import { BranchFormatSettingsSection } from '../../../cachalote/branch-format/BranchFormatSettingsSection'
 import { BRANCH_FORMAT_SEARCH_ENTRY } from '../../../cachalote/branch-format/branch-format-settings'
+// Cachalote: Sonar slots.
+import { LiveSettingsSection } from '../../../cachalote/live/LiveSettingsSection'
+import { LIVE_SEARCH_ENTRY } from '../../../cachalote/live/live-settings-search'
 import { useAppStore } from '@/store/index'
 import { getRepositoryIconSectionId } from './repository-settings-targets'
 import { RepositoryIconPicker } from './identity/RepositoryIconPicker'
@@ -386,6 +389,11 @@ export function RepositoryPane({
     (forceFullPaneForRepoMatch ||
       matchesSettingsSearch(searchQuery, BRANCH_FORMAT_SEARCH_ENTRY)) ? (
       <BranchFormatSettingsSection key={`cachalote-branch-format:${repo.id}`} repo={repo} />
+    ) : null,
+    // Cachalote: Sonar slots.
+    !isFolder &&
+    (forceFullPaneForRepoMatch || matchesSettingsSearch(searchQuery, LIVE_SEARCH_ENTRY)) ? (
+      <LiveSettingsSection key={`cachalote-live:${repo.id}`} repo={repo} />
     ) : null,
     !isFolder && (forceFullPaneForRepoMatch || matchesSettingsSearch(searchQuery, mcpEntries)) ? (
       <McpConfigSection key={`mcp-configs:${selectedHostId}:${repo.id}`} repo={repo} />
