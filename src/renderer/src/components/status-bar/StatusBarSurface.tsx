@@ -18,6 +18,8 @@ import { RemoteServerUpdateStatusSegment } from './updates/RemoteServerUpdateSta
 import { TOGGLE_FLOATING_TERMINAL_EVENT } from '@/components/floating-terminal/workspace/floating-workspace-open-intent'
 import { FloatingTerminalIconContextMenu } from '@/components/floating-terminal/trigger/FloatingTerminalIconContextMenu'
 import { CLOSE_ALL_CONTEXT_MENUS_EVENT } from '@/lib/overlay-interaction/close-all-context-menus'
+// Cachalote: Sonar slots.
+import { LiveStatusSegment } from '../../cachalote/live/LiveStatusSegment'
 import { useStatusBarController } from './composition/use-status-bar-controller'
 import { StatusBarUsageArea } from './StatusBarUsageArea'
 import { scrollStripSidewaysOnWheel } from '../tab-bar/strip/tab-strip-scroll-metrics'
@@ -127,6 +129,8 @@ export function StatusBarSurface({
             {petEnabled ? <PetStatusSegment /> : null}
             {showResourceUsage ? <ResourceUsageStatusSegment /> : null}
             {showPorts ? <PortsStatusSegment /> : null}
+            {/* Cachalote: Sonar slots. */}
+            <LiveStatusSegment iconOnly={false} />
             {showSsh ? <SshStatusSegment /> : null}
           </React.Suspense>
           {showFloatingTerminalToggle && (
