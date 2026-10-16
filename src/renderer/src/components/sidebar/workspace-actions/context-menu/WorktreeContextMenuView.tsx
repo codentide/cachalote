@@ -33,6 +33,8 @@ import {
 import { CLOSE_ALL_CONTEXT_MENUS_EVENT } from '@/lib/close-all-context-menus'
 // Cachalote: feature groups.
 import { WorktreeGroupMenuItems } from '../../../../cachalote/worktree-groups/WorktreeGroupMenuItems'
+// Cachalote: Sonar slots.
+import { LiveMenuItems } from '../../../../cachalote/live/LiveMenuItems'
 
 export default function WorktreeContextMenuView({ model }: { model: WorktreeContextMenuModel }) {
   const {
@@ -198,6 +200,8 @@ export default function WorktreeContextMenuView({ model }: { model: WorktreeCont
           />
           {/* Cachalote: feature groups, below the workspace status. */}
           <WorktreeGroupMenuItems targets={model.activeContextWorktrees} disabled={isDeleting} />
+          {/* Cachalote: Sonar slots. */}
+          <LiveMenuItems targets={model.activeContextWorktrees} disabled={isDeleting} />
           {!isMultiContext && (
             <>
               <DropdownMenuSeparator />

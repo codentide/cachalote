@@ -48,6 +48,8 @@ import type {
   NotificationsApi
 } from './api/os-permission-api'
 import type { PetApi } from './api/pet-api'
+// Cachalote: Sonar slots.
+import type { CachaloteLiveApi } from '../shared/cachalote/live/live-ipc'
 import type { AppIconApi } from './api/app-icon-api'
 import type { BrowserPasswordsApi } from './api/browser-passwords-api'
 import type { PluginsApi } from './api/plugin-host-api'
@@ -127,6 +129,8 @@ export type PreloadApi = {
   shell: ShellApi
   skills: SkillsApi
   pet: PetApi
+  // Cachalote: Sonar slots; absent in the web client.
+  cachaloteLive?: CachaloteLiveApi
   appIcon: AppIconApi
   browser: BrowserApi
   browserPasswords: BrowserPasswordsApi
