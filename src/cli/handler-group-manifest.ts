@@ -7,6 +7,8 @@ import { SERVE_PAIRING_HANDLER_GROUPS } from './serve-pairing-handler-groups'
 import { PLUGIN_HANDLER_GROUPS } from './plugin-handler-groups'
 import { HOST_HANDLER_GROUPS } from './host-handler-groups'
 import { WORKTREE_HANDLER_GROUPS } from './worktree-handler-groups'
+// Cachalote: Sonar CLI
+import { CACHALOTE_HANDLER_GROUPS } from './cachalote/cachalote-handler-groups'
 
 export type HandlerGroup = {
   name: string
@@ -244,6 +246,8 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
     load: async () => (await import('./handlers/introspection.js')).INTROSPECTION_HANDLERS
   },
   ...HOST_HANDLER_GROUPS,
+  // Cachalote: Sonar CLI
+  ...CACHALOTE_HANDLER_GROUPS,
   {
     name: 'skill-sharing',
     keys: ['skills installed', 'skills share'],

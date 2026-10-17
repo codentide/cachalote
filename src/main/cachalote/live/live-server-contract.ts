@@ -20,6 +20,11 @@ export type LiveRuntime = {
   }>
   closeTerminal: (handle: string) => Promise<unknown>
   focusTerminal: (handle: string) => Promise<unknown>
+  // Cachalote: Sonar CLI
+  readTerminal: (
+    handle: string,
+    opts: { limit?: number }
+  ) => Promise<{ tail: string[]; truncated: boolean }>
 }
 
 export type ServerPhase = 'idle' | 'starting' | 'live' | 'crashed' | 'port-busy'

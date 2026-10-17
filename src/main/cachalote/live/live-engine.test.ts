@@ -165,7 +165,8 @@ describe('LiveEngine', () => {
         terminals = terminals.filter((terminal) => terminal.handle !== handle)
         portOpen = false
       }),
-      focusTerminal: vi.fn(async () => undefined)
+      focusTerminal: vi.fn(async () => undefined),
+      readTerminal: vi.fn(async () => ({ tail: [], truncated: false }))
     }
   })
 

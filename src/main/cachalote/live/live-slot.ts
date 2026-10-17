@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises'
 import type { LiveSlotRef } from '../../../shared/cachalote/live/live-ipc'
 import type { LiveSlotConfig } from '../../../shared/cachalote/live/live-types'
+import type { SonarLogsResult } from '../../../shared/rpc-contract/cachalote-sonar-params'
 import { linkEnvFiles } from './live-env-links'
 import { touchesDepsFiles } from './live-project-model'
 import { buildServerCommand, LiveSlotServer } from './live-server'
@@ -123,6 +124,12 @@ export class LiveSlot {
 
   requestStop(): Promise<boolean> {
     return this.queue.enqueue('stop', () => this.runStop(), { supersede: true })
+  }
+
+  async readLogs(limit: number): Promise<SonarLogsResult> {
+    const { phase } = this.view()
+    const logs = await this.server.readLogs(limit).catch(() => null)
+    return { lines: logs?.lines ?? [], truncated: logs?.truncated ?? false, phase }
   }
 
   /** Re-attaches a slot that was serving before a restart; never starts a server by itself. */

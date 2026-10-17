@@ -161,6 +161,7 @@ import {
 } from './browser-params'
 import { ScreencastAck, ScreencastUnsubscribe } from './browser-screencast-params'
 import { BrowserOpenUrlParams, BrowserTabCreateParams } from './browser-tab-create-params'
+import { SonarLogs, SonarServe, SonarStop } from './cachalote-sonar-params'
 import { ClientEventsSubscribeParams, ClientEventsUnsubscribeParams } from './client-events-params'
 import {
   NativeChatSessionOptionsMutation,
@@ -1530,6 +1531,10 @@ export const RPC_PARAMS_BY_METHOD = {
   'skills.removeInstall': SkillRemoveRequestSchema,
   'skills.share': AgentSkillShareRequestSchema,
   'skills.uploadChunk': SkillUploadChunkRequestSchema,
+  'sonar.logs': SonarLogs,
+  'sonar.serve': SonarServe,
+  'sonar.status': null,
+  'sonar.stop': SonarStop,
   'speech.dictation.cancel': DictationHandle,
   'speech.dictation.chunk': DictationChunk,
   'speech.dictation.finish': DictationHandle,

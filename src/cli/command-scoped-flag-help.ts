@@ -1,8 +1,13 @@
+// Cachalote: Sonar CLI
+import { SONAR_FLAG_HELP } from './cachalote/sonar-flag-help'
+
 // File focus differs from terminal create's shared --focus help.
 const FILE_OPEN_FOCUS_HELP =
   "--focus                Bring the user to the file (switches Orca's window to its worktree)"
 
 const COMMAND_SCOPED_FLAG_HELP: Record<string, Record<string, string>> = {
+  // Cachalote: Sonar CLI
+  ...SONAR_FLAG_HELP,
   'extension reload': {
     'extension-id':
       '--extension-id <id>   Installed unpacked extension ID; also accepted positionally',
