@@ -122,6 +122,8 @@ import {
 import { ORCA_LAYOUT_OWNER_IS_MAIN } from '../../../../shared/workspace-layout/layout-owner-switch'
 import { ORCA_SIDEBAR_INPUTS_IS_MAIN } from '../../../../shared/sidebar-list/feed/sidebar-inputs-switch'
 
+// Cachalote: Sonar CLI
+import { SONAR_METHODS } from '../../../cachalote/live/live-rpc-methods'
 // Keep registration order and the full RPC/security surface visible in one manifest.
 const CORE_RPC_METHODS = [
   ...STATUS_METHODS,
@@ -246,6 +248,8 @@ const SERVICE_RPC_METHODS = [
   ...PAIRING_METHODS,
   ...MOBILE_RELAY_HOSTS_METHODS,
   ...MOBILE_PROJECT_SECTIONS_METHODS,
+  // Cachalote: Sonar CLI
+  ...SONAR_METHODS,
   // Switch point: a window-fed build publishes no sidebar input.
   ...(ORCA_SIDEBAR_INPUTS_IS_MAIN ? SIDEBAR_INPUT_METHODS : []),
   ...UPDATER_METHODS,

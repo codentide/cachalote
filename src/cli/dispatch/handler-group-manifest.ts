@@ -10,6 +10,8 @@ import { PLUGIN_HANDLER_GROUPS } from '../plugins/plugin-handler-groups'
 import { HOST_HANDLER_GROUPS } from '../hosts/host-handler-groups'
 import { WORKTREE_HANDLER_GROUPS } from '../workspaces/worktree-handler-groups'
 
+// Cachalote: Sonar CLI
+import { CACHALOTE_HANDLER_GROUPS } from '../cachalote/cachalote-handler-groups'
 export type HandlerGroup = {
   name: string
   // Eager keys allow routing and duplicate checks without importing each handler graph.
@@ -253,6 +255,8 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
       (await import('../discovery/agent-context-handlers.js')).INTROSPECTION_HANDLERS
   },
   ...HOST_HANDLER_GROUPS,
+  // Cachalote: Sonar CLI
+  ...CACHALOTE_HANDLER_GROUPS,
   {
     name: 'skill-sharing',
     keys: ['skills installed', 'skills share'],

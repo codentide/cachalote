@@ -1,3 +1,6 @@
+// Cachalote: Sonar CLI
+import { SONAR_FLAG_HELP } from '../cachalote/sonar-flag-help'
+
 import { COMPUTER_WAIT_DEFAULT_TIMEOUT_MS } from '../../shared/computer/computer-wait-timeout'
 
 // File focus differs from terminal create's shared --focus help.
@@ -10,6 +13,8 @@ const AGENT_ID_FLAG_HELP =
   "--id <id>              The agent's orca_session_id: ID; also accepted positionally"
 
 const COMMAND_SCOPED_FLAG_HELP: Record<string, Record<string, string>> = {
+  // Cachalote: Sonar CLI
+  ...SONAR_FLAG_HELP,
   'bot item add': {
     title: BOT_ITEM_TITLE_HELP,
     for: '--for bot:<name>       Make the item for another bot'

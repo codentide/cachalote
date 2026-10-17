@@ -297,6 +297,7 @@ import {
   ClientEventsSubscribeParams,
   ClientEventsUnsubscribeParams
 } from './client-ui/client-events-params'
+import { SonarLogs, SonarServe, SonarStop } from './cachalote-sonar-params'
 import {
   NativeChatSessionOptionsMutation,
   PRBotAuthorOverrideUpdate,
@@ -2013,6 +2014,10 @@ export const RPC_PARAMS_BY_METHOD = {
   'skills.removeInstall': SkillRemoveRequestSchema,
   'skills.share': AgentSkillShareRequestSchema,
   'skills.uploadChunk': SkillUploadChunkRequestSchema,
+  'sonar.logs': SonarLogs,
+  'sonar.serve': SonarServe,
+  'sonar.status': null,
+  'sonar.stop': SonarStop,
   'speech.dictation.cancel': DictationHandle,
   'speech.dictation.chunk': DictationChunk,
   'speech.dictation.finish': DictationHandle,
