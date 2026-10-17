@@ -8,6 +8,7 @@ import type { Store } from '../../persistence'
 import type { OrcaRuntimeService } from '../../runtime/orca-runtime'
 import { LiveConfigStore } from './live-config-store'
 import { LiveEngine } from './live-engine'
+import { setLiveEngine } from './live-engine-ref'
 import { isFreePortArgs, isLiveProjectConfig, isProjectArgs, isSlotRef } from './live-input-guards'
 import { PortInspector, terminateProcess } from './live-port-owner'
 import { recoverLiveSlots } from './live-recovery'
@@ -86,6 +87,9 @@ function registerLiveHandlers(store: Store, runtime: OrcaRuntimeService): void {
     emit: broadcast
   })
 
+  // Cachalote: Sonar CLI
+  setLiveEngine(engine)
+
   const channels = CACHALOTE_LIVE_CHANNELS
   for (const channel of Object.values(channels)) {
     ipcMain.removeHandler(channel)
@@ -142,6 +146,7 @@ function registerLiveHandlers(store: Store, runtime: OrcaRuntimeService): void {
 
   app.once('will-quit', () => {
     config.flushSync()
+    setLiveEngine(null)
     engine.dispose()
   })
   void recoverLiveSlots(engine.adoptPersistedSlots(), runtime, sleep).then(() => engine.notify())

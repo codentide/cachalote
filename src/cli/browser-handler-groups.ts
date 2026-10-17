@@ -42,6 +42,12 @@ export const BROWSER_HANDLER_GROUPS: readonly HandlerGroup[] = [
     keys: ORCA_BROWSER_CLI_COMMAND_KEYS['browser-env'],
     load: async () => (await import('./handlers/browser-env.js')).BROWSER_ENV_HANDLERS
   },
+  // Cachalote: Sonar CLI. Registered here because handler-group-manifest.ts is at the max-lines cap.
+  {
+    name: 'sonar',
+    keys: ['sonar status', 'sonar serve', 'sonar logs', 'sonar stop'],
+    load: async () => (await import('./cachalote/sonar-handlers.js')).SONAR_HANDLERS
+  },
   {
     name: 'browser-storage',
     keys: ORCA_BROWSER_CLI_COMMAND_KEYS['browser-storage'],

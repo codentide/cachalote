@@ -8,6 +8,7 @@ import type {
   LiveSlotState,
   LiveSnapshot
 } from '../../../shared/cachalote/live/live-types'
+import type { SonarLogsResult } from '../../../shared/rpc-contract/cachalote-sonar-params'
 import type { LiveSlotRef } from '../../../shared/cachalote/live/live-ipc'
 import {
   liveSlotKey,
@@ -264,6 +265,11 @@ export class LiveEngine {
     } catch {
       return { rssBytes: null }
     }
+  }
+
+  async readLogs(ref: LiveSlotRef, limit: number): Promise<SonarLogsResult> {
+    const slot = this.slots.get(liveSlotKey(ref.repoId, ref.slotId))
+    return slot ? slot.readLogs(limit) : { lines: [], truncated: false, phase: 'idle' }
   }
 
   async focusTerminal(args: LiveSlotRef): Promise<void> {

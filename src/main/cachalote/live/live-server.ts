@@ -222,6 +222,16 @@ export class LiveSlotServer {
     await this.deps.runtime.focusTerminal(located.handle)
   }
 
+  /** The server terminal's recent output; null when its pane is gone. */
+  async readLogs(limit: number): Promise<{ lines: string[]; truncated: boolean } | null> {
+    const located = await this.locate()
+    if (!located) {
+      return null
+    }
+    const read = await this.deps.runtime.readTerminal(located.handle, { limit })
+    return { lines: read.tail, truncated: read.truncated }
+  }
+
   /** Back to idle after the port's foreign holder was stopped. */
   clearPortBusy(): void {
     if (this.state.phase === 'port-busy') {
