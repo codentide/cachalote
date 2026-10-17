@@ -79,6 +79,8 @@ export function normalizeRightSidebarTab(tab: unknown): PersistedState['ui']['ri
     tab === 'pr-checks' ||
     tab === 'source-control' ||
     tab === 'checks' ||
+    // Cachalote: Sonar panel
+    tab === 'sonar' ||
     tab === 'ports' ||
     tab === 'bot-activity' ||
     tab === 'bot-automations' ||

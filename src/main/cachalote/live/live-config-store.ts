@@ -1,7 +1,10 @@
 import { readFileSync, renameSync, writeFileSync } from 'node:fs'
 import { rename, writeFile } from 'node:fs/promises'
-import type { LiveProjectConfig } from '../../../shared/cachalote/live/live-types'
-import { isLiveProjectConfig, isRecord } from './live-input-guards'
+import {
+  LIVE_STANDBY_LIMIT,
+  type LiveProjectConfig
+} from '../../../shared/cachalote/live/live-types'
+import { isLiveProjectConfig, isRecord, isStringArray } from './live-input-guards'
 import type { ManifestEntry } from './live-sync'
 
 /** Terminal handles are minted per process, so only the pane's identity is kept. */
@@ -68,6 +71,7 @@ function parsePersistedSlot(value: unknown): PersistedLiveSlot | null {
 export class LiveConfigStore {
   private readonly configs = new Map<string, LiveProjectConfig>()
   private readonly slots = new Map<string, PersistedLiveSlot>()
+  private readonly standby = new Map<string, string[]>()
   private timer: ReturnType<typeof setTimeout> | null = null
   private writing: Promise<void> = Promise.resolve()
   private tempCounter = 0
@@ -102,6 +106,13 @@ export class LiveConfigStore {
         const persisted = parsePersistedSlot(slot)
         if (persisted) {
           this.slots.set(key, persisted)
+        }
+      }
+    }
+    if (isRecord(parsed.standby)) {
+      for (const [repoId, worktreeIds] of Object.entries(parsed.standby)) {
+        if (isStringArray(worktreeIds) && worktreeIds.length > 0) {
+          this.standby.set(repoId, worktreeIds.slice(0, LIVE_STANDBY_LIMIT))
         }
       }
     }
@@ -141,11 +152,41 @@ export class LiveConfigStore {
     }
   }
 
+  /** Most recent first; a no-op (and no write) when the worktree is already at the front. */
+  recordStandby(repoId: string, worktreeId: string): void {
+    const current = this.standby.get(repoId) ?? []
+    if (current[0] === worktreeId) {
+      return
+    }
+    const next = [worktreeId, ...current.filter((id) => id !== worktreeId)]
+    this.standby.set(repoId, next.slice(0, LIVE_STANDBY_LIMIT))
+    this.scheduleWrite()
+  }
+
+  removeStandby(repoId: string, worktreeId: string): void {
+    const current = this.standby.get(repoId)
+    if (!current?.includes(worktreeId)) {
+      return
+    }
+    const next = current.filter((id) => id !== worktreeId)
+    if (next.length === 0) {
+      this.standby.delete(repoId)
+    } else {
+      this.standby.set(repoId, next)
+    }
+    this.scheduleWrite()
+  }
+
+  standbyEntries(): Record<string, readonly string[]> {
+    return Object.fromEntries([...this.standby].map(([repoId, ids]) => [repoId, [...ids]]))
+  }
+
   private serialize(): string {
     return JSON.stringify({
       version: FILE_VERSION,
       configs: Object.fromEntries(this.configs),
-      slots: Object.fromEntries(this.slots)
+      slots: Object.fromEntries(this.slots),
+      standby: Object.fromEntries(this.standby)
     })
   }
 

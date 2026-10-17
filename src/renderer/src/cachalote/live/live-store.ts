@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import { toast } from 'sonner'
 import type { CachaloteLiveApi, LiveSlotRef } from '../../../../shared/cachalote/live/live-ipc'
 import type { LiveSlotState, LiveSnapshot } from '../../../../shared/cachalote/live/live-types'
+import type { SonarLogsResult } from '../../../../shared/rpc-contract/cachalote-sonar-params'
 import { liveLabel } from './live-labels'
 
 const EMPTY_SLOTS: readonly LiveSlotState[] = []
@@ -13,7 +14,10 @@ type LiveState = {
   slots: readonly LiveSlotState[]
   byWorktree: Readonly<Record<string, readonly LiveSlotState[]>>
   byRepo: Readonly<Record<string, readonly LiveSlotState[]>>
+  standbyByRepo: Readonly<Record<string, readonly string[]>>
 }
+
+const EMPTY_STANDBY: Readonly<Record<string, readonly string[]>> = {}
 
 function groupSlots(
   slots: readonly LiveSlotState[],
@@ -35,7 +39,8 @@ function stateFromSnapshot(snapshot: LiveSnapshot): LiveState {
     supported: snapshot.supported,
     slots,
     byWorktree: groupSlots(slots, (slot) => slot.worktreeId),
-    byRepo: groupSlots(slots, (slot) => slot.repoId)
+    byRepo: groupSlots(slots, (slot) => slot.repoId),
+    standbyByRepo: (snapshot.supported && snapshot.standbyByRepo) || EMPTY_STANDBY
   }
 }
 
@@ -112,10 +117,20 @@ export const liveActions = {
   stop: (args: LiveSlotRef) => run((api) => api.stop(args)),
   focusTerminal: (args: LiveSlotRef) => run((api) => api.focusTerminal(args)),
   freePort: (args: { port: number; pid: number }) => run((api) => api.freePort(args)),
+  dismissStandby: (args: { repoId: string; worktreeId: string }) =>
+    run((api) => api.dismissStandby(args)),
   /** RAM on demand; null when nothing listens or the call fails. */
   async usage(args: LiveSlotRef): Promise<number | null> {
     try {
       return (await liveApi()?.usage(args))?.rssBytes ?? null
+    } catch {
+      return null
+    }
+  },
+  /** Server output for the panel; null when the call fails, so a poll just keeps the last lines. */
+  async logs(args: LiveSlotRef & { limit?: number }): Promise<SonarLogsResult | null> {
+    try {
+      return (await liveApi()?.logs(args)) ?? null
     } catch {
       return null
     }

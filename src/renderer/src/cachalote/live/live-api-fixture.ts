@@ -67,6 +67,11 @@ export function createLiveApiFixture(
     },
     focusTerminal: async (args) => record('focusTerminal', args),
     freePort: async (args) => record('freePort', args),
+    dismissStandby: async (args) => record('dismissStandby', args),
+    logs: async (args) => {
+      record('logs', args)
+      return { lines: [], truncated: false, phase: 'idle' }
+    },
     onChanged: (listener) => {
       listeners.add(listener)
       return () => listeners.delete(listener)

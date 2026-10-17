@@ -20,6 +20,8 @@ const FolderWorkspacePrChecksPanel = lazy(
   () => import('./hosted-review/folder-checks/FolderWorkspacePrChecksPanel')
 )
 const PluginPanel = lazy(() => import('./plugin-panels/PluginPanel'))
+// Cachalote: Sonar panel
+const SonarPanel = lazy(() => import('../../cachalote/live/SonarPanel'))
 const BotActivityPanel = lazy(() => import('../bots/BotActivityPanel'))
 const BotConnectorsPanel = lazy(() => import('../bots/BotConnectorsPanel'))
 const BotChatsPanel = lazy(() => import('../bots/BotChatsPanel'))
@@ -49,6 +51,10 @@ export function RightSidebarPanelContent({
       data-plugin-panel-surface={isPluginPanelTabKey(effectiveTab) ? effectiveTab : undefined}
     >
       <Suspense fallback={effectiveTab === 'bot-chats' ? <BotChatsSkeleton toolbar /> : null}>
+        {/* Cachalote: Sonar panel */}
+        {effectiveTab === 'sonar' && (
+          <SonarPanel isVisible={rightSidebarOpen && effectiveTab === 'sonar'} />
+        )}
         {effectiveTab === 'explorer' && <FileExplorer />}
         {effectiveTab === 'source-control' &&
           (isFolderWorkspace ? (
