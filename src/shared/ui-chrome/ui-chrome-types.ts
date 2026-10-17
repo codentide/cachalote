@@ -101,6 +101,8 @@ export const STATIC_RIGHT_SIDEBAR_TABS = [
   'source-control',
   'checks',
   'ports',
+  // Cachalote: Sonar panel
+  'sonar',
   'bot-activity',
   'bot-automations',
   'bot-connectors',

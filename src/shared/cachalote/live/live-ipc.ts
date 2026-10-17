@@ -1,3 +1,4 @@
+import type { SonarLogsResult } from '../../rpc-contract/cachalote-sonar-params'
 import type {
   LiveConfigEntry,
   LiveConfigSaveResult,
@@ -15,6 +16,8 @@ export const CACHALOTE_LIVE_CHANNELS = {
   usage: 'cachalote-live:usage',
   focusTerminal: 'cachalote-live:focus-terminal',
   freePort: 'cachalote-live:free-port',
+  logs: 'cachalote-live:logs',
+  dismissStandby: 'cachalote-live:dismiss-standby',
   /** Main → renderer push; the payload is the whole LiveSnapshot. */
   changed: 'cachalote-live:changed'
 } as const
@@ -39,5 +42,9 @@ export type CachaloteLiveApi = {
   focusTerminal: (args: LiveSlotRef) => Promise<void>
   /** Kills a foreign listener only if `pid` still holds `port` with the cwd and command the UI showed. */
   freePort: (args: { port: number; pid: number }) => Promise<void>
+  /** The server terminal's last `limit` lines (main clamps it; default 80). */
+  logs: (args: LiveSlotRef & { limit?: number }) => Promise<SonarLogsResult>
+  /** Takes a worktree off its project's standby list; one being served stays served. */
+  dismissStandby: (args: { repoId: string; worktreeId: string }) => Promise<void>
   onChanged: (listener: (snapshot: LiveSnapshot) => void) => () => void
 }
