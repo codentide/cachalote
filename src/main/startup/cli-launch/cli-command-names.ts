@@ -80,6 +80,8 @@ export const CLI_COMMAND_NAMES = [
   'skills',
   'slack',
   'snapshot',
+  // Cachalote: Sonar CLI
+  'sonar',
   'speech',
   'status',
   'storage',
