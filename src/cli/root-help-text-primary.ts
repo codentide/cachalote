@@ -23,6 +23,13 @@ export const ROOT_HELP_TEXT_PRIMARY = [
   'Agent Sessions:',
   '  search                    Search the full text of agent sessions on one Orca host',
   '',
+  // Cachalote: Sonar CLI
+  'Sonar:',
+  '  sonar status              Show the project Sonar ports and the worktree each serves',
+  '  sonar serve               Serve a worktree on the project fixed port and wait until it is up',
+  '  sonar logs                Print the recent output of the server on a Sonar port',
+  '  sonar stop                Stop the server on a Sonar port',
+  '',
   'Accounts:',
   '  account add               Add a managed agent account on this Orca host',
   '  account list              List managed agent accounts on this Orca host',

@@ -29,7 +29,11 @@ function setup(options: { install?: string } = {}) {
     closeTerminal: vi.fn(async () => {
       portOpen.value = false
     }),
-    focusTerminal: vi.fn(async () => undefined)
+    focusTerminal: vi.fn(async () => undefined),
+    readTerminal: vi.fn(async (_handle: string, _opts: { limit?: number }) => ({
+      tail: ['ready'],
+      truncated: false
+    }))
   } satisfies LiveRuntime
   const terminate = vi.fn((_pid: number) => {
     portOpen.value = false
@@ -305,6 +309,23 @@ describe('LiveSlotServer', () => {
       await server.restore(persisted, 1_000)
 
       expect(server.getState()).toMatchObject({ phase: 'port-busy' })
+    })
+  })
+
+  describe('readLogs', () => {
+    it('reads the located terminal by its fresh handle', async () => {
+      const { server, runtime, terminals, command } = setup()
+      terminals.value = [listed()]
+      await server.start(command)
+      runtime.readTerminal.mockResolvedValue({ tail: ['a', 'b'], truncated: true })
+      expect(await server.readLogs(2)).toEqual({ lines: ['a', 'b'], truncated: true })
+      expect(runtime.readTerminal).toHaveBeenCalledWith('fresh-handle', { limit: 2 })
+    })
+
+    it('returns null when there is no terminal', async () => {
+      const { server, runtime } = setup()
+      expect(await server.readLogs(10)).toBeNull()
+      expect(runtime.readTerminal).not.toHaveBeenCalled()
     })
   })
 })

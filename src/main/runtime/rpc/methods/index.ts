@@ -1,3 +1,5 @@
+// Cachalote: Sonar CLI
+import { SONAR_METHODS } from '../../../cachalote/live/live-rpc-methods'
 import { STATUS_METHODS } from './status'
 import { SIDEBAR_INPUT_METHODS } from './sidebar-inputs'
 import { ORCAD_TERMINAL_CENSUS_METHODS } from './orcad-terminal-census'
@@ -76,6 +78,8 @@ import { ORCA_SIDEBAR_INPUTS_IS_MAIN } from '../../../../shared/sidebar-inputs-s
 // grep-point for "what methods does the RPC server expose?" — useful when
 // auditing the security boundary or wiring new CLI commands.
 export const ALL_RPC_METHODS = [
+  // Cachalote: Sonar CLI
+  ...SONAR_METHODS,
   ...STATUS_METHODS,
   ...ORCAD_TERMINAL_CENSUS_METHODS,
   ...ORCAD_MIGRATION_METHODS,
