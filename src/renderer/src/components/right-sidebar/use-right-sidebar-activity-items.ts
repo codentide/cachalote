@@ -22,6 +22,8 @@ import { translate } from '@/i18n/i18n'
 import { useUiLanguageRevision } from '@/i18n/use-ui-language-revision'
 import { AgentSessionHistoryIcon } from './agent-session-history-icon'
 import type { ActivityBarItem } from './activity-bar-buttons'
+// Cachalote: Sonar panel
+import { sonarActivityItems } from '../../cachalote/live/sonar-activity-item'
 
 export type RightSidebarActivityItems = {
   visibleItems: ActivityBarItem[]
@@ -123,6 +125,8 @@ export function useRightSidebarActivityItems({
         shortcut: portsShortcut === 'Unassigned' ? '' : portsShortcut,
         sshOnly: true
       },
+      // Cachalote: Sonar panel
+      ...sonarActivityItems(),
       // Append plugin tabs to preserve built-in navigation positions.
       ...getPluginPanelActivityItems(visiblePluginPanels, pluginPanelErrors)
     ],

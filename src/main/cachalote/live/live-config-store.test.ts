@@ -2,7 +2,10 @@ import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'n
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import type { LiveProjectConfig } from '../../../shared/cachalote/live/live-types'
+import {
+  LIVE_STANDBY_LIMIT,
+  type LiveProjectConfig
+} from '../../../shared/cachalote/live/live-types'
 import { LiveConfigStore, liveSlotKey, parseLiveSlotKey } from './live-config-store'
 
 const config: LiveProjectConfig = {
@@ -53,7 +56,8 @@ describe('LiveConfigStore', () => {
           terminal: { worktreeId: 'repo-1::/main', tabId: 't', ptyId: 'p' },
           startedAt: 5
         }
-      }
+      },
+      standby: {}
     })
     expect(readdirSync(dir)).toEqual(['cachalote-live.json'])
   })
@@ -126,5 +130,82 @@ describe('LiveConfigStore', () => {
     store.setConfig(config)
     store.flushSync()
     expect(readdirSync(dir)).toEqual(['cachalote-live.json'])
+  })
+
+  describe('standby', () => {
+    it('keeps the most recent first without duplicates', () => {
+      const store = new LiveConfigStore(file, 0)
+      store.recordStandby('r', 'a')
+      store.recordStandby('r', 'b')
+      store.recordStandby('r', 'c')
+      store.recordStandby('r', 'a')
+
+      expect(store.standbyEntries()).toEqual({ r: ['a', 'c', 'b'] })
+    })
+
+    it('caps each project and drops the oldest', () => {
+      const store = new LiveConfigStore(file, 0)
+      for (let index = 0; index < LIVE_STANDBY_LIMIT + 3; index += 1) {
+        store.recordStandby('r', `w${index}`)
+      }
+      const list = store.standbyEntries().r
+
+      expect(list).toHaveLength(LIVE_STANDBY_LIMIT)
+      expect(list[0]).toBe(`w${LIVE_STANDBY_LIMIT + 2}`)
+      expect(list).not.toContain('w0')
+    })
+
+    it('removes entries and drops a project once empty', () => {
+      const store = new LiveConfigStore(file, 0)
+      store.recordStandby('r', 'a')
+      store.recordStandby('r', 'b')
+      store.removeStandby('r', 'a')
+      expect(store.standbyEntries()).toEqual({ r: ['b'] })
+      store.removeStandby('r', 'missing')
+      store.removeStandby('r', 'b')
+
+      expect(store.standbyEntries()).toEqual({})
+    })
+
+    it('schedules a write only when the list changed', () => {
+      const store = new LiveConfigStore(file)
+      store.recordStandby('r', 'a')
+      store.flushSync()
+      rmSync(file)
+      store.recordStandby('r', 'a')
+      store.removeStandby('r', 'nope')
+      store.flushSync()
+      expect(readdirSync(dir)).toEqual([])
+      store.removeStandby('r', 'a')
+      store.flushSync()
+
+      expect(readdirSync(dir)).toEqual(['cachalote-live.json'])
+    })
+
+    it('round-trips through the file', async () => {
+      const first = new LiveConfigStore(file, 0)
+      first.recordStandby('r', 'a')
+      first.recordStandby('r', 'b')
+      await first.flush()
+
+      expect(JSON.parse(readFileSync(file, 'utf8')).standby).toEqual({ r: ['b', 'a'] })
+      expect(new LiveConfigStore(file, 0).standbyEntries()).toEqual({ r: ['b', 'a'] })
+    })
+
+    it('loads old files without standby, and keeps only arrays of strings', () => {
+      writeFileSync(file, JSON.stringify({ version: 1, configs: {}, slots: {} }))
+      expect(new LiveConfigStore(file).standbyEntries()).toEqual({})
+      writeFileSync(file, JSON.stringify({ version: 1, standby: 'nope' }))
+      expect(new LiveConfigStore(file).standbyEntries()).toEqual({})
+      writeFileSync(
+        file,
+        JSON.stringify({
+          version: 1,
+          standby: { ok: ['a'], mixed: ['a', 1], text: 'a', empty: [], nested: { a: 1 } }
+        })
+      )
+
+      expect(new LiveConfigStore(file).standbyEntries()).toEqual({ ok: ['a'] })
+    })
   })
 })

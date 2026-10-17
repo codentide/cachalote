@@ -4,17 +4,27 @@ import os from 'node:os'
 import path from 'node:path'
 import { CACHALOTE_LIVE_CHANNELS } from '../../../shared/cachalote/live/live-ipc'
 import type { LiveSnapshot } from '../../../shared/cachalote/live/live-types'
+import { SONAR_DEFAULT_LOG_LINES } from '../../../shared/rpc-contract/cachalote-sonar-params'
 import type { Store } from '../../persistence'
 import type { OrcaRuntimeService } from '../../runtime/orca-runtime'
 import { LiveConfigStore } from './live-config-store'
 import { LiveEngine } from './live-engine'
 import { setLiveEngine } from './live-engine-ref'
-import { isFreePortArgs, isLiveProjectConfig, isProjectArgs, isSlotRef } from './live-input-guards'
+import {
+  isFreePortArgs,
+  isLiveProjectConfig,
+  isLogsArgs,
+  isProjectArgs,
+  isSlotRef,
+  isStandbyArgs
+} from './live-input-guards'
 import { PortInspector, terminateProcess } from './live-port-owner'
 import { recoverLiveSlots } from './live-recovery'
 import { watchWorktree } from './live-watch'
 
 const PROBE_TIMEOUT_MS = 800
+// The panel asks for a screenful; a renderer bug must not make main serialize a whole scrollback.
+const MAX_LOG_LINES = 1000
 
 function connects(host: string, port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -118,6 +128,12 @@ function registerLiveHandlers(store: Store, runtime: OrcaRuntimeService): void {
     }
     return engine.project(input)
   })
+  ipcMain.handle(channels.dismissStandby, (_event, input: unknown) => {
+    if (!isStandbyArgs(input)) {
+      throw invalidArguments(channels.dismissStandby)
+    }
+    engine.dismissStandby(input)
+  })
   ipcMain.handle(channels.stop, (_event, input: unknown) => {
     if (!isSlotRef(input)) {
       throw invalidArguments(channels.stop)
@@ -142,6 +158,13 @@ function registerLiveHandlers(store: Store, runtime: OrcaRuntimeService): void {
       throw invalidArguments(channels.freePort)
     }
     return engine.freePort(input)
+  })
+  ipcMain.handle(channels.logs, (_event, input: unknown) => {
+    if (!isLogsArgs(input)) {
+      throw invalidArguments(channels.logs)
+    }
+    const limit = Math.min(Math.max(input.limit ?? SONAR_DEFAULT_LOG_LINES, 1), MAX_LOG_LINES)
+    return engine.readLogs({ repoId: input.repoId, slotId: input.slotId }, limit)
   })
 
   app.once('will-quit', () => {

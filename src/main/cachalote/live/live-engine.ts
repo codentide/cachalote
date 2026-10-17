@@ -136,12 +136,20 @@ export class LiveEngine {
     }
     const repos = this.deps.getRepos()
     const slots: LiveSlotState[] = []
-    for (const repo of repos.filter(isLiveEligibleRepo)) {
+    const eligible = repos.filter(isLiveEligibleRepo)
+    const saved = this.deps.config.standbyEntries()
+    const standbyByRepo: Record<string, readonly string[]> = {}
+    for (const repo of eligible) {
+      if (saved[repo.id]) {
+        standbyByRepo[repo.id] = saved[repo.id]
+      }
+    }
+    for (const repo of eligible) {
       for (const slot of this.entryFor(repo)?.config.slots ?? []) {
         slots.push(this.slotState(repo, repos, slot))
       }
     }
-    return { supported: true, slots }
+    return { supported: true, slots, standbyByRepo }
   }
 
   private slotState(repo: Repo, repos: Repo[], slot: LiveSlotConfig): LiveSlotState {
@@ -241,9 +249,16 @@ export class LiveEngine {
     const holders = slotsHoldingPort(this.snapshot().slots, args, resolution.slot.port)
     await Promise.all(holders.map((other) => this.stop(other)))
     const slot = this.ensureSlot(args.repoId, args.slotId)
+    this.deps.config.recordStandby(args.repoId, args.worktreeId)
+    this.notify()
     void slot.requestProject(args.worktreeId, worktreePath).catch((error: unknown) => {
       console.warn('[cachalote-live] project failed', error)
     })
+  }
+
+  dismissStandby(args: { repoId: string; worktreeId: string }): void {
+    this.deps.config.removeStandby(args.repoId, args.worktreeId)
+    this.notify()
   }
 
   async stop(args: LiveSlotRef): Promise<void> {
