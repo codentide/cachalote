@@ -30,13 +30,29 @@ import { liveActions } from './live-store'
 
 type SlotRowProps = {
   slot: LiveSlotState
-  projectName: string
-  /** Worktrees of the slot's repo, for the "change" dropdown. */
+  /** Omitted when the surrounding UI already names the project. */
+  projectName?: string
+  /** Worktrees of the slot's repo, for the served name and the "change" dropdown. */
   worktrees: readonly Worktree[]
+  showChange?: boolean
+  /** Clock for the uptime; defaults to the mount time. */
+  now?: number
+  /** Changing it re-reads the RAM. */
+  usageRefreshKey?: number
+  /** Rendered first in the actions row, before Stop. */
+  extraActions?: React.ReactNode
 }
 
 /** One slot in the status bar popover; its RAM is read once, when the popover opens. */
-export function LiveStatusRow({ slot, projectName, worktrees }: SlotRowProps): React.JSX.Element {
+export function LiveStatusRow({
+  slot,
+  projectName,
+  worktrees,
+  showChange = true,
+  now,
+  usageRefreshKey,
+  extraActions
+}: SlotRowProps): React.JSX.Element {
   const [rssBytes, setRssBytes] = useState<number | null>(null)
   const [confirmFree, setConfirmFree] = useState(false)
   // Uptime is read once when the popover opens, like the RAM; no ticking.
@@ -60,11 +76,11 @@ export function LiveStatusRow({ slot, projectName, worktrees }: SlotRowProps): R
     return () => {
       cancelled = true
     }
-  }, [repoId, slotId, phase])
+  }, [repoId, slotId, phase, usageRefreshKey])
 
   const details = [
     slot.startedAt !== null && phase === 'live'
-      ? liveLabel('uptime', { time: formatUptime(slot.startedAt, openedAt) })
+      ? liveLabel('uptime', { time: formatUptime(slot.startedAt, now ?? openedAt) })
       : null,
     phase === 'live' && rssBytes !== null
       ? liveLabel('memory', { size: formatBytes(rssBytes) })
@@ -80,8 +96,18 @@ export function LiveStatusRow({ slot, projectName, worktrees }: SlotRowProps): R
           <Circle className={cn('size-2 shrink-0 fill-current', LIVE_TONE_TEXT[tone])} />
         )}
         <span className="font-mono text-xs font-medium tabular-nums">{`:${slot.port}`}</span>
-        <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{projectName}</span>
-        <span className={cn('shrink-0 text-2xs', LIVE_TONE_TEXT[tone])}>
+        {projectName !== undefined ? (
+          <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
+            {projectName}
+          </span>
+        ) : null}
+        <span
+          className={cn(
+            'shrink-0 text-2xs',
+            projectName === undefined && 'ml-auto',
+            LIVE_TONE_TEXT[tone]
+          )}
+        >
           {livePhaseLabel(phase)}
         </span>
       </div>
@@ -108,39 +134,42 @@ export function LiveStatusRow({ slot, projectName, worktrees }: SlotRowProps): R
         </div>
       ) : null}
       <div className="flex items-center gap-1.5">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              size="xs"
-              aria-label={liveLabel('changeAria', { port: slot.port })}
-            >
-              {liveLabel('change')}
-              <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <div className="max-h-64 overflow-y-auto scrollbar-sleek">
-              {worktrees.length === 0 ? (
-                <DropdownMenuItem disabled>{liveLabel('noWorktrees')}</DropdownMenuItem>
-              ) : (
-                worktrees.map((worktree) => (
-                  <DropdownMenuItem
-                    key={worktree.id}
-                    disabled={worktree.id === slot.worktreeId}
-                    onSelect={() =>
-                      void liveActions.project({ repoId, slotId, worktreeId: worktree.id })
-                    }
-                  >
-                    <span className="flex-1">{worktree.displayName}</span>
-                    {worktree.id === slot.worktreeId ? <Check className="size-3.5" /> : null}
-                  </DropdownMenuItem>
-                ))
-              )}
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {extraActions}
+        {showChange ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="xs"
+                aria-label={liveLabel('changeAria', { port: slot.port })}
+              >
+                {liveLabel('change')}
+                <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <div className="max-h-64 overflow-y-auto scrollbar-sleek">
+                {worktrees.length === 0 ? (
+                  <DropdownMenuItem disabled>{liveLabel('noWorktrees')}</DropdownMenuItem>
+                ) : (
+                  worktrees.map((worktree) => (
+                    <DropdownMenuItem
+                      key={worktree.id}
+                      disabled={worktree.id === slot.worktreeId}
+                      onSelect={() =>
+                        void liveActions.project({ repoId, slotId, worktreeId: worktree.id })
+                      }
+                    >
+                      <span className="flex-1">{worktree.displayName}</span>
+                      {worktree.id === slot.worktreeId ? <Check className="size-3.5" /> : null}
+                    </DropdownMenuItem>
+                  ))
+                )}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
         <Button
           type="button"
           variant="ghost"

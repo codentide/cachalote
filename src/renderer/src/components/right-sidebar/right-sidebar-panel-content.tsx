@@ -16,6 +16,8 @@ const FolderWorkspacePrChecksPanel = lazy(
 )
 const PluginPanel = lazy(() => import('./plugin-panels/PluginPanel'))
 
+// Cachalote: Sonar panel
+const SonarPanel = lazy(() => import('../../cachalote/live/SonarPanel'))
 type RightSidebarPanelContentProps = {
   effectiveTab: ActiveRightSidebarTab
   rightSidebarOpen: boolean
@@ -39,6 +41,10 @@ export function RightSidebarPanelContent({
       data-plugin-panel-surface={isPluginPanelTabKey(effectiveTab) ? effectiveTab : undefined}
     >
       <Suspense fallback={null}>
+        {/* Cachalote: Sonar panel */}
+        {effectiveTab === 'sonar' && (
+          <SonarPanel isVisible={rightSidebarOpen && effectiveTab === 'sonar'} />
+        )}
         {effectiveTab === 'explorer' && <FileExplorer />}
         {effectiveTab === 'source-control' &&
           (isFolderWorkspace ? (

@@ -61,6 +61,31 @@ const LABELS = {
     en: "Orca's ports list shows these ports as external, and the memory dashboard counts their RAM on the primary checkout."
   },
   actionFailed: { es: 'No se pudo completar la acción', en: 'The action failed' },
+  // Right sidebar panel
+  panelUnsupported: {
+    es: 'Sonar solo está disponible en macOS.',
+    en: 'Sonar is only available on macOS.'
+  },
+  panelEmpty: {
+    es: 'Ningún proyecto tiene puertos de Sonar. Configuralos en Ajustes → el proyecto → Sonar.',
+    en: 'No project has Sonar ports. Set them up in Settings → the project → Sonar.'
+  },
+  sectionCount: { es: '{live}/{total}', en: '{live}/{total}' },
+  sectionCountAria: {
+    es: '{live} de {total} puertos en vivo',
+    en: '{live} of {total} ports live'
+  },
+  worktreesTitle: { es: 'Worktrees', en: 'Worktrees' },
+  serveOnSlot: { es: 'Poner en vivo en :{port} · {label}', en: 'Serve live on :{port} · {label}' },
+  serveAnother: { es: 'Poner en vivo otro worktree…', en: 'Serve another worktree…' },
+  dismissStandby: { es: 'Quitar de la lista', en: 'Remove from list' },
+  showLogs: { es: 'Ver logs', en: 'Show logs' },
+  hideLogs: { es: 'Ocultar logs', en: 'Hide logs' },
+  logsEmpty: { es: 'Sin salida todavía.', en: 'No output yet.' },
+  logsTruncated: {
+    es: 'Mostrando las últimas {count} líneas.',
+    en: 'Showing the last {count} lines.'
+  },
   // Settings
   settingsDescription: {
     es: 'Puertos fijos que sirven un worktree de este proyecto a la vez. Cambiar de worktree no reinicia el servidor: se copian solo los archivos que difieren.',

@@ -15,6 +15,8 @@ export const cachaloteLiveApi = {
   usage: (args) => ipcRenderer.invoke(CACHALOTE_LIVE_CHANNELS.usage, args),
   focusTerminal: (args) => ipcRenderer.invoke(CACHALOTE_LIVE_CHANNELS.focusTerminal, args),
   freePort: (args) => ipcRenderer.invoke(CACHALOTE_LIVE_CHANNELS.freePort, args),
+  logs: (args) => ipcRenderer.invoke(CACHALOTE_LIVE_CHANNELS.logs, args),
+  dismissStandby: (args) => ipcRenderer.invoke(CACHALOTE_LIVE_CHANNELS.dismissStandby, args),
   onChanged: (listener) => {
     const handler = (_event: Electron.IpcRendererEvent, snapshot: LiveSnapshot): void =>
       listener(snapshot)
