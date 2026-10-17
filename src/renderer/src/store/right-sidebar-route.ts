@@ -46,6 +46,8 @@ export function normalizeRightSidebarRoute(
     tab === 'pr-checks' ||
     tab === 'source-control' ||
     tab === 'checks' ||
+    // Cachalote: Sonar panel
+    tab === 'sonar' ||
     tab === 'ports'
   ) {
     return {

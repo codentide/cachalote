@@ -11,6 +11,8 @@ const AiVaultSidebarPanel = lazy(() => import('./AiVaultSidebarPanel'))
 const FolderWorkspaceWorktreesPanel = lazy(() => import('./FolderWorkspaceWorktreesPanel'))
 const FolderWorkspacePrChecksPanel = lazy(() => import('./FolderWorkspacePrChecksPanel'))
 const PluginPanel = lazy(() => import('./PluginPanel'))
+// Cachalote: Sonar panel
+const SonarPanel = lazy(() => import('../../cachalote/live/SonarPanel'))
 
 type RightSidebarPanelContentProps = {
   effectiveTab: ActiveRightSidebarTab
@@ -24,6 +26,10 @@ export function RightSidebarPanelContent({
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <Suspense fallback={null}>
+        {/* Cachalote: Sonar panel */}
+        {effectiveTab === 'sonar' && (
+          <SonarPanel isVisible={rightSidebarOpen && effectiveTab === 'sonar'} />
+        )}
         {effectiveTab === 'explorer' && <FileExplorer />}
         {effectiveTab === 'source-control' && <SourceControl />}
         {effectiveTab === 'checks' && <ChecksPanel />}

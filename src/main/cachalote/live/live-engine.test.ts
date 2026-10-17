@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 import type { Repo } from '../../../shared/repo-types'
-import type { LiveProjectConfig } from '../../../shared/cachalote/live/live-types'
+import type { LiveProjectConfig, LiveSnapshot } from '../../../shared/cachalote/live/live-types'
 import { LiveConfigStore } from './live-config-store'
 import { LiveEngine } from './live-engine'
 import type { PortOwner } from './live-port-owner'
@@ -58,6 +58,7 @@ describe('LiveEngine', () => {
   let terminate: Mock<(pid: number) => void>
   let engines: LiveEngine[]
   let platform: NodeJS.Platform
+  let emitted: LiveSnapshot[]
 
   const config = (
     overrides: Partial<LiveProjectConfig['slots'][number]> = {}
@@ -99,7 +100,7 @@ describe('LiveEngine', () => {
       inspector: { resolveOwner: async () => owner, treeRssBytes: async () => 123 },
       platform,
       homeDir: home,
-      emit: () => {}
+      emit: (snapshot) => emitted.push(snapshot)
     })
     engines.push(engine)
     return engine
@@ -139,6 +140,7 @@ describe('LiveEngine', () => {
     terminals = []
     watchers = []
     engines = []
+    emitted = []
     platform = 'darwin'
     terminate = vi.fn(() => {
       portOpen = false
@@ -179,7 +181,7 @@ describe('LiveEngine', () => {
 
   it('lists configured slots as idle, and reports unsupported platforms', async () => {
     const engine = makeEngine()
-    expect(engine.snapshot()).toEqual({ supported: true, slots: [] })
+    expect(engine.snapshot()).toEqual({ supported: true, slots: [], standbyByRepo: {} })
     expect(await engine.saveConfig(config())).toEqual({ ok: true })
 
     expect(slotState(engine)).toMatchObject({
@@ -348,6 +350,60 @@ describe('LiveEngine', () => {
     await expect(
       engine.project({ repoId: 'r1', slotId: 'web', worktreeId: `other::${main}` })
     ).rejects.toThrow()
+  })
+
+  it('records served worktrees as standby, most recent first, and lets them be dismissed', async () => {
+    const engine = makeEngine()
+    await engine.saveConfig(config())
+    await engine.project({ repoId: 'r1', slotId: 'web', worktreeId: mainId() })
+    await settle(engine)
+    await engine.project({ repoId: 'r1', slotId: 'web', worktreeId: otherId() })
+    await settle(engine)
+
+    expect(engine.snapshot().standbyByRepo).toEqual({ r1: [otherId(), mainId()] })
+    expect(new LiveConfigStore(storeFile, 0).standbyEntries()).toEqual({
+      r1: [otherId(), mainId()]
+    })
+
+    emitted = []
+    engine.dismissStandby({ repoId: 'r1', worktreeId: mainId() })
+
+    expect(engine.snapshot().standbyByRepo).toEqual({ r1: [otherId()] })
+    await vi.waitFor(() => expect(emitted.at(-1)?.standbyByRepo).toEqual({ r1: [otherId()] }))
+    expect(slotState(engine).worktreeId).toBe(otherId())
+  })
+
+  it('emits a snapshot with the standby entry when a worktree is put live', async () => {
+    const engine = makeEngine()
+    await engine.saveConfig(config())
+    emitted = []
+    await engine.project({ repoId: 'r1', slotId: 'web', worktreeId: mainId() })
+    await settle(engine)
+
+    await vi.waitFor(() => expect(emitted.at(-1)?.standbyByRepo).toEqual({ r1: [mainId()] }))
+  })
+
+  it('omits standby when unsupported and when a request fails validation', async () => {
+    platform = 'linux'
+    expect(makeEngine().snapshot()).toEqual({ supported: false, slots: [] })
+    platform = 'darwin'
+    const engine = makeEngine()
+    await engine.saveConfig(config())
+
+    await expect(
+      engine.project({ repoId: 'r1', slotId: 'nope', worktreeId: mainId() })
+    ).rejects.toThrow()
+    await expect(
+      engine.project({ repoId: 'r1', slotId: 'web', worktreeId: `other::${main}` })
+    ).rejects.toThrow()
+    const stranger = path.join(sandbox, 'stranger')
+    mkdirSync(stranger)
+    git(stranger, 'init', '-q', '-b', 'main')
+    await expect(
+      engine.project({ repoId: 'r1', slotId: 'web', worktreeId: `r1::${stranger}` })
+    ).rejects.toThrow(/does not belong/)
+
+    expect(engine.snapshot().standbyByRepo).toEqual({})
   })
 
   it('reports port-busy and frees it only for the exact process it recorded', async () => {

@@ -49,7 +49,12 @@ export type LiveSnapshot = {
   /** False where the feature is off (only macOS for now); slots is then empty. */
   supported: boolean
   slots: LiveSlotState[]
+  /** Per project, the worktrees put live before (most recent first), kept for a quick switch back. */
+  standbyByRepo?: Readonly<Record<string, readonly string[]>>
 }
+
+/** Standby worktrees kept per project; an older one drops when a new one comes in. */
+export const LIVE_STANDBY_LIMIT = 10
 
 export type LiveConfigError = {
   /** -1 for errors about the project as a whole. */

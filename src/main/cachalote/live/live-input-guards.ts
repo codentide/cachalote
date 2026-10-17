@@ -5,7 +5,7 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-function isStringArray(value: unknown): value is string[] {
+export function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string')
 }
 
@@ -39,6 +39,15 @@ export function isProjectArgs(value: unknown): value is LiveSlotRef & { worktree
   return isSlotRef(value) && 'worktreeId' in value && typeof value.worktreeId === 'string'
 }
 
+export function isLogsArgs(value: unknown): value is LiveSlotRef & { limit?: number } {
+  return (
+    isSlotRef(value) &&
+    (!('limit' in value) ||
+      value.limit === undefined ||
+      (typeof value.limit === 'number' && Number.isSafeInteger(value.limit)))
+  )
+}
+
 export function isFreePortArgs(value: unknown): value is { port: number; pid: number } {
   return (
     isRecord(value) &&
@@ -47,4 +56,8 @@ export function isFreePortArgs(value: unknown): value is { port: number; pid: nu
     typeof value.pid === 'number' &&
     Number.isSafeInteger(value.pid)
   )
+}
+
+export function isStandbyArgs(value: unknown): value is { repoId: string; worktreeId: string } {
+  return isRecord(value) && typeof value.repoId === 'string' && typeof value.worktreeId === 'string'
 }
