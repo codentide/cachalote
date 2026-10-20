@@ -30,7 +30,20 @@ const TEXT = {
     en: 'The build takes a few minutes. When it finishes, Cachalote restarts by itself; terminals and their agents keep running.'
   },
   update: { es: 'Actualizar', en: 'Update' },
-  dismiss: { es: 'Cerrar', en: 'Dismiss' }
+  dismiss: { es: 'Cerrar', en: 'Dismiss' },
+  updatedTitle: { es: 'Cachalote actualizada', en: 'Cachalote updated' },
+  reapplied: {
+    es: 'Choques con upstream resueltos solos',
+    en: 'Upstream conflicts resolved on their own'
+  },
+  resolved: {
+    es: 'Choques que resolvió Claude (revisados por otro Claude)',
+    en: 'Conflicts Claude resolved (reviewed by another Claude)'
+  },
+  pendingTests: {
+    es: 'Pendiente: pruebas que ya no compilan (no afectan la app)',
+    en: 'Pending: tests that no longer typecheck (the app is not affected)'
+  }
 } as const
 
 function text(key: keyof typeof TEXT): string {
@@ -43,6 +56,29 @@ function text(key: keyof typeof TEXT): string {
 }
 
 const CURRENT_VISIBLE_MS = 4_000
+
+function FileList({
+  label,
+  files
+}: {
+  label: string
+  files: readonly string[]
+}): React.JSX.Element {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="text-xs text-muted-foreground">
+        {label} ({files.length})
+      </p>
+      <ul className="flex flex-col gap-1">
+        {files.map((file) => (
+          <li key={file} title={file} className="truncate font-mono text-xs">
+            {file.split('/').pop()}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 /** Bottom-right card for Cachalote's own update flow (cachalote-sync), next to upstream's. */
 export function CachaloteUpdateCard(): React.JSX.Element | null {
@@ -96,6 +132,27 @@ export function CachaloteUpdateCard(): React.JSX.Element | null {
           text={`${text('failed')}: ${state.message}`}
           onClose={dismiss}
         />
+      )}
+      {state.kind === 'updated' && (
+        <div className="flex flex-col gap-3 p-4">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-sm font-semibold">
+              {state.release ? `${text('updatedTitle')} · ${state.release}` : text('updatedTitle')}
+            </h3>
+            <Button variant="ghost" size="icon-sm" onClick={dismiss} aria-label={text('dismiss')}>
+              <X className="size-3.5" />
+            </Button>
+          </div>
+          {state.reappliedFiles.length > 0 && (
+            <FileList label={text('reapplied')} files={state.reappliedFiles} />
+          )}
+          {state.resolvedFiles.length > 0 && (
+            <FileList label={text('resolved')} files={state.resolvedFiles} />
+          )}
+          {state.pendingTestFiles.length > 0 && (
+            <FileList label={text('pendingTests')} files={state.pendingTestFiles} />
+          )}
+        </div>
       )}
       {state.kind === 'available' && (
         <div className="flex flex-col gap-3 p-4">

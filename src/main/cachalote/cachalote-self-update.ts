@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import { open } from 'node:fs/promises'
+import { open, readFile, rename } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import path from 'node:path'
 import { runProcess } from '@orca/process-host'
@@ -12,6 +12,7 @@ import {
   backgroundUpdateKey,
   parseInstalledBuildSha,
   parseSyncCheck,
+  parseUpdateReport,
   parseUpdateRunOutcome,
   toCachaloteUpdateState,
   UPDATE_RESULT_MARKER,
@@ -23,6 +24,8 @@ const REPO = path.join(homedir(), 'code/personal/cachalote')
 const INSTALLED_PLIST = '/Applications/Cachalote.app/Contents/Info.plist'
 const JOB = 'com.marcodelboccio.cachalote-self-update'
 const LOG = path.join(homedir(), 'Library/Logs/cachalote-self-update.log')
+// Written by cachalote-sync after a build; read once by the reopened app.
+const UPDATE_REPORT = path.join(homedir(), '.local/state/cachalote-sync/last-update-report')
 // Leaves startup alone, then follows roughly the cadence of upstream's own update checks.
 const BACKGROUND_FIRST_CHECK_MS = 60_000
 const BACKGROUND_INTERVAL_MS = 6 * 60 * 60_000
@@ -184,8 +187,30 @@ let backgroundChecksStarted = false
 // The last update surfaced unprompted: a dismissed card stays dismissed until something changes.
 let lastBackgroundKey: string | null = null
 
+/** After an update the sync had to resolve, tells what it did once; true when it showed something. */
+async function surfaceUpdateReport(): Promise<boolean> {
+  const text = await readFile(UPDATE_REPORT, 'utf8').catch(() => null)
+  if (text === null) {
+    return false
+  }
+  await rename(UPDATE_REPORT, `${UPDATE_REPORT}.shown`).catch(() => {})
+  const report = parseUpdateReport(text)
+  if (
+    report.reappliedFiles.length === 0 &&
+    report.resolvedFiles.length === 0 &&
+    report.pendingTestFiles.length === 0
+  ) {
+    return false
+  }
+  publish({ kind: 'updated', ...report })
+  return true
+}
+
 async function backgroundCheck(): Promise<void> {
   if (await isUpdateRunning()) {
+    return
+  }
+  if (await surfaceUpdateReport()) {
     return
   }
   const state = toCachaloteUpdateState(await readStatus())
