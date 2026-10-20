@@ -14,6 +14,31 @@ export type CachaloteUpdateStatus = {
 }
 
 /** `1.4.224-local.<ts>.<sha>` → `<sha>`; release or dev versions carry none. */
+export type UpdateReport = {
+  release: string | null
+  reappliedFiles: string[]
+  resolvedFiles: string[]
+  pendingTestFiles: string[]
+}
+
+/** cachalote-sync's `last-update-report`: `key=value` lines, lists separated by spaces. */
+export function parseUpdateReport(text: string): UpdateReport {
+  const values = new Map<string, string>()
+  for (const line of text.split('\n')) {
+    const separator = line.indexOf('=')
+    if (separator > 0) {
+      values.set(line.slice(0, separator).trim(), line.slice(separator + 1).trim())
+    }
+  }
+  const list = (key: string): string[] => (values.get(key) ?? '').split(/\s+/).filter(Boolean)
+  return {
+    release: values.get('tag') || null,
+    reappliedFiles: list('reapplied_files'),
+    resolvedFiles: list('resolved_files'),
+    pendingTestFiles: list('pending_test_errors')
+  }
+}
+
 export function parseInstalledBuildSha(version: string | null): string | null {
   return version?.match(/-local\.\d+\.([0-9a-f]{7,40})$/)?.[1] ?? null
 }
