@@ -15,6 +15,17 @@ export type CachaloteUpdateState =
     }
   | { kind: 'started' }
   | { kind: 'failed'; message: string }
+  | {
+      /** Shown once after an update that needed the sync to resolve something on its own. */
+      kind: 'updated'
+      release: string | null
+      /** Upstream files where the sync re-inserted the fork's lines by their anchor. */
+      reappliedFiles: readonly string[]
+      /** Files headless Claude resolved where the anchors failed; a second Claude reviewed them. */
+      resolvedFiles: readonly string[]
+      /** Test files that no longer typecheck: they never ship, so they did not block the install. */
+      pendingTestFiles: readonly string[]
+    }
 
 export const CACHALOTE_UPDATE_STATE_CHANNEL = 'cachalote:update-state'
 export const CACHALOTE_UPDATE_START_CHANNEL = 'cachalote:update-start'

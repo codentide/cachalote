@@ -5,6 +5,7 @@ import {
   toCachaloteUpdateState,
   parseInstalledBuildSha,
   parseSyncCheck,
+  parseUpdateReport,
   parseUpdateRunOutcome,
   UPDATE_RESULT_MARKER,
   type CachaloteUpdateStatus
@@ -176,6 +177,37 @@ describe('parseUpdateRunOutcome', () => {
       parseUpdateRunOutcome(['=== Thu Oct 15 10:28:45 -05 2026 ===', '→ pnpm install'].join('\n'))
     ).toEqual({
       kind: 'unknown'
+    })
+  })
+})
+
+describe('parseUpdateReport', () => {
+  it('reads the release, the reapplied files and the pending test files', () => {
+    expect(
+      parseUpdateReport(
+        [
+          'tag=v1.4.233',
+          'reapplied=2',
+          'reapplied_files=src/a.ts src/b.tsx ',
+          'pending_test_errors=src/c.test.ts ',
+          'resolved=1',
+          'resolved_files=src/d.ts '
+        ].join('\n')
+      )
+    ).toEqual({
+      release: 'v1.4.233',
+      reappliedFiles: ['src/a.ts', 'src/b.tsx'],
+      resolvedFiles: ['src/d.ts'],
+      pendingTestFiles: ['src/c.test.ts']
+    })
+  })
+
+  it('treats empty and missing keys as nothing to report', () => {
+    expect(parseUpdateReport('tag=\nreapplied=0\nreapplied_files=\n')).toEqual({
+      release: null,
+      reappliedFiles: [],
+      resolvedFiles: [],
+      pendingTestFiles: []
     })
   })
 })
