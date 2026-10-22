@@ -93,6 +93,8 @@ import type {
 } from './api/workspaces/worktree-api'
 // Cachalote: Sonar slots.
 import type { CachaloteLiveApi } from '../shared/cachalote/live/live-ipc'
+// Cachalote: the same conversation between terminal and chat.
+import type { CachaloteChatHandoffApi } from '../shared/cachalote/chat-handoff/chat-handoff-ipc'
 
 // Flattens contracts that share one PreloadApi key: an intersection is not type-identical to the flat shape.
 type Merged<T> = { [K in keyof T]: T[K] }
@@ -154,6 +156,8 @@ export type PreloadApi = {
   pet: PetApi
   // Cachalote: Sonar slots; absent in the web client.
   cachaloteLive?: CachaloteLiveApi
+  // Cachalote: the same conversation between terminal and chat; absent in the web client.
+  cachaloteChatHandoff?: CachaloteChatHandoffApi
   appIcon: AppIconApi
   browser: BrowserApi
   browserPasswords: BrowserPasswordsApi
