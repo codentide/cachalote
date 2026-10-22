@@ -15,6 +15,8 @@ import type { WorktreeCardPresentation } from '../surface/worktree-card-presenta
 import type { WorktreeCardController } from '../controller/use-worktree-card-controller'
 // Cachalote: Sonar pill.
 import { LivePill } from '../../../../cachalote/live/LivePill'
+// Cachalote: a worktree group's icon outside its folder.
+import { WorktreeGroupBadge } from '../../../../cachalote/worktree-groups/WorktreeGroupBadge'
 
 export function WorktreeCardMetaRow({
   card,
@@ -97,6 +99,8 @@ export function WorktreeCardMetaRow({
       {showMetaRowDetails && (
         <div className="ml-auto flex shrink-0 items-center gap-1 pr-1.5">{detailsAndPorts}</div>
       )}
+      {/* Cachalote: a worktree group's icon outside its folder. */}
+      <WorktreeGroupBadge worktreeId={worktree.id} />
       {/* Cachalote: Sonar pill. */}
       <LivePill worktreeId={worktree.id} pushRight={!showMetaRowDetails} />
     </div>

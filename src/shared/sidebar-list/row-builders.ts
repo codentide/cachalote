@@ -99,7 +99,7 @@ export function appendWorktreeRows(
     options.collapsedGroups.has(getWorktreeLineageGroupKey(worktree))
   )
   // Cachalote: grouped worktrees render first, under their group; the loop below sees the rest.
-  spliceWorktreeGroupRows(result, occurrences, repoMap, options)
+  spliceWorktreeGroupRows(result, occurrences, repoOf, options)
   for (const occurrence of occurrences) {
     const worktree = occurrence.row
     const folderPair = options.folderPairByIdentity?.get(getWorktreeHostIdentity(worktree))
