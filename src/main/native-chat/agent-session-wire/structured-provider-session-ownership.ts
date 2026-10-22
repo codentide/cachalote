@@ -5,6 +5,8 @@ import type {
 import type { StructuredAgentId } from '../../../shared/agent-session-provider-handle'
 import { agentSessionOwnerObservationVerdict } from '../../../shared/agent-session-lease-adjudication'
 import { structuredAgentRuntimeMetadata } from '../../runtime/structured-agent-runtime-metadata'
+// Cachalote: a chat that ceded its conversation to a terminal.
+import { isCachaloteCededChat } from '../../cachalote/chat-handoff/ceded-chats'
 import {
   keysMayMatch,
   recordConversationKey,
@@ -28,6 +30,10 @@ export function listStructuredProviderSessionOwnership(
   records: readonly AgentSessionConversationView[]
 ): StructuredProviderSessionOwnership[] {
   return records.flatMap((record) => {
+    // Cachalote: a chat that ceded its conversation to a terminal owns it no more.
+    if (isCachaloteCededChat(record.sessionId)) {
+      return []
+    }
     const history = structuredAgentRuntimeMetadata(record.provider)?.sessionHistory
     const head = record.providerHandleChain.at(-1)
     const headKey = head ? recordConversationKey(record, head) : null

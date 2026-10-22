@@ -10,6 +10,8 @@ import { terminalOwnerRefusalMessage } from '../../../shared/agent-session-legac
 import type { StructuredAgentSessionAttachContext } from './structured-agent-session-attach-context'
 import type { StructuredAgentSessionResumeOutcome } from './structured-agent-session-agent-start'
 import { hostCanStartRecord } from './structured-agent-session-provider-support'
+// Cachalote: a chat that ceded its conversation to a terminal.
+import { isCachaloteCededChat } from '../../cachalote/chat-handoff/ceded-chats'
 import {
   structuredAgentSessionResumeOperationId,
   structuredAgentSessionResumeParams
@@ -40,6 +42,14 @@ export function structuredAgentSessionStartParams(
       'agent_session_identity_required',
       { reason: 'recordMissing' },
       'No structured session exists by that id.'
+    )
+  }
+  // Cachalote: a chat that ceded its conversation to a terminal never writes it again.
+  if (isCachaloteCededChat(sessionId)) {
+    return refusedStructuredAgentSessionStart(
+      'agent_session_conflict',
+      { reason: 'conversationHeldElsewhere' },
+      'This chat handed its conversation back to a terminal.'
     )
   }
   if (!hostCanStartRecord(context.deps, record)) {

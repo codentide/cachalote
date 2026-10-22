@@ -1,5 +1,7 @@
 // Cachalote: Sonar slots.
 import { registerCachaloteLiveHandlers } from '../../cachalote/live/live-handlers'
+// Cachalote: the same conversation between terminal and chat.
+import { registerCachaloteChatHandoffHandlers } from '../../cachalote/chat-handoff/chat-to-terminal'
 import { app } from 'electron'
 import { ORCA_LAYOUT_OWNER_IS_MAIN } from '../../../shared/layout-owner-switch'
 import { registerAppHandlers } from '../app'
@@ -254,6 +256,8 @@ export function registerCoreHandlers(
   registerWorkspacePortHandlers(store)
   // Cachalote: Sonar slots.
   registerCachaloteLiveHandlers(store, runtime)
+  // Cachalote: the same conversation between terminal and chat.
+  registerCachaloteChatHandoffHandlers()
   registerLocalhostWorktreeLabelHandlers(store)
   registerFilesystemHandlers(store, commitMessageAgentEnv)
   registerFilesystemWatcherHandlers()

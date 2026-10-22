@@ -50,6 +50,8 @@ import type {
 import type { PetApi } from './api/pet-api'
 // Cachalote: Sonar slots.
 import type { CachaloteLiveApi } from '../shared/cachalote/live/live-ipc'
+// Cachalote: the same conversation between terminal and chat.
+import type { CachaloteChatHandoffApi } from '../shared/cachalote/chat-handoff/chat-handoff-ipc'
 import type { PluginsApi } from './api/plugin-host-api'
 import type { PreflightApi } from './api/preflight-api'
 import type { PtyApi } from './api/pty-api'
@@ -126,6 +128,8 @@ export type PreloadApi = {
   pet: PetApi
   // Cachalote: Sonar slots; absent in the web client.
   cachaloteLive?: CachaloteLiveApi
+  // Cachalote: the same conversation between terminal and chat; absent in the web client.
+  cachaloteChatHandoff?: CachaloteChatHandoffApi
   browser: BrowserApi
   emulator: EmulatorApi
   hooks: HooksApi
