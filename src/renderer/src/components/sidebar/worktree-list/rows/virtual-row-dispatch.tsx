@@ -220,7 +220,12 @@ export function renderWorktreeVirtualRow(
         className="absolute left-0 right-0 top-0"
         style={{ transform: getVirtualRowTransform(vItem.start) }}
       >
-        <WorktreeGroupRow row={row} isGrouped={ctx.groupBy !== 'none'} />
+        <WorktreeGroupRow
+          row={row}
+          isGrouped={ctx.groupBy !== 'none'}
+          onDragStart={ctx.item.onCardDragStart}
+          onDragEnd={ctx.item.onCardDragEnd}
+        />
       </div>
     )
   }

@@ -1,12 +1,11 @@
-import type { Repo } from '../../repo-types'
-import type { Row } from '../../sidebar-list/row-types'
+import type { RepoOfWorktree, Row } from '../../sidebar-list/row-types'
 import type { WorktreeOccurrence } from '../../worktree-occurrence-plan'
 import { getWorktreeHostIdentity } from '../../worktree/host-qualified-identity'
 import type { Worktree } from '../../worktree/types'
 
 /** What the sidebar row plan reads about worktree groups; the renderer store's view satisfies it. */
 export type WorktreeGroupsRowView = {
-  groups: Readonly<Record<string, { name: string; color?: string }>>
+  groups: Readonly<Record<string, { name: string; color?: string; icon?: string }>>
   /** worktree id → group id */
   membership: Readonly<Record<string, string>>
   /** group ids collapsed in every section they appear in */
@@ -22,6 +21,8 @@ export type CachaloteWorktreeGroupRow = {
   name: string
   /** Workspace-status palette key; undefined keeps the muted icon. */
   color: string | undefined
+  /** Icon id from the fork's curated set; undefined shows the default. */
+  icon: string | undefined
   count: number
   collapsed: boolean
   groupDepth: number
@@ -63,18 +64,31 @@ function groupIdOf(
 export function spliceWorktreeGroupRows(
   result: Row[],
   occurrences: WorktreeOccurrence<Worktree>[],
-  repoMap: Map<string, Repo>,
+  repoOf: RepoOfWorktree,
   options: GroupRowOptions
 ): void {
   const view = options.worktreeGroups
   if (!view || Object.keys(view.membership).length === 0) {
     return
   }
+  const groupOf = new Map<WorktreeOccurrence<Worktree>, string>()
+  const directMembers = new Map<string, number>()
+  for (const occurrence of occurrences) {
+    const groupId = occurrence.placement === 'pinned' ? undefined : groupIdOf(occurrence, view)
+    if (groupId) {
+      groupOf.set(occurrence, groupId)
+      if (view.membership[occurrence.row.id] === groupId) {
+        directMembers.set(groupId, (directMembers.get(groupId) ?? 0) + 1)
+      }
+    }
+  }
   const kept: WorktreeOccurrence<Worktree>[] = []
   const membersByGroupId = new Map<string, WorktreeOccurrence<Worktree>[]>()
   for (const occurrence of occurrences) {
-    const groupId = occurrence.placement === 'pinned' ? undefined : groupIdOf(occurrence, view)
-    if (!groupId) {
+    const groupId = groupOf.get(occurrence)
+    // A folder only where two or more of the group's worktrees share the section; a lone one stays
+    // in place and shows the group's icon instead.
+    if (!groupId || (directMembers.get(groupId) ?? 0) < 2) {
       kept.push(occurrence)
       continue
     }
@@ -96,6 +110,7 @@ export function spliceWorktreeGroupRows(
       groupId,
       name: view.groups[groupId]?.name ?? '',
       color: view.groups[groupId]?.color,
+      icon: view.groups[groupId]?.icon,
       count: members.length,
       collapsed,
       groupDepth: options.groupDepth,
@@ -112,7 +127,7 @@ export function spliceWorktreeGroupRows(
         rowKey: member.key,
         sectionKey: member.sectionKey,
         worktree,
-        repo: repoMap.get(worktree.repoId),
+        repo: repoOf(worktree),
         depth: 1,
         groupDepth: options.groupDepth,
         isLastLineageChild: index === members.length - 1,
