@@ -12,6 +12,8 @@
 import { agentSessionRefusalError } from '../../shared/agent-session-wire-refusals'
 import { assertAgentSessionOptionsAdmitted } from './agent-session-record-options'
 import { chatAgentsShareConversations } from '../../shared/structured-agent-cli-conversation-adoption'
+// Cachalote: a chat that ceded its conversation to a terminal.
+import { isCachaloteCededChat } from '../cachalote/chat-handoff/ceded-chats'
 import {
   agentSessionOperationKey,
   evaluateAgentSessionOperation,
@@ -248,6 +250,10 @@ export function assertAdoptedConversationUnowned(
   const root = agentSessionProviderHandleRoot(adopted.handle)
   for (const record of state.records.values()) {
     if (record.sessionId === request.sessionId) {
+      continue
+    }
+    // Cachalote: a chat that ceded its conversation to a terminal holds it no more.
+    if (isCachaloteCededChat(record.sessionId)) {
       continue
     }
     const holdsSameConversation = record.providerHandleChain.some(

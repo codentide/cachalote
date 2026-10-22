@@ -10,6 +10,11 @@ import { CLI_CONVERSATION_ADOPTING_AGENTS } from '../../../../shared/structured-
 import { resolveCliChatResumeSource, type CliChatResumeSource } from './cli-chat-resume-source'
 import { reportCliChatResumeFailure } from './cli-chat-resume-feedback'
 import { adoptingAgentOnHost } from '../right-sidebar/ai-vault-session-resume-in-chat-launch'
+// Cachalote: the same conversation between terminal and chat.
+import {
+  isCachaloteTerminalToChat,
+  runCachaloteTerminalToChat
+} from '@/cachalote/chat-handoff/terminal-to-chat'
 
 const pending = new Map<string, AbortController>()
 const listeners = new Set<() => void>()
@@ -40,6 +45,15 @@ export async function runCliChatResume(
   const key = keyFor(source)
   if (pending.has(key)) {
     return
+  }
+  // Cachalote: local Claude is asked to exit first, then the chat opens on Cachalote's own launch.
+  if (isCachaloteTerminalToChat(source)) {
+    pending.set(key, new AbortController())
+    changed()
+    return runCachaloteTerminalToChat(source).finally(() => {
+      pending.delete(key)
+      changed()
+    })
   }
   const target = structuredAgentSessionTargetForHost(source.executionHostId)
   if (!target || target.kind !== 'local') {
