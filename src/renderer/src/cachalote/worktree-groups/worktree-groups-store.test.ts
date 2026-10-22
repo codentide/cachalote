@@ -70,3 +70,14 @@ describe('worktree groups store', () => {
     expect(groups.missing).toBeUndefined()
   })
 })
+
+describe('worktree group icon', () => {
+  it('sets an icon on an existing group and ignores an unknown group', () => {
+    const id = useWorktreeGroupsStore.getState().createGroup('Checkout', ['app'])
+    useWorktreeGroupsStore.getState().setGroupIcon(id, 'bug')
+    useWorktreeGroupsStore.getState().setGroupIcon('missing', 'bug')
+    const state = useWorktreeGroupsStore.getState()
+    expect(state.groups[id]?.icon).toBe('bug')
+    expect(state.groups.missing).toBeUndefined()
+  })
+})

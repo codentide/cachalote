@@ -1,6 +1,8 @@
 // Cachalote: name prompt for worktree groups.
 import { WorktreeGroupNameDialog } from '../../../../cachalote/worktree-groups/WorktreeGroupNameDialog'
 import { useAppStoreWithHostStatuses } from '@/store/slices/runtime-status/views/use-runtime-status-view'
+// Cachalote: which worktrees sit inside a group folder.
+import { usePublishWorktreeGroupFolderMembers } from '../../../../cachalote/worktree-groups/worktree-group-folder-members'
 import React, { useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppStore } from '@/store'
@@ -160,6 +162,8 @@ const WorktreeList = React.memo(function WorktreeList({
     prCache,
     agentSendTargetWorktreeId
   })
+  // Cachalote: which worktrees sit inside a group folder.
+  usePublishWorktreeGroupFolderMembers(rowModel.rows)
   const visibleProjectRepoIdsBySection = useMemo(
     () => new Map(rowModel.occurrencePlan.sections.map(({ key, group }) => [key, group.repoIds])),
     [rowModel.occurrencePlan]
