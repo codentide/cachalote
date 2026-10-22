@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Layers } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -15,6 +15,12 @@ import { getWorktreeCardContentIndent } from '../../components/sidebar/worktree-
 import type { CachaloteWorktreeGroupRow } from './worktree-group-rows'
 import { useWorktreeGroupsStore } from './worktree-groups-store'
 import { AFTER_MENU_CLOSE_MS, worktreeGroupLabel } from './worktree-group-labels'
+import {
+  DEFAULT_WORKTREE_GROUP_ICON,
+  WorktreeGroupIcon,
+  worktreeGroupIconOptions
+} from './worktree-group-icons'
+import { writeWorkspaceDragData } from '../../components/sidebar/workspace-status-drag-data'
 import { LiveGroupMenuItem, LiveGroupSummary } from '../live/LiveGroupSummary'
 
 export function WorktreeGroupRow({
@@ -29,6 +35,7 @@ export function WorktreeGroupRow({
   const requestName = useWorktreeGroupsStore((s) => s.requestName)
   const removeFromGroup = useWorktreeGroupsStore((s) => s.removeFromGroup)
   const setGroupColor = useWorktreeGroupsStore((s) => s.setGroupColor)
+  const setGroupIcon = useWorktreeGroupsStore((s) => s.setGroupIcon)
   const membership = useWorktreeGroupsStore((s) => s.membership)
   const colorOptions = getWorkspaceStatusColorOptions()
   // Groups saved before colors existed keep the old muted look.
@@ -59,13 +66,16 @@ export function WorktreeGroupRow({
           aria-expanded={!row.collapsed}
           className="flex h-[30px] w-full cursor-pointer items-center gap-1.5 pr-2 text-muted-foreground transition-colors hover:text-foreground"
           style={{ paddingLeft }}
+          // Dropped on a status, the folder moves the members it shows in this section.
+          draggable
+          onDragStart={(event) => writeWorkspaceDragData(event.dataTransfer, row.worktreeIds)}
           onClick={() => toggleCollapsed(row.groupId)}
           onDoubleClick={() => rename(0)}
         >
           <ChevronDown
             className={cn('size-3.5 shrink-0 transition-transform', row.collapsed && '-rotate-90')}
           />
-          <Layers className={cn('size-3.5 shrink-0', tone)} />
+          <WorktreeGroupIcon icon={row.icon} className={cn('size-3.5 shrink-0', tone)} />
           <span className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">
             {row.name}
           </span>
@@ -88,6 +98,20 @@ export function WorktreeGroupRow({
                 <span className={cn('size-2.5 shrink-0 rounded-full', option.swatch)} />
                 <span className="flex-1">{option.label}</span>
                 {option.id === row.color ? <Check className="size-3.5" /> : null}
+              </ContextMenuItem>
+            ))}
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>{worktreeGroupLabel('icon')}</ContextMenuSubTrigger>
+          <ContextMenuSubContent>
+            {worktreeGroupIconOptions().map(({ id, Icon, label }) => (
+              <ContextMenuItem key={id} onSelect={() => setGroupIcon(row.groupId, id)}>
+                <Icon className="size-3.5 shrink-0" />
+                <span className="flex-1">{label}</span>
+                {id === (row.icon ?? DEFAULT_WORKTREE_GROUP_ICON) ? (
+                  <Check className="size-3.5" />
+                ) : null}
               </ContextMenuItem>
             ))}
           </ContextMenuSubContent>

@@ -78,9 +78,28 @@ describe('spliceWorktreeGroupRows', () => {
     expect(kept).toEqual(['other'])
   })
 
-  it('counts only the members that fall in the section', () => {
-    const { result } = run([occurrence('backend', { repoId: 'repo-b' })], view)
-    expect(result[0]).toMatchObject({ count: 1, worktreeIds: ['backend'] })
+  it('leaves a lone member of the section in place, without a folder', () => {
+    const { result, kept } = run(
+      [occurrence('other'), occurrence('backend', { repoId: 'repo-b' })],
+      view
+    )
+    expect(result).toEqual([])
+    expect(kept).toEqual(['other', 'backend'])
+  })
+
+  it('carries the group icon on the folder', () => {
+    const { result } = run([occurrence('app'), occurrence('backend')], {
+      ...view,
+      groups: { checkout: { name: 'Feature checkout', icon: 'bug' } }
+    })
+    expect(result[0]).toMatchObject({ icon: 'bug' })
+  })
+
+  it('does not count a lineage child toward the two members a folder needs', () => {
+    const parent = occurrence('app')
+    const { result, kept } = run([parent, occurrence('app-child', { parent })], view)
+    expect(result).toEqual([])
+    expect(kept).toEqual(['app', 'app-child'])
   })
 
   it('hides the members of a collapsed group', () => {
@@ -93,7 +112,11 @@ describe('spliceWorktreeGroupRows', () => {
   })
 
   it('treats membership in an unknown group as ungrouped', () => {
-    const { result, kept } = run([occurrence('app')], { ...view, groups: {} })
+    const { result, kept } = run([occurrence('app')], {
+      ...view,
+      groups: {},
+      membership: { app: 'gone' }
+    })
     expect(result).toEqual([])
     expect(kept).toEqual(['app'])
   })
@@ -101,17 +124,21 @@ describe('spliceWorktreeGroupRows', () => {
   it('takes lineage children along with a grouped parent, flat', () => {
     const parent = occurrence('app')
     const child = occurrence('app-child', { parent })
-    const { result, kept } = run([parent, child, occurrence('other')], view)
+    const { result, kept } = run([parent, child, occurrence('other'), occurrence('backend')], view)
     expect(result.slice(1)).toMatchObject([
       { worktree: { id: 'app' }, depth: 1 },
-      { worktree: { id: 'app-child' }, depth: 1 }
+      { worktree: { id: 'app-child' }, depth: 1 },
+      { worktree: { id: 'backend' }, depth: 1 }
     ])
     expect(kept).toEqual(['other'])
   })
 
   it('never groups a pinned occurrence', () => {
-    const { result, kept } = run([occurrence('app', { placement: 'pinned' })], view)
+    const { result, kept } = run(
+      [occurrence('app', { placement: 'pinned' }), occurrence('backend')],
+      view
+    )
     expect(result).toEqual([])
-    expect(kept).toEqual(['app'])
+    expect(kept).toEqual(['app', 'backend'])
   })
 })

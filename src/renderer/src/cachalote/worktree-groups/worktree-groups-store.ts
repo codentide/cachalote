@@ -2,8 +2,8 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { createBrowserUuid } from '@/lib/browser-uuid'
 
-/** `color` is a workspace-status color id; groups saved before colors existed have none. */
-export type WorktreeGroup = { id: string; name: string; color?: string }
+/** `color` is a workspace-status color id, `icon` an id from worktree-group-icons; older groups lack them. */
+export type WorktreeGroup = { id: string; name: string; color?: string; icon?: string }
 
 // Vivid status colors only, so a new group never looks like a neutral or "done" lane.
 export const WORKTREE_GROUP_COLOR_ROTATION = ['blue', 'violet', 'emerald', 'amber', 'rose', 'sky']
@@ -30,6 +30,7 @@ type WorktreeGroupsState = WorktreeGroupsView & {
   removeFromGroup: (worktreeIds: readonly string[]) => void
   renameGroup: (groupId: string, name: string) => void
   setGroupColor: (groupId: string, color: string) => void
+  setGroupIcon: (groupId: string, icon: string) => void
   toggleCollapsed: (groupId: string) => void
 }
 
@@ -109,6 +110,11 @@ export const useWorktreeGroupsStore = create<WorktreeGroupsState>()(
         set((state) => {
           const group = state.groups[groupId]
           return group ? { groups: { ...state.groups, [groupId]: { ...group, color } } } : state
+        }),
+      setGroupIcon: (groupId, icon) =>
+        set((state) => {
+          const group = state.groups[groupId]
+          return group ? { groups: { ...state.groups, [groupId]: { ...group, icon } } } : state
         }),
       toggleCollapsed: (groupId) =>
         set((state) => {
