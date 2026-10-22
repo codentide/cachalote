@@ -56,6 +56,8 @@ import { skillsApi } from './api/skills-bridge'
 import { petApi } from './api/pet-bridge'
 // Cachalote: Sonar slots.
 import { cachaloteLiveApi } from './api/cachalote-live-bridge'
+// Cachalote: the same conversation between terminal and chat.
+import { cachaloteChatHandoffApi } from './api/cachalote-chat-handoff-bridge'
 import { appIconApi } from './api/app-icon-bridge'
 import { browserPasswordsApi } from './api/browser-passwords-bridge'
 import { browserApi } from './api/browser/browser-bridge'
@@ -164,6 +166,8 @@ const api = {
   pet: petApi,
   // Cachalote: Sonar slots.
   cachaloteLive: cachaloteLiveApi,
+  // Cachalote: the same conversation between terminal and chat.
+  cachaloteChatHandoff: cachaloteChatHandoffApi,
   appIcon: appIconApi,
   browser: browserApi,
   browserPasswords: browserPasswordsApi,
