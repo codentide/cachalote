@@ -50,6 +50,13 @@ export async function posixCliWriterShellAlone(rootPid: number): Promise<boolean
   const index = getProcessTableIndex(await getFreshShellForegroundSnapshot())
   const root = index.byPid.get(rootPid)
   const executable = root?.command.trim().replace(/^-/, '').split(/\s+/, 1)[0] ?? ''
+  // Cachalote: macOS wraps every terminal shell in login(1) for TCC attribution
+  // (macos-tcc-login-shell.ts), so the PTY root is login and the shell is its only child.
+  const loginChildren =
+    executable === '/usr/bin/login' ? index.childrenByPpid.get(rootPid) : undefined
+  if (loginChildren?.length === 1) {
+    return posixCliWriterShellAlone(loginChildren[0].pid)
+  }
   return (
     !!root &&
     isShellProcess(executable) &&
