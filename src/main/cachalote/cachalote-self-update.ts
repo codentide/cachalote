@@ -93,7 +93,7 @@ async function isUpdateRunning(): Promise<boolean> {
  * already be gone when a build fails, so failure is reported with a system notification.
  */
 async function startUpdate(): Promise<void> {
-  const notifyFailure = `osascript -e 'display notification "${LOG}" with title "Cachalote update failed"'`
+  const notifyFailure = `osascript -e 'display notification "${LOG}" with title "Cachalot update failed"'`
   const script = [
     `echo "=== $(date) ==="`,
     `if cachalote-sync; then echo "${UPDATE_RESULT_MARKER}ok"; else echo "${UPDATE_RESULT_MARKER}failed"; ${notifyFailure}; fi`,

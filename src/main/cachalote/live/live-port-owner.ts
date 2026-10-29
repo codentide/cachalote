@@ -177,7 +177,7 @@ export class PortInspector {
   }
 }
 
-/** SIGTERM that treats an already-gone pid as success; refuses Cachalote's own process. */
+/** SIGTERM that treats an already-gone pid as success; refuses Cachalot's own process. */
 export function terminateProcess(
   pid: number,
   kill: (pid: number, signal: NodeJS.Signals) => void = process.kill.bind(process)

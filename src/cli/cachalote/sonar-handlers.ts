@@ -39,7 +39,7 @@ async function callSonar<T>(
     if (error instanceof RuntimeClientError && error.code === 'method_not_found') {
       throw new RuntimeClientError(
         'incompatible_runtime',
-        'This Orca build has no Sonar; update Cachalote.'
+        'This Orca build has no Sonar; update Cachalot.'
       )
     }
     throw error

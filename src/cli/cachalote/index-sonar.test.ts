@@ -82,6 +82,9 @@ function setup(script: Script) {
     if (method === 'worktree.list') {
       return worktreeListFixture(script.worktrees ?? [MINE])
     }
+    if (method === 'folderWorkspace.list') {
+      return okFixture('folders', { folderWorkspaces: [] })
+    }
     if (method === 'worktree.show') {
       const found = [MINE, OTHER].find((w) => w.id === params?.worktree?.replace(/^id:/, ''))
       return okFixture('show', { worktree: found ?? MINE })
@@ -185,7 +188,7 @@ describe('orca sonar', () => {
         return base(method, ...rest)
       })
       await main(['sonar', 'status'], '/tmp/api')
-      expect(err()).toContain('This Orca build has no Sonar; update Cachalote.')
+      expect(err()).toContain('This Orca build has no Sonar; update Cachalot.')
       expect(err()).not.toContain('Unknown method')
       expect(process.exitCode).toBe(1)
     })
