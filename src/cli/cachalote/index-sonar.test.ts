@@ -18,7 +18,7 @@ const {
   spawnMock: vi.fn()
 }))
 
-vi.mock('../runtime-client', async () => {
+vi.mock('../runtime/client', async () => {
   const { createRuntimeClientModuleMock } = await import('../index-test-harness.js')
   return createRuntimeClientModuleMock({
     callMock,
@@ -28,7 +28,7 @@ vi.mock('../runtime-client', async () => {
   })
 })
 
-vi.mock('../runtime/environments', () => ({
+vi.mock('../runtime/pairing/environments', () => ({
   addEnvironmentFromPairingCode: addEnvironmentFromPairingCodeMock,
   listEnvironments: listEnvironmentsMock,
   removeEnvironment: vi.fn(),
@@ -41,7 +41,7 @@ vi.mock('child_process', async () => {
 })
 
 import { main } from '../index'
-import { buildWorktree, okFixture, worktreeListFixture } from '../test-fixtures'
+import { buildWorktree, okFixture, worktreeListFixture } from '../runtime/fixtures/runtime-rpc-fixtures'
 import { useWorktreeAwarenessEnvironment } from '../index-test-harness'
 import type {
   SonarSlotStatus,
@@ -81,6 +81,9 @@ function setup(script: Script) {
   callMock.mockImplementation(async (method: string, params?: { worktree?: string }) => {
     if (method === 'worktree.list') {
       return worktreeListFixture(script.worktrees ?? [MINE])
+    }
+    if (method === 'folderWorkspace.list') {
+      return okFixture('folders', { folderWorkspaces: [] })
     }
     if (method === 'worktree.show') {
       const found = [MINE, OTHER].find((w) => w.id === params?.worktree?.replace(/^id:/, ''))
@@ -176,7 +179,7 @@ describe('orca sonar', () => {
 
     it('names the version gap when the runtime has no Sonar', async () => {
       setup({})
-      const { RuntimeClientError } = await import('../runtime/types.js')
+      const { RuntimeClientError } = await import('../runtime/connection/types.js')
       const base = callMock.getMockImplementation()!
       callMock.mockImplementation(async (method: string, ...rest: unknown[]) => {
         if (method === 'sonar.status') {
@@ -185,7 +188,7 @@ describe('orca sonar', () => {
         return base(method, ...rest)
       })
       await main(['sonar', 'status'], '/tmp/api')
-      expect(err()).toContain('This Orca build has no Sonar; update Cachalote.')
+      expect(err()).toContain('This Orca build has no Sonar; update Cachalot.')
       expect(err()).not.toContain('Unknown method')
       expect(process.exitCode).toBe(1)
     })

@@ -39,6 +39,8 @@ import {
 import type { FloatingWorkspacePanelState } from '../components/floating-terminal/workspace/use-floating-workspace-panel'
 import type { OnboardingGate } from './startup/use-onboarding-and-feature-tips'
 
+// Cachalote: the titlebar's app name comes from the translation catalog.
+import '../cachalote/i18n/app-name-translation'
 const QuickOpen = lazy(() => import('../components/file-actions/quick-open/QuickOpen'))
 const WorkspaceCleanupDialog = lazy(
   () => import('../components/workspace-cleanup/WorkspaceCleanupDialog')

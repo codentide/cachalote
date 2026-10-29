@@ -22,6 +22,8 @@ import { logStartupMilestone } from '../diagnostics/startup-diagnostics'
 import { browserManager } from '../../browser/guest-lifecycle/manager/browser-manager'
 // Cachalote: the visible app name in the macOS menu bar.
 import { CACHALOTE_APP_NAME } from '../../../shared/cachalote/cachalote-name'
+// Cachalote: About and Hide name the app through the translation catalog.
+import '../../cachalote/i18n/app-name-menu'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   const store = state.store
