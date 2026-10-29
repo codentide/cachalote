@@ -3,6 +3,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Progress } from '@/components/ui/progress'
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
+// Cachalote: context ring tone by absolute tokens.
+import {
+  cachaloteContextRingBlinkClass,
+  cachaloteContextRingStyle
+} from '../../cachalote/native-chat/context-ring-tone'
 import {
   formatContextTokenCount,
   type NativeChatContextUsageSummary
@@ -119,8 +124,12 @@ export function NativeChatContextUsageRing({
             data-native-chat-context-usage-estimated={usage.estimated ? 'true' : undefined}
             className={cn(
               'flex size-7 items-center justify-center rounded-md text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring pointer-coarse:size-11',
+              // Cachalote: warn by absolute tokens, like the terminal status line.
+              cachaloteContextRingBlinkClass(usage.usedTokens),
               critical && 'text-destructive'
             )}
+            // Cachalote: warn by absolute tokens, like the terminal status line.
+            style={cachaloteContextRingStyle(usage.usedTokens)}
             // A read-only readout: clicking it must not pull focus out of the composer.
             onMouseDown={(event) => event.preventDefault()}
             onClick={(event) => {
