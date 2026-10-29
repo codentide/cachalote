@@ -7,18 +7,18 @@ import type { CachaloteUpdateState } from '../../../../shared/cachalote/cachalot
 
 const TEXT = {
   checking: { es: 'Buscando actualizaciones…', en: 'Checking for updates…' },
-  current: { es: 'Cachalote está al día', en: 'Cachalote is up to date' },
+  current: { es: 'Cachalot está al día', en: 'Cachalot is up to date' },
   unreachable: {
     es: 'No se pudo consultar si hay un release nuevo.',
     en: 'Could not check for a new release.'
   },
   running: { es: 'Ya hay una actualización en curso.', en: 'An update is already running.' },
   started: {
-    es: 'Construyendo en segundo plano. Cachalote se reabre sola al terminar.',
-    en: 'Building in the background. Cachalote reopens when done.'
+    es: 'Construyendo en segundo plano. Cachalot se reabre sola al terminar.',
+    en: 'Building in the background. Cachalot reopens when done.'
   },
   failed: { es: 'Falló la actualización', en: 'Update failed' },
-  title: { es: 'Actualización de Cachalote', en: 'Cachalote update' },
+  title: { es: 'Actualización de Cachalot', en: 'Cachalot update' },
   release: { es: 'Release nuevo de upstream', en: 'New upstream release' },
   changes: { es: 'Cambios sin instalar', en: 'Changes not installed' },
   upstreamUnreachable: {
@@ -26,12 +26,12 @@ const TEXT = {
     en: 'Upstream could not be checked; only your changes will be installed.'
   },
   warning: {
-    es: 'El build tarda unos minutos. Al terminar, Cachalote se reinicia sola; las terminales y sus agentes siguen corriendo.',
-    en: 'The build takes a few minutes. When it finishes, Cachalote restarts by itself; terminals and their agents keep running.'
+    es: 'El build tarda unos minutos. Al terminar, Cachalot se reinicia sola; las terminales y sus agentes siguen corriendo.',
+    en: 'The build takes a few minutes. When it finishes, Cachalot restarts by itself; terminals and their agents keep running.'
   },
   update: { es: 'Actualizar', en: 'Update' },
   dismiss: { es: 'Cerrar', en: 'Dismiss' },
-  updatedTitle: { es: 'Cachalote actualizada', en: 'Cachalote updated' },
+  updatedTitle: { es: 'Cachalot actualizada', en: 'Cachalot updated' },
   reapplied: {
     es: 'Choques con upstream resueltos solos',
     en: 'Upstream conflicts resolved on their own'

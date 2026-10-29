@@ -12,15 +12,15 @@ import {
   sonarServeProgress,
   type SonarSlotChoice
 } from '../../shared/cachalote/live/sonar-cli-policy'
-import type { RuntimeWorktreeRecord } from '../../shared/runtime-worktree-contracts'
-import type { CommandHandler, HandlerContext } from '../dispatch'
+import type { RuntimeWorktreeRecord } from '../../shared/worktree/catalog/runtime-worktree-contracts'
+import type { CommandHandler, HandlerContext } from '../dispatch/dispatch'
 import {
   getOptionalNonNegativeIntegerFlag,
   getOptionalPositiveIntegerFlag,
   getOptionalStringFlag
-} from '../flags'
-import { RuntimeClientError } from '../runtime-client'
-import { getOptionalWorktreeSelector, resolveCurrentWorktreeSelector } from '../selectors'
+} from '../arguments/flags'
+import { RuntimeClientError } from '../runtime/connection/types'
+import { getOptionalWorktreeSelector, resolveCurrentWorktreeSelector } from '../workspace-selection/workspace-selector'
 import { formatSonarFailure, formatSonarStatus } from './sonar-format'
 
 const DEFAULT_SERVE_TIMEOUT_MS = 300_000
@@ -39,7 +39,7 @@ async function callSonar<T>(
     if (error instanceof RuntimeClientError && error.code === 'method_not_found') {
       throw new RuntimeClientError(
         'incompatible_runtime',
-        'This Orca build has no Sonar; update Cachalote.'
+        'This Orca build has no Sonar; update Cachalot.'
       )
     }
     throw error

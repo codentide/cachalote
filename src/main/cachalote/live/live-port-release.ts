@@ -20,7 +20,7 @@ export async function freeForeignPort(
   context: PortReleaseContext
 ): Promise<void> {
   if (args.pid === process.pid) {
-    throw new Error('Cachalote cannot stop its own process.')
+    throw new Error('Cachalot cannot stop its own process.')
   }
   const reported = context.find(args.port, args.pid)
   if (!reported) {

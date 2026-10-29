@@ -101,7 +101,7 @@ describe('PortInspector', () => {
 })
 
 describe('terminateProcess', () => {
-  it('refuses Cachalote itself and init', () => {
+  it('refuses Cachalot itself and init', () => {
     expect(() => terminateProcess(process.pid, vi.fn())).toThrow()
     expect(() => terminateProcess(1, vi.fn())).toThrow()
   })

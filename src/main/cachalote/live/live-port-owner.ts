@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { runProcess } from '@orca/process-host'
-import { LSOF_NONBLOCKING_ARGS } from '../../../shared/lsof-nonblocking-args'
+import { LSOF_NONBLOCKING_ARGS } from '../../../shared/process-observation/lsof-nonblocking-args'
 
 /** Who holds a TCP port; cwd and command are what a kill is later checked against. */
 export type PortOwner = { pid: number; command: string; cwd: string | null }
@@ -177,7 +177,7 @@ export class PortInspector {
   }
 }
 
-/** SIGTERM that treats an already-gone pid as success; refuses Cachalote's own process. */
+/** SIGTERM that treats an already-gone pid as success; refuses Cachalot's own process. */
 export function terminateProcess(
   pid: number,
   kill: (pid: number, signal: NodeJS.Signals) => void = process.kill.bind(process)
