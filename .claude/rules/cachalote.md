@@ -49,7 +49,7 @@ Estos valores siguen siendo `Orca` a propósito. Cambiarlos rompe la app o el pe
 | `productName`, `app.name` | De ahí salen la carpeta del perfil (`~/Library/Application Support/orca`) y la entrada del llavero de `safeStorage` |
 | `appId` (`com.stablyai.orca`) | Identidad del perfil, del CLI `orca` y de los permisos de macOS |
 
-El nombre visible "Cachalote" va solo en `CFBundleDisplayName`, en
+El nombre visible "Cachalot" va solo en `CFBundleDisplayName`, en
 `resources/build/cachalote/InfoPlist.strings` y en `CACHALOTE_APP_NAME`.
 
 ## Desarrollo y prueba

@@ -131,13 +131,13 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
     submenu: [
       // Cachalote: macOS ignores labels on native roles, so About/Hide are explicit actions. The name is
       // literal: this file sits at the max-lines cap, and importing CACHALOTE_APP_NAME would push it over.
-      { label: 'About Cachalote', click: () => app.showAboutPanel() },
+      { label: 'About Cachalot', click: () => app.showAboutPanel() },
       checkForUpdatesItem,
       settingsItem,
       { type: 'separator' },
       { role: 'services' },
       { type: 'separator' },
-      { label: 'Hide Cachalote', accelerator: 'Command+H', click: () => app.hide() },
+      { label: 'Hide Cachalot', accelerator: 'Command+H', click: () => app.hide() },
       { role: 'hideOthers' },
       { role: 'unhide' },
       { type: 'separator' },

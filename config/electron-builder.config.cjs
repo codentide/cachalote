@@ -898,7 +898,9 @@ function findInstalledMacSigningIdentity(keychainFile) {
 // none of its lines change.
 module.exports.mac.extendInfo = {
   ...module.exports.mac.extendInfo,
-  CFBundleDisplayName: 'Cachalote'
+  CFBundleDisplayName: 'Cachalot',
+  // Finder, Spotlight and Launchpad show the bundle's file name unless this asks for the localized one.
+  LSHasLocalizedDisplayName: true
 }
 
 // Cachalote: macOS shows the localized CFBundleName in the menu bar and Mission Control, while

@@ -185,7 +185,7 @@ describe('orca sonar', () => {
         return base(method, ...rest)
       })
       await main(['sonar', 'status'], '/tmp/api')
-      expect(err()).toContain('This Orca build has no Sonar; update Cachalote.')
+      expect(err()).toContain('This Orca build has no Sonar; update Cachalot.')
       expect(err()).not.toContain('Unknown method')
       expect(process.exitCode).toBe(1)
     })
