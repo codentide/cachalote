@@ -1,4 +1,6 @@
-import { Layers, Plus, Ungroup } from 'lucide-react'
+import { useMemo } from 'react'
+import { Layers, Plus, Trash2, Ungroup } from 'lucide-react'
+import { useAppStore } from '@/store'
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -8,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import type { Worktree } from '../../../../shared/worktree/types'
 import { useWorktreeGroupsStore } from './worktree-groups-store'
+import { orphanWorktreeGroups } from './worktree-group-orphans'
 import { AFTER_MENU_CLOSE_MS, worktreeGroupLabel } from './worktree-group-labels'
 
 /** "Add to Group" / "Remove from Group" for every workspace the context menu targets. */
@@ -31,6 +34,16 @@ export function WorktreeGroupMenuItems({
   const anyGrouped = targetIds.some((id) => membership[id] !== undefined)
   const sortedGroups = Object.values(groups).sort((left, right) =>
     left.name.localeCompare(right.name)
+  )
+  const deleteGroup = useWorktreeGroupsStore((s) => s.deleteGroup)
+  const worktreesByRepo = useAppStore((s) => s.worktreesByRepo)
+  const orphans = useMemo(
+    () =>
+      orphanWorktreeGroups(
+        { groups, membership },
+        new Set(Object.values(worktreesByRepo).flatMap((list) => list.map((w) => w.id)))
+      ),
+    [groups, membership, worktreesByRepo]
   )
 
   return (
@@ -64,6 +77,28 @@ export function WorktreeGroupMenuItems({
               {group.name}
             </DropdownMenuItem>
           ))}
+          {orphans.length > 0 && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <Trash2 className="size-3.5" />
+                  {worktreeGroupLabel('deleteOrphan')}
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  {orphans.map(({ group, staleMembers }) => (
+                    <DropdownMenuItem key={group.id} onSelect={() => deleteGroup(group.id)}>
+                      <span className="flex-1">{group.name}</span>
+                      {/* Ids of worktrees it still points at: deleted, or on a host not loaded now. */}
+                      <span className="text-xs text-muted-foreground tabular-nums">
+                        {staleMembers}
+                      </span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </>
+          )}
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       {anyGrouped && (

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { createNonSecureContextUuid as createBrowserUuid } from '../../../../shared/non-secure-context-uuid'
+import { createNonSecureContextUuid as createBrowserUuid } from '../../../../shared/identifiers/non-secure-context-uuid'
 
 /** `color` is a workspace-status color id, `icon` an id from worktree-group-icons; older groups lack them. */
 export type WorktreeGroup = { id: string; name: string; color?: string; icon?: string }
@@ -28,6 +28,8 @@ type WorktreeGroupsState = WorktreeGroupsView & {
   createGroup: (name: string, worktreeIds: readonly string[]) => string
   addToGroup: (groupId: string, worktreeIds: readonly string[]) => void
   removeFromGroup: (worktreeIds: readonly string[]) => void
+  /** Drops the group and every membership pointing at it, including ids of deleted worktrees. */
+  deleteGroup: (groupId: string) => void
   renameGroup: (groupId: string, name: string) => void
   setGroupColor: (groupId: string, color: string) => void
   setGroupIcon: (groupId: string, icon: string) => void
@@ -96,6 +98,15 @@ export const useWorktreeGroupsStore = create<WorktreeGroupsState>()(
           for (const worktreeId of worktreeIds) {
             delete membership[worktreeId]
           }
+          return { membership, ...pruneEmptyGroups({ ...state, membership }) }
+        }),
+      deleteGroup: (groupId) =>
+        set((state) => {
+          const membership = Object.fromEntries(
+            Object.entries(state.membership).filter(
+              ([, memberGroupId]) => memberGroupId !== groupId
+            )
+          )
           return { membership, ...pruneEmptyGroups({ ...state, membership }) }
         }),
       renameGroup: (groupId, name) =>
