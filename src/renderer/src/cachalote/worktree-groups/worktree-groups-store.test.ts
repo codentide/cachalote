@@ -22,6 +22,16 @@ describe('worktree groups store', () => {
     expect(state.membership).toEqual({ app: id, backend: id })
   })
 
+  it('deletes a group with all its members, deleted worktrees included, and keeps the others', () => {
+    const store = useWorktreeGroupsStore.getState()
+    const doomed = store.createGroup('Doomed', ['deleted-a', 'deleted-b'])
+    const kept = store.createGroup('Kept', ['app'])
+    useWorktreeGroupsStore.getState().deleteGroup(doomed)
+    const state = useWorktreeGroupsStore.getState()
+    expect(Object.keys(state.groups)).toEqual([kept])
+    expect(state.membership).toEqual({ app: kept })
+  })
+
   it('moves a worktree from one group to another and drops the emptied group', () => {
     const store = useWorktreeGroupsStore.getState()
     const first = store.createGroup('First', ['app'])

@@ -17,7 +17,8 @@ const LABELS = {
   composerField: { es: 'Grupo de worktrees', en: 'Worktree group' },
   noGroup: { es: 'Sin grupo', en: 'No group' },
   newGroupOption: { es: 'Nuevo grupo…', en: 'New group…' },
-  groupName: { es: 'Nombre del grupo', en: 'Group name' }
+  groupName: { es: 'Nombre del grupo', en: 'Group name' },
+  deleteOrphan: { es: 'Eliminar grupo sin worktrees', en: 'Delete Group Without Worktrees' }
 } as const
 
 function uiLanguage(): string {
