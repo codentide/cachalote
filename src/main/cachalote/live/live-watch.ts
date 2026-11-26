@@ -1,9 +1,7 @@
 import { realpath } from 'node:fs/promises'
 import path from 'node:path'
-import {
-  buildParcelWatcherIgnoreOptions,
-  WATCHER_IGNORE_DIRS
-} from '../../ipc/filesystem/watchers/filesystem-watcher-ignore'
+import { buildParcelWatcherIgnoreOptions } from '../../ipc/filesystem/watchers/filesystem-watcher-ignore'
+import { WATCHER_IGNORE_DIRS } from '../../../shared/file-watch/watcher-ignore-dirs'
 import { subscribeViaWatcherProcess } from '../../ipc/filesystem/watcher-process/parcel-watcher-process'
 
 /** `directory` marks a created or changed directory: only a full enumeration knows what is inside. */
