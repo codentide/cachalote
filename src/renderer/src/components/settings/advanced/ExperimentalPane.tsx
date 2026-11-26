@@ -24,6 +24,13 @@ import {
   getEffectiveAgentHibernationIdleMs
 } from '@/lib/agent-session/hibernation/agent-hibernation-planner'
 import { trackWorktreeCardStyleChanged } from '@/components/sidebar/workspace-card/template/worktree-card-style-telemetry'
+// Cachalote: card style
+import {
+  resolveCardStyleChoice,
+  useCachaloteCardStyleStore,
+  type CardStyleChoice
+} from '@/cachalote/card-style/card-style-store'
+import { cardStyleLabel } from '@/cachalote/card-style/card-style-labels'
 
 const MS_PER_MINUTE = 60 * 1000
 
@@ -62,6 +69,9 @@ export function ExperimentalPane({
     getExperimentalSearchEntry().newWorktreeCardStyle
   ])
   const showAppRail = matchesSettingsSearch(searchQuery, [getExperimentalSearchEntry().appRail])
+  // Cachalote: card style
+  const cachaloteCards = useCachaloteCardStyleStore((s) => s.cachaloteCards)
+  const setCachaloteCards = useCachaloteCardStyleStore((s) => s.setCachaloteCards)
   const agentHibernationEnabled = settings.experimentalAgentHibernation === true
   // Use the planner’s clamped millisecond value/default while editing minutes.
   const agentHibernationIdleMinutes = Math.round(
@@ -292,13 +302,16 @@ export function ExperimentalPane({
                   )}
                 </p>
               </div>
-              <SettingsSegmentedControl<'classic' | 'experimental'>
+              {/* Cachalote: card style adds a third option over the experimental layout */}
+              <SettingsSegmentedControl<CardStyleChoice>
                 size="sm"
-                value={
-                  settings.experimentalNewWorktreeCardStyle === true ? 'experimental' : 'classic'
-                }
+                value={resolveCardStyleChoice(
+                  settings.experimentalNewWorktreeCardStyle === true,
+                  cachaloteCards
+                )}
                 onChange={(style) => {
-                  const experimental = style === 'experimental'
+                  setCachaloteCards(style === 'cachalote')
+                  const experimental = style !== 'classic'
                   void Promise.resolve(
                     updateSettings({ experimentalNewWorktreeCardStyle: experimental })
                   ).then(() => {
@@ -333,7 +346,9 @@ export function ExperimentalPane({
                       'auto.components.settings.ExperimentalPane.worktreeCardStyle.experimental',
                       'Experimental'
                     )
-                  }
+                  },
+                  // Cachalote: card style
+                  { value: 'cachalote', label: cardStyleLabel('option') }
                 ]}
               />
             </div>

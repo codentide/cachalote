@@ -1,0 +1,15 @@
+/* Cachalote cards read as cards: a visible edge and a faint fill on upstream's own frame.
+   Active and hovered rows keep upstream's colors. */
+[data-worktree-card-surface]:not([data-worktree-card-active]):has(
+    > [data-cachalote-card],
+    > [data-worktree-sleeping-dim] > [data-cachalote-card]
+  ) {
+  border-color: var(--color-worktree-sidebar-border);
+}
+
+[data-worktree-card-surface]:not([data-worktree-card-active]):not(:hover):has(
+    > [data-cachalote-card],
+    > [data-worktree-sleeping-dim] > [data-cachalote-card]
+  ) {
+  background-color: color-mix(in srgb, var(--color-worktree-sidebar-accent) 35%, transparent);
+}
