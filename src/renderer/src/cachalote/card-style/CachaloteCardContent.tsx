@@ -42,6 +42,25 @@ function ProjectBadge({
   )
 }
 
+/** A one-icon badge the height of the project badge: primary worktree, asleep. */
+function IconBadge({
+  label,
+  children
+}: {
+  label: string
+  children: React.ReactNode
+}): React.JSX.Element {
+  return (
+    <span
+      className="inline-grid h-[17px] w-[19px] shrink-0 place-items-center rounded-[4px] bg-worktree-sidebar-accent text-muted-foreground"
+      title={label}
+      aria-label={label}
+    >
+      {children}
+    </span>
+  )
+}
+
 function reviewTagClassName(status: string | undefined): string {
   if (status === 'success') {
     return 'text-emerald-500'
@@ -128,10 +147,9 @@ export function CachaloteCardContent({
             {title}
           </span>
           {unreadDot}
-          <Moon
-            className="size-3 shrink-0 text-muted-foreground"
-            aria-label={cardStyleLabel('asleep')}
-          />
+          <IconBadge label={cardStyleLabel('asleep')}>
+            <Moon className="size-[11px]" />
+          </IconBadge>
           <ActivityTime at={worktree.lastActivityAt} now={now} />
         </div>
       </div>
@@ -148,12 +166,9 @@ export function CachaloteCardContent({
       <div className="flex min-w-0 items-center gap-1.5">
         {projectBadge}
         {worktree.isMainWorktree ? (
-          <span
-            className="inline-grid h-[17px] w-[19px] shrink-0 place-items-center rounded-[4px] bg-worktree-sidebar-accent text-muted-foreground"
-            title={cardStyleLabel('primary')}
-          >
+          <IconBadge label={cardStyleLabel('primary')}>
             <House className="size-[11px]" />
-          </span>
+          </IconBadge>
         ) : null}
         {showBranch ? (
           <span
