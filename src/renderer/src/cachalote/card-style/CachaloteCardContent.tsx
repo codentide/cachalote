@@ -2,6 +2,7 @@ import React from 'react'
 import { GitBranch, GitFork, GitMerge, GitPullRequest, House, Moon, Server } from 'lucide-react'
 
 import { cn } from '@/lib/class-names'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useNow } from '@/lib/window-activity/use-now'
 import { formatShortTimeAgo } from '@/lib/time-format/short-time-ago'
 import type { WorktreeCardController } from '@/components/sidebar/workspace-card/controller/use-worktree-card-controller'
@@ -191,13 +192,17 @@ export function CachaloteCardContent({
           </IconBadge>
         ) : null}
         {showBranch ? (
-          <span
-            className="inline-flex h-[17px] min-w-0 items-center gap-1 rounded-[4px] bg-worktree-sidebar-accent px-1.5 text-muted-foreground"
-            title={branch}
-          >
-            <GitBranch className="size-[11px] shrink-0" />
-            <span className="truncate font-mono text-3xs">{branch}</span>
-          </span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="inline-flex h-[17px] min-w-0 items-center gap-1 rounded-[4px] bg-worktree-sidebar-accent px-1.5 text-muted-foreground">
+                <GitBranch className="size-[11px] shrink-0" />
+                <span className="truncate font-mono text-3xs">{branch}</span>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={4}>
+              <span className="font-mono">{branch}</span>
+            </TooltipContent>
+          </Tooltip>
         ) : null}
         {hostLabel ? (
           <span className={TAG_CLASS_NAME}>
