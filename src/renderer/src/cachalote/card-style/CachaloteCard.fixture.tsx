@@ -1,4 +1,5 @@
 import { defineFixture } from '../../component-fixtures/component-fixture'
+import { useAppStore } from '@/store'
 import type { Repo } from '../../../../shared/repository/repo-types'
 import type { Worktree } from '../../../../shared/worktree/types'
 import WorktreeCard from '@/components/sidebar/workspace-card/surface/WorktreeCard'
@@ -57,7 +58,15 @@ const SEEDS: WorkspaceSeed[] = [
     manualUnread: true,
     lastActivityMinutesAgo: 240
   },
-  { id: 'wt-idle', name: 'main', agents: [], lastActivityMinutesAgo: 1500 }
+  { id: 'wt-idle', name: 'main', agents: [], lastActivityMinutesAgo: 1500 },
+  {
+    id: 'wt-mongo',
+    name: 'AX-3846',
+    agents: [
+      { agentType: 'claude', state: 'working', minutesAgo: 36, toolName: 'mcp__mongodb__aggregate' }
+    ],
+    lastActivityMinutesAgo: 36
+  }
 ]
 
 const REPOS: Record<string, Repo> = {
@@ -83,13 +92,21 @@ const REPOS: Record<string, Repo> = {
     addedAt: 0
   },
   'wt-done': { id: 'r3', path: '/r3', displayName: 'zitta', badgeColor: '#eab308', addedAt: 0 },
-  'wt-idle': { id: 'r4', path: '/r4', displayName: 'kamae', badgeColor: '#f97316', addedAt: 0 }
+  'wt-idle': { id: 'r4', path: '/r4', displayName: 'kamae', badgeColor: '#f97316', addedAt: 0 },
+  'wt-mongo': {
+    id: 'r5',
+    path: '/r5',
+    displayName: 'ax-backend',
+    badgeColor: '#eab308',
+    addedAt: 0
+  }
 }
 
 const now = Date.now()
 const worktrees: Worktree[] = SEEDS.map((seed) => ({
   ...makeWorktree(seed, now),
-  ...(seed.id === 'wt-idle' ? { isMainWorktree: true, branch: 'main' } : {})
+  ...(seed.id === 'wt-idle' ? { isMainWorktree: true, branch: 'main' } : {}),
+  ...(seed.id === 'wt-mongo' ? { branch: 'AX-3845' } : {})
 }))
 
 export const cards = defineFixture({
@@ -97,6 +114,10 @@ export const cards = defineFixture({
   setup: () => {
     seedWorkspaces(SEEDS, now)
     useCachaloteCardStyleStore.setState({ cachaloteCards: true })
+    // 'unknown' must stay hidden, as upstream's label does; 'rebase' shows its tag.
+    useAppStore.setState({
+      gitConflictOperationByWorktree: { 'wt-mongo': 'unknown', 'wt-failed': 'rebase' }
+    })
   },
   render: () => (
     <div className="flex flex-col gap-1 bg-worktree-sidebar py-1.5 text-worktree-sidebar-foreground">

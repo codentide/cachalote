@@ -8,6 +8,7 @@ import type { WorktreeCardController } from '@/components/sidebar/workspace-card
 import { getCompactAgentSecondary } from '@/components/sidebar/workspace-card/activity/worktree-card-compact-agent-row'
 import { useWorktreeCardRolledUpUnread } from '@/components/sidebar/workspace-card/surface/worktree-card-title-status'
 import { resolveRepoHeaderColor } from '@/components/sidebar/worktree-list/rows/project-header-color'
+import { conflictOperationLabel } from '@/components/sidebar/workspace-card/metadata/worktree-conflict-label'
 import { useIsSleepingWorktree } from '@/components/sidebar/workspace-actions/sleep/use-worktree-sleep-state'
 import { pickCardLeadAgent } from './card-lead-agent'
 import { cardStyleLabel } from './card-style-labels'
@@ -68,17 +69,23 @@ function reviewTagClassName(status: string | undefined): string {
   return status === 'failure' ? 'text-red-500' : ''
 }
 
+// Upstream's label: an operation git can't name ('unknown') shows nothing, as on its own cards.
+function cardConflictLabel(card: WorktreeCardController): string {
+  return card.conflictOperation ? conflictOperationLabel(card.conflictOperation) : ''
+}
+
 function ReviewTags({ card }: { card: WorktreeCardController }): React.JSX.Element | null {
-  const { prDisplay, conflictOperation, lineageChildCount } = card
-  if (!prDisplay && !conflictOperation && lineageChildCount === 0) {
+  const { prDisplay, lineageChildCount } = card
+  const conflictLabel = cardConflictLabel(card)
+  if (!prDisplay && !conflictLabel && lineageChildCount === 0) {
     return null
   }
   return (
     <>
-      {conflictOperation ? (
+      {conflictLabel ? (
         <span className={cn(TAG_CLASS_NAME, 'text-destructive')}>
           <GitMerge />
-          {conflictOperation}
+          {conflictLabel}
         </span>
       ) : null}
       {prDisplay ? (
@@ -100,9 +107,22 @@ function ReviewTags({ card }: { card: WorktreeCardController }): React.JSX.Eleme
   )
 }
 
-function ActivityTime({ at, now }: { at: number; now: number }): React.JSX.Element | null {
+function ActivityTime({
+  at,
+  now,
+  unread
+}: {
+  at: number
+  now: number
+  unread: boolean
+}): React.JSX.Element | null {
   return at > 0 ? (
-    <span className="shrink-0 text-2xs text-muted-foreground/70 tabular-nums">
+    <span
+      className={cn(
+        'shrink-0 text-2xs tabular-nums',
+        unread ? 'font-semibold text-unread' : 'text-muted-foreground/70'
+      )}
+    >
       {formatShortTimeAgo(at, now)}
     </span>
   ) : null
@@ -150,14 +170,14 @@ export function CachaloteCardContent({
           <IconBadge label={cardStyleLabel('asleep')}>
             <Moon className="size-[11px]" />
           </IconBadge>
-          <ActivityTime at={worktree.lastActivityAt} now={now} />
+          <ActivityTime at={worktree.lastActivityAt} now={now} unread={unread} />
         </div>
       </div>
     )
   }
 
   const tags = <ReviewTags card={card} />
-  const hasTags = Boolean(card.prDisplay || card.conflictOperation || card.lineageChildCount > 0)
+  const hasTags = Boolean(card.prDisplay || cardConflictLabel(card) || card.lineageChildCount > 0)
   const showLead = lead !== null && lead.state !== 'idle'
 
   return (
@@ -187,7 +207,7 @@ export function CachaloteCardContent({
         ) : null}
         <span className="min-w-1 flex-1" />
         {unreadDot}
-        <ActivityTime at={worktree.lastActivityAt} now={now} />
+        <ActivityTime at={worktree.lastActivityAt} now={now} unread={unread} />
       </div>
 
       <div className="truncate text-[13px] leading-5 font-semibold" title={title}>
