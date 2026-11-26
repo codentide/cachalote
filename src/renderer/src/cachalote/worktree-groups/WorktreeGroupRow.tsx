@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 import {
   ContextMenu,
@@ -24,6 +25,8 @@ import { writeWorkspaceDragData } from '../../components/sidebar/workspace-statu
 import type { DraggedWorktreeCopies } from '../../components/sidebar/worktree-list/drag/dragged-worktree-copies'
 import { useAppStore } from '@/store'
 import { LiveGroupMenuItem, LiveGroupSummary } from '../live/LiveGroupSummary'
+import { usePublishGuideAnchor } from './worktree-group-guide-anchor'
+import { GROUP_TREE_GUIDE_CLASS_NAME } from './worktree-group-tree-guide'
 
 type CardDragStart = (
   event: React.DragEvent<HTMLDivElement>,
@@ -62,6 +65,8 @@ export function WorktreeGroupRow({
   const colorOptions = getWorkspaceStatusColorOptions()
   // Groups saved before colors existed keep the old muted look.
   const tone = colorOptions.find((option) => option.id === row.color)?.tone
+  const chevronRef = useRef<SVGSVGElement>(null)
+  usePublishGuideAnchor(row.groupId, chevronRef)
   const paddingLeft = getWorktreeCardContentIndent({
     isGrouped,
     groupDepth: row.groupDepth,
@@ -86,7 +91,7 @@ export function WorktreeGroupRow({
           role="button"
           tabIndex={-1}
           aria-expanded={!row.collapsed}
-          className="flex h-[30px] w-full cursor-pointer items-center gap-1.5 pr-2 text-muted-foreground transition-colors hover:text-foreground"
+          className="relative flex h-[30px] w-full cursor-pointer items-center gap-1.5 pr-2 text-muted-foreground transition-colors hover:text-foreground"
           style={{ paddingLeft }}
           // Dropped on a status, the folder moves the members it shows in this section.
           draggable
@@ -108,8 +113,17 @@ export function WorktreeGroupRow({
           onDoubleClick={() => rename(0)}
         >
           <ChevronDown
+            ref={chevronRef}
             className={cn('size-3.5 shrink-0 transition-transform', row.collapsed && '-rotate-90')}
           />
+          {row.collapsed ? null : (
+            // The folder's tree guide starts under the chevron; member cards carry it on.
+            <span
+              aria-hidden="true"
+              className={cn(GROUP_TREE_GUIDE_CLASS_NAME, 'top-[23px] bottom-0')}
+              style={{ left: paddingLeft + 7 }}
+            />
+          )}
           <WorktreeGroupIcon icon={row.icon} className={cn('size-3.5 shrink-0', tone)} />
           <span className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">
             {row.name}

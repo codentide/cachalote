@@ -8,6 +8,16 @@ import {
   type WorkspaceSeed
 } from '@/components/sidebar/worktree-card-slot-fixture-seeds'
 import { useCachaloteCardStyleStore } from './card-style-store'
+import {
+  getWorktreeCardContentIndent,
+  getWorktreeCardSurfaceInset
+} from '@/components/sidebar/worktree-list/rows/indentation'
+import { WorktreeGroupRow } from '../worktree-groups/WorktreeGroupRow'
+import {
+  folderMemberIds,
+  folderMemberPositions,
+  useWorktreeGroupFolderMembers
+} from '../worktree-groups/worktree-group-folder-members'
 
 const SEEDS: WorkspaceSeed[] = [
   {
@@ -101,6 +111,69 @@ export const cards = defineFixture({
           nativeDragEnabled={false}
         />
       ))}
+    </div>
+  )
+})
+
+const GROUP_MEMBERS = ['wt-waiting', 'wt-failed', 'wt-working']
+const GROUP_DEPTH = 1
+const memberIndent = getWorktreeCardContentIndent({
+  isGrouped: true,
+  groupDepth: GROUP_DEPTH,
+  lineageDepth: 1
+})
+const memberInset = getWorktreeCardSurfaceInset({ isGrouped: true, groupDepth: GROUP_DEPTH })
+
+export const groupTree = defineFixture({
+  width: 320,
+  setup: () => {
+    seedWorkspaces(SEEDS, now)
+    useCachaloteCardStyleStore.setState({ cachaloteCards: true })
+    const rows = [
+      {
+        type: 'cachalote-worktree-group',
+        groupId: 'g1',
+        collapsed: false,
+        worktreeIds: GROUP_MEMBERS
+      }
+    ]
+    useWorktreeGroupFolderMembers
+      .getState()
+      .publish(folderMemberIds(rows), folderMemberPositions(rows))
+  },
+  render: () => (
+    <div className="flex flex-col bg-worktree-sidebar py-1.5 text-worktree-sidebar-foreground">
+      <WorktreeGroupRow
+        isGrouped
+        row={{
+          type: 'cachalote-worktree-group',
+          key: 's:g1',
+          sectionKey: 's',
+          groupId: 'g1',
+          name: 'Eventos',
+          color: undefined,
+          icon: undefined,
+          count: GROUP_MEMBERS.length,
+          collapsed: false,
+          groupDepth: GROUP_DEPTH,
+          worktreeIds: GROUP_MEMBERS,
+          memberHostKeys: GROUP_MEMBERS
+        }}
+      />
+      {worktrees
+        .filter((worktree) => GROUP_MEMBERS.includes(worktree.id))
+        .map((worktree) => (
+          <div key={worktree.id} style={{ paddingLeft: memberInset }}>
+            <WorktreeCard
+              worktree={worktree}
+              repo={REPOS[worktree.id]}
+              isActive={worktree.id === 'wt-working'}
+              contentIndent={memberIndent - memberInset}
+              flushSurface
+              nativeDragEnabled={false}
+            />
+          </div>
+        ))}
     </div>
   )
 })

@@ -11,6 +11,8 @@ import { resolveRepoHeaderColor } from '@/components/sidebar/worktree-list/rows/
 import { pickCardLeadAgent } from './card-lead-agent'
 import { cardStyleLabel } from './card-style-labels'
 import { CardStateIcon } from './CardStateIcon'
+import { WorktreeGroupTreeGuide } from '../worktree-groups/worktree-group-tree-guide'
+import { useWorktreeGroupFolderMembers } from '../worktree-groups/worktree-group-folder-members'
 import './cachalote-card.css'
 
 const TAG_CLASS_NAME =
@@ -60,15 +62,19 @@ export function CachaloteCardContent({
   const showBranch = branch.length > 0 && branch !== title
   const hostLabel = card.hostContextLabel
   const quiet = (lead === null || lead.state === 'idle') && !card.isActiveSurface
+  // Room for the folder's tree guide to branch into the card.
+  const inFolder = useWorktreeGroupFolderMembers((s) => s.positions.has(worktree.id))
 
   return (
     <div
       data-cachalote-card=""
       className={cn(
         'flex min-w-0 flex-1 flex-col gap-[5px] rounded-lg border border-worktree-sidebar-border bg-worktree-sidebar-accent/35 px-2.5 py-2 transition-[background-color,border-color] duration-200',
-        quiet && 'opacity-55'
+        quiet && 'opacity-55',
+        inFolder && 'ml-2.5'
       )}
     >
+      <WorktreeGroupTreeGuide worktreeId={worktree.id} />
       <div className="flex min-w-0 items-center gap-1.5">
         {repo ? <ProjectBadge name={repo.displayName} badgeColor={repo.badgeColor} /> : null}
         {worktree.isMainWorktree ? (
