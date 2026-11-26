@@ -115,7 +115,15 @@ export const cards = defineFixture({
   )
 })
 
-const GROUP_MEMBERS = ['wt-waiting', 'wt-failed', 'wt-working']
+const GROUP_MEMBERS = ['wt-waiting', 'wt-failed', 'wt-working', 'wt-asleep']
+// No tabs or agents seeded, so the sidebar treats it as asleep.
+const ASLEEP: Worktree = {
+  ...makeWorktree(
+    { id: 'wt-asleep', name: 'ax-3846', agents: [], lastActivityMinutesAgo: 1020 },
+    now
+  ),
+  branch: 'AX-3845'
+}
 const GROUP_DEPTH = 1
 const memberIndent = getWorktreeCardContentIndent({
   isGrouped: true,
@@ -160,13 +168,13 @@ export const groupTree = defineFixture({
           memberHostKeys: GROUP_MEMBERS
         }}
       />
-      {worktrees
+      {[...worktrees, ASLEEP]
         .filter((worktree) => GROUP_MEMBERS.includes(worktree.id))
         .map((worktree) => (
           <div key={worktree.id} style={{ paddingLeft: memberInset }}>
             <WorktreeCard
               worktree={worktree}
-              repo={REPOS[worktree.id]}
+              repo={REPOS[worktree.id] ?? REPOS['wt-failed']}
               isActive={worktree.id === 'wt-working'}
               contentIndent={memberIndent - memberInset}
               flushSurface

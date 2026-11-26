@@ -9,11 +9,8 @@ const GUIDE_TONE = 'border-worktree-sidebar-border'
 // The last branch curves into its card (└); the rest leave the trunk straight (├).
 const BRANCH_RADIUS = 6
 
-/** The vertical run of a folder's tree guide. */
-export const GROUP_TREE_GUIDE_CLASS_NAME = cn(
-  'pointer-events-none absolute w-0 border-l',
-  GUIDE_TONE
-)
+/** The vertical run of a folder's tree guide; it starts at the first member, clear of the chevron. */
+const GROUP_TREE_GUIDE_CLASS_NAME = cn('pointer-events-none absolute w-0 border-l', GUIDE_TONE)
 
 type GuideGeometry = { left: number; branchWidth: number }
 
