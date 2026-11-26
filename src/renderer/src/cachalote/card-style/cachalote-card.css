@@ -3,7 +3,8 @@
    Upstream wraps the content in one div (the sleep dim), so the card sits one or two levels down. */
 [data-worktree-card-surface]:has(> [data-cachalote-card], > div > [data-cachalote-card]) {
   background: transparent !important;
-  border-color: transparent !important;
+  /* No frame edge: it would clip the tree guide where two member cards meet. */
+  border-width: 0 !important;
   box-shadow: none !important;
 }
 

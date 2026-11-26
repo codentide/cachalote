@@ -4,9 +4,12 @@ import { cn } from '@/lib/class-names'
 import { useWorktreeGroupFolderMembers } from './worktree-group-folder-members'
 import { useWorktreeGroupGuideAnchors } from './worktree-group-guide-anchor'
 
-const GUIDE_TONE = 'border-dashed border-worktree-sidebar-foreground/20'
+// Same tone as an idle card's edge, so the tree reads as part of the cards.
+const GUIDE_TONE = 'border-worktree-sidebar-border'
+// Each branch curves off the trunk into its card.
+const BRANCH_RADIUS = 6
 
-/** The vertical run of a folder's tree guide (├ └), dashed and quiet. */
+/** The vertical run of a folder's tree guide. */
 export const GROUP_TREE_GUIDE_CLASS_NAME = cn(
   'pointer-events-none absolute w-0 border-l',
   GUIDE_TONE
@@ -54,16 +57,21 @@ export function WorktreeGroupTreeGuide({
       {geometry ? (
         <>
           <span
-            className={cn(
-              GROUP_TREE_GUIDE_CLASS_NAME,
-              'top-0',
-              position.last ? 'bottom-1/2' : 'bottom-0'
-            )}
-            style={{ left: geometry.left }}
+            className={cn(GROUP_TREE_GUIDE_CLASS_NAME, 'top-0', !position.last && 'bottom-0')}
+            style={{
+              left: geometry.left,
+              ...(position.last ? { bottom: `calc(50% + ${BRANCH_RADIUS}px)` } : {})
+            }}
           />
           <span
-            className={cn('pointer-events-none absolute top-1/2 h-0 border-t', GUIDE_TONE)}
-            style={{ left: geometry.left, width: geometry.branchWidth }}
+            className={cn('pointer-events-none absolute border-b border-l', GUIDE_TONE)}
+            style={{
+              left: geometry.left,
+              top: `calc(50% - ${BRANCH_RADIUS}px)`,
+              height: BRANCH_RADIUS,
+              width: geometry.branchWidth,
+              borderBottomLeftRadius: BRANCH_RADIUS
+            }}
           />
         </>
       ) : null}
