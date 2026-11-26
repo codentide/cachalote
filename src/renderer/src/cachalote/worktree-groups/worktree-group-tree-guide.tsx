@@ -5,7 +5,7 @@ import { useWorktreeGroupFolderMembers } from './worktree-group-folder-members'
 import { useWorktreeGroupGuideAnchors } from './worktree-group-guide-anchor'
 
 // Same tone as an idle card's edge, so the tree reads as part of the cards.
-const GUIDE_TONE = 'border-worktree-sidebar-border'
+const GUIDE_TONE = 'border-worktree-sidebar-border/55'
 // The last branch curves into its card (└); the rest leave the trunk straight (├).
 const BRANCH_RADIUS = 6
 
