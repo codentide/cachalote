@@ -120,7 +120,7 @@ export function WorktreeGroupRow({
             // The folder's tree guide starts under the chevron; member cards carry it on.
             <span
               aria-hidden="true"
-              className={cn(GROUP_TREE_GUIDE_CLASS_NAME, 'top-[23px] bottom-0')}
+              className={cn(GROUP_TREE_GUIDE_CLASS_NAME, 'top-[27px] bottom-0')}
               style={{ left: paddingLeft + 7 }}
             />
           )}
