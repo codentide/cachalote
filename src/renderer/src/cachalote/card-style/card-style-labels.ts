@@ -5,7 +5,9 @@ const LABELS = {
   option: { es: 'Cachalote', en: 'Cachalote' },
   primary: { es: 'Worktree principal', en: 'Primary worktree' },
   childWorktrees: { es: 'Worktrees hijos', en: 'Child worktrees' },
-  otherAgents: { es: 'Agentes más', en: 'More agents' }
+  otherAgents: { es: 'Agentes más', en: 'More agents' },
+  unread: { es: 'Sin leer', en: 'Unread' },
+  asleep: { es: 'Suspendida', en: 'Asleep' }
 } as const
 
 function uiLanguage(): string {
