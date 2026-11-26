@@ -5,8 +5,12 @@
   background: transparent !important;
   /* No frame edge: it would clip the tree guide where two member cards meet. */
   border-width: 0 !important;
-  /* The card box has its own padding; the frame's would leave ~11px of empty gap between cards. */
-  padding-block: 2px !important;
+  /* The card box has its own padding. The sidebar row adds 6px below each frame (upstream's
+     lineage frame `after`); pulling 2px back leaves cards 4px apart. */
+  padding-block: 0 !important;
+  margin-bottom: -2px;
+  /* Lets the tree guide reach across that gap to the next member. */
+  overflow: visible !important;
   box-shadow: none !important;
 }
 

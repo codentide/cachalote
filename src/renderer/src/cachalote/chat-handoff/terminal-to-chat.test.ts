@@ -25,7 +25,9 @@ const mocks = vi.hoisted(() => {
 vi.stubGlobal('window', { api: { cachaloteChatHandoff: { terminalShellAlone: mocks.shellAlone } } })
 
 vi.mock('@/store', () => ({ useAppStore: { getState: () => mocks.state } }))
-vi.mock('@/lib/pane-manager/pane-layout/pane-key-pty-id', () => ({ getPtyIdForPaneKey: mocks.getPtyIdForPaneKey }))
+vi.mock('@/lib/pane-manager/pane-layout/pane-key-pty-id', () => ({
+  getPtyIdForPaneKey: mocks.getPtyIdForPaneKey
+}))
 vi.mock('@/runtime/hosted-terminals/inspection/runtime-terminal-process-inspection', () => ({
   confirmRuntimeTerminalForegroundProcess: mocks.confirmForeground
 }))
@@ -35,9 +37,12 @@ vi.mock('@/runtime/hosted-terminals/input/runtime-terminal-input-send', () => ({
 vi.mock('@/runtime/native-chat/session-ownership/structured-agent-session-owner', () => ({
   structuredAgentSessionTargetForHost: mocks.target
 }))
-vi.mock('@/components/right-sidebar/ai-vault/session-actions/ai-vault-session-resume-in-chat-launch', () => ({
-  adoptingAgentOnHost: async (agent: string) => agent
-}))
+vi.mock(
+  '@/components/right-sidebar/ai-vault/session-actions/ai-vault-session-resume-in-chat-launch',
+  () => ({
+    adoptingAgentOnHost: async (agent: string) => agent
+  })
+)
 vi.mock('../../../../shared/identifiers/non-secure-context-uuid', () => ({
   createNonSecureContextUuid: () => 'request-1'
 }))

@@ -192,7 +192,8 @@ export const groupTree = defineFixture({
       {[...worktrees, ASLEEP]
         .filter((worktree) => GROUP_MEMBERS.includes(worktree.id))
         .map((worktree) => (
-          <div key={worktree.id} style={{ paddingLeft: memberInset }}>
+          // The sidebar's virtual rows pad 6px below each card (lineage frame `after`).
+          <div key={worktree.id} style={{ paddingLeft: memberInset, paddingBottom: 6 }}>
             <WorktreeCard
               worktree={worktree}
               repo={REPOS[worktree.id] ?? REPOS['wt-failed']}

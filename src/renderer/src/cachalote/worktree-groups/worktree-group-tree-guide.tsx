@@ -8,6 +8,8 @@ import { useWorktreeGroupGuideAnchors } from './worktree-group-guide-anchor'
 const GUIDE_TONE = 'border-worktree-sidebar-border/55'
 // The last branch curves into its card (└); the rest leave the trunk straight (├).
 const BRANCH_RADIUS = 6
+// Space the sidebar row leaves under each card frame; the trunk crosses it to stay unbroken.
+const ROW_GAP_BELOW_FRAME = 4
 
 /** The vertical run of a folder's tree guide; it starts at the first member, clear of the chevron. */
 const GROUP_TREE_GUIDE_CLASS_NAME = cn('pointer-events-none absolute w-0 border-l', GUIDE_TONE)
@@ -54,10 +56,10 @@ export function WorktreeGroupTreeGuide({
       {geometry ? (
         <>
           <span
-            className={cn(GROUP_TREE_GUIDE_CLASS_NAME, 'top-0', !position.last && 'bottom-0')}
+            className={cn(GROUP_TREE_GUIDE_CLASS_NAME, 'top-0')}
             style={{
               left: geometry.left,
-              ...(position.last ? { bottom: `calc(50% + ${BRANCH_RADIUS}px)` } : {})
+              bottom: position.last ? `calc(50% + ${BRANCH_RADIUS}px)` : -ROW_GAP_BELOW_FRAME
             }}
           />
           {position.last ? (
