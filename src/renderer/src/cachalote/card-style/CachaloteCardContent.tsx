@@ -130,7 +130,7 @@ function ActivityTime({
 }
 
 const CARD_BOX_CLASS_NAME =
-  'flex min-w-0 flex-1 flex-col gap-[5px] rounded-lg border border-worktree-sidebar-border/55 bg-worktree-sidebar-accent/35 p-2.5 transition-[background-color,border-color] duration-200'
+  'flex min-w-0 flex-1 flex-col gap-[5px] rounded-lg border border-transparent p-2.5 transition-[background-color,border-color] duration-200'
 
 /** Cachalote's card: project, branch and time; the name; the lead agent's state. */
 export function CachaloteCardContent({
