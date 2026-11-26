@@ -1,15 +1,29 @@
-/* Cachalote cards read as cards: a visible edge and a faint fill on upstream's own frame.
-   Active and hovered rows keep upstream's colors. */
-[data-worktree-card-surface]:not([data-worktree-card-active]):has(
-    > [data-cachalote-card],
-    > [data-worktree-sleeping-dim] > [data-cachalote-card]
-  ) {
-  border-color: var(--color-worktree-sidebar-border);
+/* The Cachalote card draws its own box; upstream's frame keeps the clicks, the indent and the
+   gap between cards, and gives up its paint so no frame state shows a different card.
+   Upstream wraps the content in one div (the sleep dim), so the card sits one or two levels down. */
+[data-worktree-card-surface]:has(> [data-cachalote-card], > div > [data-cachalote-card]) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
-[data-worktree-card-surface]:not([data-worktree-card-active]):not(:hover):has(
-    > [data-cachalote-card],
-    > [data-worktree-sleeping-dim] > [data-cachalote-card]
-  ) {
-  background-color: color-mix(in srgb, var(--color-worktree-sidebar-accent) 35%, transparent);
+[data-worktree-card-surface]:hover > [data-cachalote-card],
+[data-worktree-card-surface]:hover > div > [data-cachalote-card] {
+  background-color: color-mix(in srgb, var(--color-worktree-sidebar-accent) 60%, transparent);
+}
+
+[data-worktree-card-surface][data-worktree-card-selected] > [data-cachalote-card],
+[data-worktree-card-surface][data-worktree-card-selected] > div > [data-cachalote-card] {
+  border-color: color-mix(in oklab, var(--color-worktree-sidebar-ring) 45%, transparent);
+}
+
+/* The open workspace: the same brighter edge and wash as upstream's active card. */
+[data-worktree-card-surface][data-worktree-card-active] > [data-cachalote-card],
+[data-worktree-card-surface][data-worktree-card-active] > div > [data-cachalote-card] {
+  border-color: color-mix(
+    in srgb,
+    var(--color-worktree-sidebar-foreground) 22%,
+    var(--color-worktree-sidebar-border)
+  );
+  background-color: color-mix(in srgb, var(--color-worktree-sidebar-foreground) 10%, transparent);
 }

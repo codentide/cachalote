@@ -64,7 +64,10 @@ export function CachaloteCardContent({
   return (
     <div
       data-cachalote-card=""
-      className={cn('flex min-w-0 flex-1 flex-col gap-[5px] py-0.5 pl-1.5', quiet && 'opacity-55')}
+      className={cn(
+        'flex min-w-0 flex-1 flex-col gap-[5px] rounded-lg border border-worktree-sidebar-border bg-worktree-sidebar-accent/35 px-2.5 py-2 transition-[background-color,border-color] duration-200',
+        quiet && 'opacity-55'
+      )}
     >
       <div className="flex min-w-0 items-center gap-1.5">
         {repo ? <ProjectBadge name={repo.displayName} badgeColor={repo.badgeColor} /> : null}
