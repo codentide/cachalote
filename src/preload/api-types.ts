@@ -92,8 +92,6 @@ import type {
   SparsePresetsApi,
   WorktreeApi
 } from './api/workspaces/worktree-api'
-// Cachalote: Sonar slots.
-import type { CachaloteLiveApi } from '../shared/cachalote/live/live-ipc'
 // Cachalote: the same conversation between terminal and chat.
 import type { CachaloteChatHandoffApi } from '../shared/cachalote/chat-handoff/chat-handoff-ipc'
 
@@ -156,8 +154,6 @@ export type PreloadApi = {
   avatarGeneration: AvatarGenerationApi
   skills: SkillsApi
   pet: PetApi
-  // Cachalote: Sonar slots; absent in the web client.
-  cachaloteLive?: CachaloteLiveApi
   // Cachalote: the same conversation between terminal and chat; absent in the web client.
   cachaloteChatHandoff?: CachaloteChatHandoffApi
   appIcon: AppIconApi

@@ -33,7 +33,7 @@ describe('CachaloteUpdateCard updated state', () => {
         release: 'v1.4.233',
         reappliedFiles: ['src/renderer/src/components/sidebar/WorktreeList.tsx'],
         resolvedFiles: ['src/renderer/src/components/native-chat/NativeChatToolRun.tsx'],
-        pendingTestFiles: ['src/main/cachalote/live/live-watch.test.ts']
+        pendingTestFiles: ['src/main/cachalote/chat-handoff/ceded-chats.test.ts']
       })
     )
     expect(screen.getByText(/v1\.4\.233/)).toBeTruthy()
@@ -41,7 +41,7 @@ describe('CachaloteUpdateCard updated state', () => {
     expect(screen.getByText('WorktreeList.tsx').getAttribute('title')).toBe(
       'src/renderer/src/components/sidebar/WorktreeList.tsx'
     )
-    expect(screen.getByText('live-watch.test.ts')).toBeTruthy()
+    expect(screen.getByText('ceded-chats.test.ts')).toBeTruthy()
     fireEvent.click(screen.getByRole('button'))
     expect(screen.queryByText(/v1\.4\.233/)).toBeNull()
   })

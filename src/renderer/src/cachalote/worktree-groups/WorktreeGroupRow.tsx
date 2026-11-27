@@ -24,7 +24,6 @@ import {
 import { writeWorkspaceDragData } from '../../components/sidebar/workspace-status/presentation/workspace-status-drag-data'
 import type { DraggedWorktreeCopies } from '../../components/sidebar/worktree-list/drag/dragged-worktree-copies'
 import { useAppStore } from '@/store'
-import { LiveGroupMenuItem, LiveGroupSummary } from '../live/LiveGroupSummary'
 import { usePublishGuideAnchor } from './worktree-group-guide-anchor'
 
 type CardDragStart = (
@@ -119,7 +118,6 @@ export function WorktreeGroupRow({
           <span className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">
             {row.name}
           </span>
-          <LiveGroupSummary groupId={row.groupId} />
           <span className="shrink-0 text-xs tabular-nums">{row.count}</span>
         </div>
       </ContextMenuTrigger>
@@ -163,7 +161,6 @@ export function WorktreeGroupRow({
             ))}
           </ContextMenuSubContent>
         </ContextMenuSub>
-        <LiveGroupMenuItem groupId={row.groupId} />
         <ContextMenuSeparator />
         <ContextMenuItem onSelect={ungroup}>{worktreeGroupLabel('ungroup')}</ContextMenuItem>
       </ContextMenuContent>

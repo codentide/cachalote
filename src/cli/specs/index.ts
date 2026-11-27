@@ -40,8 +40,6 @@ import { ARTIFACT_COMMAND_SPECS } from './artifacts'
 import { SEARCH_COMMAND_SPECS } from './search'
 import { PROFILE_STATE_COMMAND_SPECS } from './profile-state'
 import { REFERENCE_COMMAND_SPECS } from './reference'
-// Cachalote: Sonar CLI
-import { SONAR_COMMAND_SPECS } from '../cachalote/sonar-specs'
 import { PORTS_COMMAND_SPECS } from './ports'
 import { PLUGIN_AUTHORING_COMMAND_SPECS, PLUGIN_RUNTIME_COMMAND_SPECS } from './plugin'
 import { PAIR_COMMAND_SPECS } from './pair'
@@ -92,8 +90,6 @@ export const COMMAND_SPECS: CommandSpec[] = [
   ...EMULATOR_COMMAND_SPECS,
   ...SKILL_COMMAND_SPECS,
   ...SEARCH_COMMAND_SPECS,
-  // Cachalote: Sonar CLI
-  ...SONAR_COMMAND_SPECS,
   ...PROFILE_STATE_COMMAND_SPECS,
   ...PORTS_COMMAND_SPECS,
   ...PLUGIN_AUTHORING_COMMAND_SPECS,
