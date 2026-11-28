@@ -1,5 +1,5 @@
-// Cachalote: file the created worktree under the composer's worktree group.
-import { applyComposerWorktreeGroup } from '../../../cachalote/worktree-groups/composer-worktree-group'
+// Narwhal: file the created worktree under the composer's worktree group.
+import { applyComposerWorktreeGroup } from '../../../narwhal/worktree-groups/composer-worktree-group'
 import { prepareWorktreeCreationHooks, setupCreateArgs } from './worktree-creation-hook-preparation'
 import { useAppStore } from '@/store/index'
 import { activateAndRevealWorktree } from '@/lib/workspace/activation/worktree-activation'
@@ -154,7 +154,7 @@ export async function executeWorktreeCreation(
   }
   // The VM's checkout is now this workspace (or its project), so the sidebar may list it.
   releaseVmCreateCheckout(creationId)
-  applyComposerWorktreeGroup(creationId, worktree.id) // Cachalote: composer worktree group
+  applyComposerWorktreeGroup(creationId, worktree.id) // Narwhal: composer worktree group
   await attachEphemeralVmRuntimeToWorkspace(preparedRequest, worktree.id)
 
   const backendSpawned = result.startupTerminal?.spawned === true

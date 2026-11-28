@@ -3,8 +3,8 @@
 import { agentSessionRefusalError } from '../../../../shared/agent-session/failures/agent-session-wire-refusals'
 import type { AgentSessionAdmissionModels } from '../records/agent-session-record-options'
 import { chatAgentsShareConversations } from '../../../../shared/agent-session/view/structured-agent-cli-conversation-adoption'
-// Cachalote: a chat that ceded its conversation to a terminal.
-import { isCachaloteCededChat } from '../../../cachalote/chat-handoff/ceded-chats'
+// Narwhal: a chat that ceded its conversation to a terminal.
+import { isNarwhalCededChat } from '../../../narwhal/chat-handoff/ceded-chats'
 import {
   agentSessionOperationKey,
   evaluateAgentSessionOperation,
@@ -236,8 +236,8 @@ export function assertAdoptedConversationUnowned(
     if (record.sessionId === request.sessionId) {
       continue
     }
-    // Cachalote: a chat that ceded its conversation to a terminal holds it no more.
-    if (isCachaloteCededChat(record.sessionId)) {
+    // Narwhal: a chat that ceded its conversation to a terminal holds it no more.
+    if (isNarwhalCededChat(record.sessionId)) {
       continue
     }
     // Only the conversation a chat continues now: an earlier link no longer holds anything.

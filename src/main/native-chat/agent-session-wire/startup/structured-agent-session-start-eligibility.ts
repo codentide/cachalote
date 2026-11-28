@@ -10,8 +10,8 @@ import { terminalOwnerRefusalMessage } from '../../../../shared/agent-session/li
 import type { StructuredAgentSessionAttachContext } from '../acquisition/structured-agent-session-attach-context'
 import type { StructuredAgentSessionResumeOutcome } from './structured-agent-session-agent-start'
 import { hostCanStartRecord } from '../providers/structured-agent-session-provider-support'
-// Cachalote: a chat that ceded its conversation to a terminal.
-import { isCachaloteCededChat } from '../../../cachalote/chat-handoff/ceded-chats'
+// Narwhal: a chat that ceded its conversation to a terminal.
+import { isNarwhalCededChat } from '../../../narwhal/chat-handoff/ceded-chats'
 import {
   structuredAgentSessionResumeOperationId,
   structuredAgentSessionResumeParams
@@ -45,8 +45,8 @@ export async function structuredAgentSessionStartParams(
       'No structured session exists by that id.'
     )
   }
-  // Cachalote: a chat that ceded its conversation to a terminal never writes it again.
-  if (isCachaloteCededChat(sessionId)) {
+  // Narwhal: a chat that ceded its conversation to a terminal never writes it again.
+  if (isNarwhalCededChat(sessionId)) {
     return refusedStructuredAgentSessionStart(
       'agent_session_conflict',
       { reason: 'conversationHeldElsewhere' },

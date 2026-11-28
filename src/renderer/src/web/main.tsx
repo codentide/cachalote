@@ -1,3 +1,5 @@
+// Narwhal: migrate legacy storage before stores hydrate
+import '../narwhal/legacy-storage-migration'
 import '../assets/main.css'
 
 import { Suspense, useMemo, useState } from 'react'

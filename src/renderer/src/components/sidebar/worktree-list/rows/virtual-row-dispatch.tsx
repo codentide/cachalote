@@ -34,8 +34,8 @@ import { renderWorktreeSectionHeaderRow } from './SectionHeader'
 import type { SectionHeaderRowContext } from './section-header-row-context'
 import type { WorktreeRowDragState } from '../drag/row-state'
 import type { Translate } from '@/i18n/use-translate'
-// Cachalote: feature group row.
-import { WorktreeGroupRow } from '../../../../cachalote/worktree-groups/WorktreeGroupRow'
+// Narwhal: feature group row.
+import { WorktreeGroupRow } from '../../../../narwhal/worktree-groups/WorktreeGroupRow'
 
 export type WorktreeVirtualRowContext = {
   dragUnitsByRow: ReadonlyMap<number, { identity: string }>
@@ -180,8 +180,8 @@ export function renderWorktreeVirtualRow(
     })
   }
 
-  // Cachalote
-  if (row.type === 'cachalote-worktree-group') {
+  // Narwhal: feature group rows
+  if (row.type === 'narwhal-worktree-group') {
     return (
       <div
         key={vItem.key}

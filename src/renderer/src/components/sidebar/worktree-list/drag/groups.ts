@@ -29,8 +29,8 @@ export function getWorktreeDragGroups(rows: HostSectionRow[]): WorktreeDragGroup
       row.type === 'new-external-worktrees-inbox' ||
       row.type === 'pending-creation' ||
       row.type === 'folder-workspace' ||
-      // Cachalote: its members follow as ordinary rows of this section.
-      row.type === 'cachalote-worktree-group'
+      // Narwhal: its members follow as ordinary rows of this section.
+      row.type === 'narwhal-worktree-group'
     ) {
       continue
     }

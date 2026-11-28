@@ -15,9 +15,9 @@ import { UpdaterSetup, type UpdaterSetupOptions } from './lifecycle/updater-setu
 import type { UpdateInstallMode } from './lifecycle/updater-state'
 import { setDesktopReportUpdateStatus } from '../orca-profiles/cloud-auth/desktop-client-report'
 
-// Cachalote: user-initiated checks run cachalote-sync instead of upstream's feed.
-import { CACHALOTE_AUTO_UPDATE_DISABLED } from '../cachalote/cachalote-flags'
-import { runCachaloteUpdateCheck } from '../cachalote/cachalote-self-update'
+// Narwhal: user-initiated checks run narwhal-sync instead of upstream's feed.
+import { NARWHAL_AUTO_UPDATE_DISABLED } from '../narwhal/narwhal-flags'
+import { runNarwhalUpdateCheck } from '../narwhal/narwhal-self-update'
 const updater = new UpdaterSetup()
 setDesktopReportUpdateStatus(() => updater.getUpdateStatus())
 
@@ -57,9 +57,9 @@ export function checkForUpdates(): void {
 }
 
 export function checkForUpdatesFromMenu(options?: UpdateCheckOptions): void {
-  // Cachalote: every entry point (app menu, tray, sidebar help menu, Settings) lands here.
-  if (CACHALOTE_AUTO_UPDATE_DISABLED) {
-    runCachaloteUpdateCheck()
+  // Narwhal: every entry point (app menu, tray, sidebar help menu, Settings) lands here.
+  if (NARWHAL_AUTO_UPDATE_DISABLED) {
+    runNarwhalUpdateCheck()
     return
   }
   updater.checkForUpdatesFromMenu(options)

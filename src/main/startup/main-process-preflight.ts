@@ -106,6 +106,8 @@ import {
   handleMainProcessPreflightFailure
 } from './main-process-preflight-failure'
 import { ensureWindowsAppDataPath } from './windows-startup/windows-app-data-path'
+// Narwhal: one-shot copy of legacy user data files
+import { migrateLegacyUserDataFiles } from '../narwhal/legacy-user-data-migration'
 
 export type MainProcessPreflightOptions = {
   focusExistingWindow: (request: { background?: boolean }) => void
@@ -195,6 +197,8 @@ function initializeMainProcessPreflight(options: MainProcessPreflightOptions): b
   installMainProcessTreeKillGate()
   configureDevUserDataPath(isDev)
   configureOrcaUserDataPathEnv()
+  // Narwhal: copy legacy user data before first read
+  migrateLegacyUserDataFiles(app.getPath('userData'))
   // #16761: install the lazy environment accessor immediately after userData selection or early resolves can throw/memoize the wrong profile.
   setAppEnvironment(new ElectronAppEnvironment())
   // Capture after overrides, before ready-time app naming can change userData on case-sensitive filesystems.

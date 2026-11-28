@@ -34,8 +34,8 @@ import {
 } from '../updater-service'
 import type { PreQuitCleanupFailureMode, UpdateInstallMode } from './updater-state'
 import type { UpdaterSetupOptions } from './updater-setup'
-// Cachalote: the update card's Update button.
-import { registerCachaloteUpdateHandlers } from '../../cachalote/cachalote-self-update'
+// Narwhal: the update card's Update button.
+import { registerNarwhalUpdateHandlers } from '../../narwhal/narwhal-self-update'
 import type { OrcaRuntimeService } from '../../runtime/orca-runtime'
 import { hasWorkingUpdateAgents } from './update-agent-activity'
 import {
@@ -216,8 +216,8 @@ export function scheduleMainWindowAutoUpdaterSetup(
 }
 
 export function registerUpdaterHandlers(): void {
-  // Cachalote
-  registerCachaloteUpdateHandlers()
+  // Narwhal: update IPC handlers
+  registerNarwhalUpdateHandlers()
   ipcMain.removeHandler('updater:getStatus')
   ipcMain.removeHandler('updater:getVersion')
   ipcMain.removeHandler('updater:check')

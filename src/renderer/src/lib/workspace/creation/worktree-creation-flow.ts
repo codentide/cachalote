@@ -13,8 +13,8 @@ import {
   showWorktreeCreationError
 } from '@/lib/workspace/creation/worktree-creation-surface'
 import { executeWorktreeCreation } from '@/lib/workspace/creation/worktree-creation-flow-execute'
-// Cachalote: the composer's worktree group follows the creation it started.
-import { bindComposerWorktreeGroup } from '../../../cachalote/worktree-groups/composer-worktree-group'
+// Narwhal: the composer's worktree group follows the creation it started.
+import { bindComposerWorktreeGroup } from '../../../narwhal/worktree-groups/composer-worktree-group'
 import {
   getInitialWorktreeCreationPhase,
   getWorktreeCreationIndeterminate
@@ -109,7 +109,7 @@ export function runBackgroundWorktreeCreation(request: WorktreeCreationRequest):
   }
   // Plain-HTTP LAN clients lack randomUUID; createBrowserUuid uses getRandomValues fallback.
   const creationId = createBrowserUuid()
-  bindComposerWorktreeGroup(creationId) // Cachalote: worktree group chosen in the composer
+  bindComposerWorktreeGroup(creationId) // Narwhal: worktree group chosen in the composer
   revealPendingCreation(creationId, request, getInitialWorktreeCreationPhase(request))
   startWorktreeCreation(creationId, request)
   return creationId

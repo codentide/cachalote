@@ -27,11 +27,11 @@ import {
   reportCliChatResumeTerminalChanged
 } from './cli-chat-resume-feedback'
 import { adoptingAgentOnHost } from '../../right-sidebar/ai-vault/session-actions/ai-vault-session-resume-in-chat-launch'
-// Cachalote: the same conversation between terminal and chat.
+// Narwhal: the same conversation between terminal and chat.
 import {
-  isCachaloteTerminalToChat,
-  runCachaloteTerminalToChat
-} from '@/cachalote/chat-handoff/terminal-to-chat'
+  isNarwhalTerminalToChat,
+  runNarwhalTerminalToChat
+} from '@/narwhal/chat-handoff/terminal-to-chat'
 
 const pending = new Map<string, { controller: AbortController; source: CliChatResumeSource }>()
 const listeners = new Set<() => void>()
@@ -63,11 +63,11 @@ export async function runCliChatResume(
   if (pending.has(key) || source.hostUpdateRequired) {
     return
   }
-  // Cachalote: local Claude is asked to exit first, then the chat opens on Cachalote's own launch.
-  if (isCachaloteTerminalToChat(source)) {
+  // Narwhal: local Claude is asked to exit first, then the chat opens on Narwhal's own launch.
+  if (isNarwhalTerminalToChat(source)) {
     pending.set(key, { controller: new AbortController(), source })
     changed()
-    return runCachaloteTerminalToChat(source).finally(() => {
+    return runNarwhalTerminalToChat(source).finally(() => {
       pending.delete(key)
       changed()
     })

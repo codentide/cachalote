@@ -1,0 +1,36 @@
+/* The Narwhal card draws its own box; upstream's frame keeps the clicks, the indent and the
+   gap between cards, and gives up its paint so no frame state shows a different card.
+   Upstream wraps the content in one div (the sleep dim), so the card sits one or two levels down. */
+[data-worktree-card-surface]:has(> [data-narwhal-card], > div > [data-narwhal-card]) {
+  background: transparent !important;
+  /* No frame edge: it would clip the tree guide where two member cards meet. */
+  border-width: 0 !important;
+  /* The card box has its own padding. The sidebar row adds 6px below each frame (upstream's
+     lineage frame `after`); pulling 2px back leaves cards 4px apart. */
+  padding-block: 0 !important;
+  margin-bottom: -2px;
+  /* Lets the tree guide reach across that gap to the next member. */
+  overflow: visible !important;
+  box-shadow: none !important;
+}
+
+[data-worktree-card-surface]:hover > [data-narwhal-card],
+[data-worktree-card-surface]:hover > div > [data-narwhal-card] {
+  background-color: color-mix(in srgb, var(--color-worktree-sidebar-accent) 60%, transparent);
+}
+
+[data-worktree-card-surface][data-worktree-card-selected] > [data-narwhal-card],
+[data-worktree-card-surface][data-worktree-card-selected] > div > [data-narwhal-card] {
+  border-color: color-mix(in oklab, var(--color-worktree-sidebar-ring) 45%, transparent);
+}
+
+/* The open workspace: the same brighter edge and wash as upstream's active card. */
+[data-worktree-card-surface][data-worktree-card-active] > [data-narwhal-card],
+[data-worktree-card-surface][data-worktree-card-active] > div > [data-narwhal-card] {
+  border-color: color-mix(
+    in srgb,
+    var(--color-worktree-sidebar-foreground) 22%,
+    var(--color-worktree-sidebar-border)
+  );
+  background-color: color-mix(in srgb, var(--color-worktree-sidebar-foreground) 10%, transparent);
+}

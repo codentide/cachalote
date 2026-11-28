@@ -62,8 +62,8 @@ import { skillsApi } from './api/skills/skills-bridge'
 import { petApi } from './api/pets/pet-bridge'
 import { appIconApi } from './api/window-ui/app-icon-bridge'
 import { browserPasswordsApi } from './api/browser/browser-passwords-bridge'
-// Cachalote: the same conversation between terminal and chat.
-import { cachaloteChatHandoffApi } from './api/cachalote-chat-handoff-bridge'
+// Narwhal: the same conversation between terminal and chat.
+import { narwhalChatHandoffApi } from './api/narwhal-chat-handoff-bridge'
 import { browserApi } from './api/browser/browser-bridge'
 import { emulatorApi } from './api/emulator/emulator-bridge'
 import { hooksApi } from './api/agent-hooks/hooks-bridge'
@@ -177,8 +177,8 @@ const api = {
   avatarGeneration: avatarGenerationApi,
   skills: skillsApi,
   pet: petApi,
-  // Cachalote: the same conversation between terminal and chat.
-  cachaloteChatHandoff: cachaloteChatHandoffApi,
+  // Narwhal: the same conversation between terminal and chat.
+  narwhalChatHandoff: narwhalChatHandoffApi,
   appIcon: appIconApi,
   browser: browserApi,
   browserPasswords: browserPasswordsApi,

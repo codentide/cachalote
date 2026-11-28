@@ -30,10 +30,10 @@ import { NewWorkspaceComposerAgentSection } from './NewWorkspaceComposerAgentSec
 import { NewWorkspaceComposerFooter } from './NewWorkspaceComposerFooter'
 import { NewWorkspaceComposerNameSection } from './NewWorkspaceComposerNameSection'
 import { NewWorkspaceComposerProjectSection } from './NewWorkspaceComposerProjectSection'
-// Cachalote: pick the worktree group while creating.
-import { ComposerWorktreeGroupField } from '../../../cachalote/worktree-groups/ComposerWorktreeGroupField'
-// Cachalote: branch name from the project's template.
-import { ComposerBranchFormatField } from '../../../cachalote/branch-format/ComposerBranchFormatField'
+// Narwhal: pick the worktree group while creating.
+import { ComposerWorktreeGroupField } from '../../../narwhal/worktree-groups/ComposerWorktreeGroupField'
+// Narwhal: branch name from the project's template.
+import { ComposerBranchFormatField } from '../../../narwhal/branch-format/ComposerBranchFormatField'
 import {
   EMPTY_EPHEMERAL_VM_RECIPES,
   EMPTY_PROJECT_HOST_SETUP_OPTIONS,
@@ -344,9 +344,9 @@ export default function NewWorkspaceComposerCard(
           selectedProjectName={selectedProjectName}
         />
         <NewWorkspaceComposerNameSection {...props} onNamePlainEnter={handleNamePlainEnter} />
-        {/* Cachalote: branch name from the project's template. */}
+        {/* Narwhal: branch name from the project's template. */}
         {props.selectedRepoIsGit ? <ComposerBranchFormatField {...props} /> : null}
-        {/* Cachalote: only worktree creations go through the group binding. */}
+        {/* Narwhal: only worktree creations go through the group binding. */}
         {props.selectedRepoIsGit ? <ComposerWorktreeGroupField /> : null}
         <NewWorkspaceComposerAgentSection
           {...props}

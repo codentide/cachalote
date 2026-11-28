@@ -1,6 +1,8 @@
 // Install the import-free hook before react-dom reads it during evaluation; the observer below wraps a per-commit property and can load later.
 import './diagnostics/react-commits/react-devtools-commit-hook-shim'
 import './diagnostics/react-commits/react-commit-cascade-observer'
+// Narwhal: migrate legacy storage before stores hydrate
+import './narwhal/legacy-storage-migration'
 import './assets/main.css'
 
 import { StrictMode } from 'react'

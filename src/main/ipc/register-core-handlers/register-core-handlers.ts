@@ -1,5 +1,5 @@
-// Cachalote: the same conversation between terminal and chat.
-import { registerCachaloteChatHandoffHandlers } from '../../cachalote/chat-handoff/chat-to-terminal'
+// Narwhal: the same conversation between terminal and chat.
+import { registerNarwhalChatHandoffHandlers } from '../../narwhal/chat-handoff/chat-to-terminal'
 import { registerAppHandlers } from '../app'
 import { canCreateWslHostService } from '../wsl/wsl-host-service-availability'
 import { registerNonWindowsWslIpcStubs } from '../wsl/non-windows-wsl-ipc-stubs'
@@ -153,8 +153,8 @@ export async function registerCoreHandlers(
     registerUIHandlers(store, { isDashboardPopoutRenderer })
     registerLazyEmulatorHandlers((id) => runtime.getEmulatorBridge()?.getIosVideoStreamUrl(id))
     registerLazyWorkspacePortHandlers(store)
-    // Cachalote: the same conversation between terminal and chat.
-    registerCachaloteChatHandoffHandlers()
+    // Narwhal: the same conversation between terminal and chat.
+    registerNarwhalChatHandoffHandlers()
     registerFilesystemHandlers(store, commitMessageAgentEnv)
     registerFilesystemWatcherHandlers()
     registerRuntimeHandlers(runtime)

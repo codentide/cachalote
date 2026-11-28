@@ -3,12 +3,12 @@ import type { UpdateStatus } from '../../../shared/updater/update-status-types'
 import { prepareAndInvokeUpdaterInstall } from '../../renderer/restart/renderer-restart-wiring'
 import { awaitBeforeUnloadCheckpoint, updaterQuitAbortRelay } from '../../renderer/renderer-runtime'
 import type { PreloadApi } from '../../api-types'
-// Cachalote: update card channels.
+// Narwhal: update card channels.
 import {
-  CACHALOTE_UPDATE_START_CHANNEL,
-  CACHALOTE_UPDATE_STATE_CHANNEL,
-  type CachaloteUpdateState
-} from '../../../shared/cachalote/cachalote-update-state'
+  NARWHAL_UPDATE_START_CHANNEL,
+  NARWHAL_UPDATE_STATE_CHANNEL,
+  type NarwhalUpdateState
+} from '../../../shared/narwhal/narwhal-update-state'
 
 export const updaterApi = {
   getStatus: () => ipcRenderer.invoke('updater:getStatus'),
@@ -29,15 +29,14 @@ export const updaterApi = {
       () => ipcRenderer.invoke('updater:quitAndInstall'),
       awaitBeforeUnloadCheckpoint
     ),
-  // Cachalote
-  cachaloteStart: () => ipcRenderer.invoke(CACHALOTE_UPDATE_START_CHANNEL),
-  onCachaloteState: (callback) => {
-    const listener = (_event: Electron.IpcRendererEvent, state: CachaloteUpdateState) =>
+  // Narwhal: update bridge
+  narwhalStart: () => ipcRenderer.invoke(NARWHAL_UPDATE_START_CHANNEL),
+  onNarwhalState: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, state: NarwhalUpdateState) =>
       callback(state)
-    ipcRenderer.on(CACHALOTE_UPDATE_STATE_CHANNEL, listener)
-    return () => ipcRenderer.removeListener(CACHALOTE_UPDATE_STATE_CHANNEL, listener)
+    ipcRenderer.on(NARWHAL_UPDATE_STATE_CHANNEL, listener)
+    return () => ipcRenderer.removeListener(NARWHAL_UPDATE_STATE_CHANNEL, listener)
   },
-
 
   onStatus: (callback) => {
     const listener = (_event: Electron.IpcRendererEvent, status: UpdateStatus) => callback(status)

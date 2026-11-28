@@ -289,6 +289,7 @@
 13 src/main/mimo/hook-service.ts
 1 src/main/muse/hook-config-json.ts
 4 src/main/muse/hook-service.ts
+3 src/main/narwhal/legacy-user-data-migration.ts # one-shot startup migration
 2 src/main/native-chat/agent-session-attachments/agent-session-attachment-claims.ts
 1 src/main/native-chat/agent-session-journal/database/journal-host-database.ts
 2 src/main/native-chat/transcript-filesystem/process/wsl-transcript-fs-process-spawn.ts

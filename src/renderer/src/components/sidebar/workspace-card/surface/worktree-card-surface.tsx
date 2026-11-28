@@ -9,8 +9,8 @@ import type { WorktreeCardController } from '../controller/use-worktree-card-con
 import { DEFAULT_WORKSPACE_CARD_TEMPLATE } from '../template/default-workspace-card'
 import { renderWorkspaceCardTemplate } from '../template/render-workspace-card-template'
 import { WorktreeCardTitleStatusProvider } from './worktree-card-title-status'
-// Cachalote: card style
-import { useCachaloteCardContent } from '@/cachalote/card-style/use-cachalote-card-content'
+// Narwhal: card style
+import { useNarwhalCardContent } from '@/narwhal/card-style/use-narwhal-card-content'
 
 /** Shape, inset and transitions every sidebar card row shares; inactive rows add `worktree-sidebar-card-hover`. */
 export const WORKTREE_CARD_SURFACE_CLASS_NAME =
@@ -61,12 +61,12 @@ export function WorktreeCardSurface({ card }: { card: WorktreeCardController }):
         : undefined
     }
   )
-  // Cachalote: card style draws its own content in the same frame
-  const cachaloteContent = useCachaloteCardContent(card)
+  // Narwhal: card style draws its own content in the same frame
+  const narwhalContent = useNarwhalCardContent(card)
   const parentCardContent = newCardStyle ? (
     // One roll-up per card feeds the status lane, the title and the title's right-hand slot.
     <WorktreeCardTitleStatusProvider card={card}>
-      {cachaloteContent ?? templateContent}
+      {narwhalContent ?? templateContent}
     </WorktreeCardTitleStatusProvider>
   ) : (
     templateContent

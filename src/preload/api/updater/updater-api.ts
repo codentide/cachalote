@@ -1,4 +1,4 @@
-import type { CachaloteUpdateState } from '../../../shared/cachalote/cachalote-update-state'
+import type { NarwhalUpdateState } from '../../../shared/narwhal/narwhal-update-state'
 import type {
   LinuxPackageInstallInstructions,
   ReleaseBuildListResult,
@@ -27,8 +27,8 @@ export type UpdaterApi = {
   ) => Promise<ReleaseBuildListResult>
 
   onStatus: (callback: (status: UpdateStatus) => void) => () => void
-  // Cachalote: optional so the web client's updater API needs no stub.
-  onCachaloteState?: (callback: (state: CachaloteUpdateState) => void) => () => void
-  cachaloteStart?: () => Promise<void>
+  // Narwhal: optional so the web client's updater API needs no stub.
+  onNarwhalState?: (callback: (state: NarwhalUpdateState) => void) => () => void
+  narwhalStart?: () => Promise<void>
   onClearDismissal: (callback: () => void) => () => void
 }

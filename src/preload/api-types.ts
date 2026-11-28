@@ -92,8 +92,8 @@ import type {
   SparsePresetsApi,
   WorktreeApi
 } from './api/workspaces/worktree-api'
-// Cachalote: the same conversation between terminal and chat.
-import type { CachaloteChatHandoffApi } from '../shared/cachalote/chat-handoff/chat-handoff-ipc'
+// Narwhal: the same conversation between terminal and chat.
+import type { NarwhalChatHandoffApi } from '../shared/narwhal/chat-handoff/chat-handoff-ipc'
 
 // Flattens contracts that share one PreloadApi key: an intersection is not type-identical to the flat shape.
 type Merged<T> = { [K in keyof T]: T[K] }
@@ -154,8 +154,8 @@ export type PreloadApi = {
   avatarGeneration: AvatarGenerationApi
   skills: SkillsApi
   pet: PetApi
-  // Cachalote: the same conversation between terminal and chat; absent in the web client.
-  cachaloteChatHandoff?: CachaloteChatHandoffApi
+  // Narwhal: the same conversation between terminal and chat; absent in the web client.
+  narwhalChatHandoff?: NarwhalChatHandoffApi
   appIcon: AppIconApi
   browser: BrowserApi
   browserPasswords: BrowserPasswordsApi

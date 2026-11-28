@@ -25,7 +25,7 @@ import {
 } from '../windows-install-permissions/windows-install-dir-acl-recovery'
 import { mainProcessState as state, gpuFallbackEnvironment } from '../main-process-state'
 import { createGpuAccelerationAboutPanelOptions } from '../../menu/gpu-acceleration-about-panel'
-import { CACHALOTE_APP_NAME } from '../../../shared/cachalote/cachalote-name'
+import { NARWHAL_APP_NAME } from '../../../shared/narwhal/narwhal-name'
 
 export function createGpuCrashDiagnosticsRecorder(): GpuCrashDiagnosticsRecorder | null {
   if (process.platform !== 'win32') {
@@ -43,8 +43,8 @@ export function createGpuCrashDiagnosticsRecorder(): GpuCrashDiagnosticsRecorder
 export function updateGpuAccelerationAboutPanel(): void {
   app.setAboutPanelOptions(
     createGpuAccelerationAboutPanelOptions({
-      // Cachalote: visible name in the About panel.
-      appName: CACHALOTE_APP_NAME,
+      // Narwhal: visible name in the About panel.
+      appName: NARWHAL_APP_NAME,
       appVersion: app.getVersion(),
       platform: process.platform,
       gpuFallbackActive: state.gpuFallbackActiveThisLaunch,

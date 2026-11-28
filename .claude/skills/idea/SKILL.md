@@ -1,9 +1,9 @@
 ---
 name: idea
-description: Captura y prioriza ideas de features, mejoras y bugs de Cachalote como issues de GitHub en codentide/cachalote, pesando impacto contra esfuerzo antes de anotarlas. Usar cuando el usuario diga /idea, "se me ocurrió algo", "anotá esta idea", "qué hay en el backlog", "qué hago ahora en Cachalote", o pida repriorizar las ideas.
+description: Captura y prioriza ideas de features, mejoras y bugs de Narwhal como issues de GitHub en codentide/cachalote, pesando impacto contra esfuerzo antes de anotarlas. Usar cuando el usuario diga /idea, "se me ocurrió algo", "anotá esta idea", "qué hay en el backlog", "qué hago ahora en Narwhal", o pida repriorizar las ideas.
 ---
 
-# /idea — backlog priorizado de Cachalote
+# /idea — backlog priorizado de Narwhal
 
 El backlog vive en los issues de `codentide/cachalote`. Orca ya los lista en la app y
 arranca un worktree desde uno, así que no hay que construir nada para verlos.
@@ -17,12 +17,12 @@ trabajo, se describe en abstracto.
 
 ## Modos
 
-| El usuario dice | Modo |
-| --- | --- |
-| `/idea <texto>`, "se me ocurrió…" | **Capturar** |
-| `/idea`, "qué hay", "qué hago ahora" | **Backlog** |
-| "repriorizá", "revisá las ideas" | **Revisar** |
-| "terminé #N", al commitear el feature | **Cerrar** |
+| El usuario dice                       | Modo         |
+| ------------------------------------- | ------------ |
+| `/idea <texto>`, "se me ocurrió…"     | **Capturar** |
+| `/idea`, "qué hay", "qué hago ahora"  | **Backlog**  |
+| "repriorizá", "revisá las ideas"      | **Revisar**  |
+| "terminé #N", al commitear el feature | **Cerrar**   |
 
 ## Capturar
 
@@ -40,18 +40,20 @@ En este orden, y cortá en el primero que la resuelva:
    Si existe, sumá el caso nuevo como comentario y, si cambia la frecuencia o el dolor,
    repuntuá ese issue en vez de crear otro.
 2. **Orca ya lo trae:** buscá en el código (`rg` en `src/`) y en los releases nuevos
-   (`git log --oneline refs/cachalote/base..upstream/main --grep "<palabra>"`). Si
+   (`git log --oneline refs/narwhal/base..upstream/main --grep "<palabra>"`). Si
    upstream lo hace o está por hacerlo, decilo y no se crea el issue.
 3. **Se resuelve con configuración:** una setting de Orca, un `orca.yaml`, una skill.
 
 ### 3. Puntuá
 
 **Frecuencia** — cada cuánto aparece la fricción:
+
 - 3 = todos los días
 - 2 = todas las semanas
 - 1 = de vez en cuando
 
 **Dolor** — qué cuesta cada vez:
+
 - 3 = bloquea, rompe algo o corta la concentración
 - 2 = minutos perdidos
 - 1 = molestia
@@ -59,6 +61,7 @@ En este orden, y cortá en el primero que la resuelva:
 **Impacto = frecuencia × dolor** (1 a 9): alto 6–9, medio 3–4, bajo 1–2.
 
 **Esfuerzo** — contá el costo de sync, no solo el código:
+
 - S = hasta 2 horas y hasta 2 archivos de upstream tocados
 - M = hasta un día
 - L = más de un día, o muchas líneas en archivos de upstream (cada una puede chocar en
@@ -66,11 +69,11 @@ En este orden, y cortá en el primero que la resuelva:
 
 **Prioridad:**
 
-| | S | M | L |
-| --- | --- | --- | --- |
-| Impacto alto | P1 | P1 | P2 |
-| Impacto medio | P2 | P3 | P3 |
-| Impacto bajo | aparcada | aparcada | aparcada |
+|               | S        | M        | L        |
+| ------------- | -------- | -------- | -------- |
+| Impacto alto  | P1       | P1       | P2       |
+| Impacto medio | P2       | P3       | P3       |
+| Impacto bajo  | aparcada | aparcada | aparcada |
 
 Si queda en L, proponé el **corte más chico** que entregue la mayor parte del impacto, y
 puntuá ese corte. Es lo que se anota como propuesta; el resto va a "Después".
@@ -99,21 +102,27 @@ Cuerpo:
 
 ```markdown
 ## Problema
+
 Qué pasa hoy y cuándo. Una o dos líneas.
 
 ## Puntaje
+
 Frecuencia N (por qué) × dolor N (por qué) = impacto N · esfuerzo X
 
 ## Propuesta
+
 El corte mínimo. Qué archivos propios y cuántas líneas en upstream, estimadas.
 
 ## Done
+
 Cómo se comprueba que quedó: un estado de UI, un comando, un valor.
 
 ## Descartado
+
 Lo que se miró y no sirve (Orca ya lo trae a medias, configuración, otra forma).
 
 ## Después
+
 Lo que queda fuera del corte. Omitir si no hay.
 ```
 

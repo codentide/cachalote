@@ -9,8 +9,8 @@ import {
   type NativeChatTabSession
 } from './tab-session-history-switch'
 import { runNativeChatCliFork, useNativeChatCliForkPending } from './native-chat-cli-fork-run'
-// Cachalote: the same conversation between terminal and chat.
-import { ChatToTerminalMenuItem } from '@/cachalote/chat-handoff/ChatToTerminalMenuItem'
+// Narwhal: the same conversation between terminal and chat.
+import { ChatToTerminalMenuItem } from '@/narwhal/chat-handoff/ChatToTerminalMenuItem'
 
 export function NativeChatCliForkMenuItems({
   tab,
@@ -50,7 +50,7 @@ export function NativeChatCliForkMenuItems({
           void runNativeChatCliFork({ subject: chat, tab, agent, onComplete })
         }}
       />
-      {/* Cachalote: the same conversation back in a terminal, next to upstream's copy. */}
+      {/* Narwhal: the same conversation back in a terminal, next to upstream's copy. */}
       <ChatToTerminalMenuItem tab={tab} nativeChat={nativeChat} onComplete={onComplete} />
     </>
   )

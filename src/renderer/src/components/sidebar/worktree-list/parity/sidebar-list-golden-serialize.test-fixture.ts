@@ -139,9 +139,9 @@ export function serializeSidebarRow(
         field('depth', row.depth),
         field('groupDepth', row.groupDepth)
       ])
-    // Cachalote: worktree groups
-    case 'cachalote-worktree-group':
-      return line('CACHALOTE_GROUP', [
+    // Narwhal: worktree groups
+    case 'narwhal-worktree-group':
+      return line('NARWHAL_GROUP', [
         field('key', row.key),
         field('groupId', row.groupId),
         field('count', row.count),

@@ -21,10 +21,10 @@ import {
 import { ensureAutoUpdaterConfigured } from '../../updater/lifecycle/main-window-updater'
 import { logStartupMilestone } from '../diagnostics/startup-diagnostics'
 import { browserManager } from '../../browser/guest-lifecycle/manager/browser-manager'
-// Cachalote: the visible app name in the macOS menu bar.
-import { CACHALOTE_APP_NAME } from '../../../shared/cachalote/cachalote-name'
-// Cachalote: About and Hide name the app through the translation catalog.
-import '../../cachalote/i18n/app-name-menu'
+// Narwhal: the visible app name in the macOS menu bar.
+import { NARWHAL_APP_NAME } from '../../../shared/narwhal/narwhal-name'
+// Narwhal: About and Hide name the app through the translation catalog.
+import '../../narwhal/i18n/app-name-menu'
 
 export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   const store = state.store
@@ -34,7 +34,7 @@ export async function initializeMainProcessI18nAndMenu(): Promise<void> {
   await setMainUiLanguage(store.getSettings().uiLanguage)
   logStartupMilestone('i18n-ready')
   registerAppMenu({
-    appMenuLabel: state.devInstanceIdentity?.name ?? CACHALOTE_APP_NAME,
+    appMenuLabel: state.devInstanceIdentity?.name ?? NARWHAL_APP_NAME,
     ...getAppMenuQuitHandlers(),
     onCheckForUpdates: (options) => {
       ensureAutoUpdaterConfigured()

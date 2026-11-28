@@ -1034,34 +1034,34 @@ function findInstalledMacSigningIdentity(keychainFile) {
   return null
 }
 
-// Cachalote: display name only. CFBundleName must stay 'Orca': Electron derives the helper app
+// Narwhal: display name only. CFBundleName must stay 'Orca': Electron derives the helper app
 // names from it ('Orca Helper.app') and aborts at launch otherwise. Set after upstream's config, so
 // none of its lines change.
 module.exports.mac.extendInfo = {
   ...module.exports.mac.extendInfo,
-  CFBundleDisplayName: 'Cachalot',
+  CFBundleDisplayName: 'Narwhal',
   // Finder, Spotlight and Launchpad show the bundle's file name unless this asks for the localized one.
   LSHasLocalizedDisplayName: true
 }
 
-// Cachalote: macOS shows the localized CFBundleName in the menu bar and Mission Control, while
+// Narwhal: macOS shows the localized CFBundleName in the menu bar and Mission Control, while
 // Electron resolves its helpers from the raw Info.plist value, which must stay 'Orca'.
 module.exports.mac.extraFiles.push(
   ...['en', 'es', 'es_419'].map((locale) => ({
-    from: 'resources/build/cachalote/InfoPlist.strings',
+    from: 'resources/build/narwhal/InfoPlist.strings',
     to: `Resources/${locale}.lproj/InfoPlist.strings`
   }))
 )
 
-// Cachalote: own app icon (Icon Composer project in resources/build/cachalote/icon.icon).
-module.exports.mac.icon = 'resources/build/cachalote/icon.icns'
+// Narwhal: own app icon (Icon Composer project in resources/build/narwhal/icon.icon).
+module.exports.mac.icon = 'resources/build/narwhal/icon.icns'
 
-// Cachalote: cachalote-sync builds only the slice it installs (CACHALOTE_MAC_ARCHS=arm64 on Apple
+// Narwhal: narwhal-sync builds only the slice it installs (NARWHAL_MAC_ARCHS=arm64 on Apple
 // Silicon). The x64 slice is never installed, and under Rosetta its terminal host boots past the
 // afterPack check's timeout.
-if (process.env.CACHALOTE_MAC_ARCHS) {
-  const cachaloteMacArchs = process.env.CACHALOTE_MAC_ARCHS.split(',')
+if (process.env.NARWHAL_MAC_ARCHS) {
+  const narwhalMacArchs = process.env.NARWHAL_MAC_ARCHS.split(',')
   for (const target of module.exports.mac.target) {
-    target.arch = cachaloteMacArchs
+    target.arch = narwhalMacArchs
   }
 }

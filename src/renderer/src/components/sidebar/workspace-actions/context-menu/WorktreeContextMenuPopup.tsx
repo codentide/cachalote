@@ -28,8 +28,8 @@ import {
 } from './WorktreeContextMenuSubMenus'
 import { shouldRevealWorktreeDeveloperMenu } from './worktree-context-menu-policy'
 import { WorktreeHandToBotMenuItem } from '@/components/bots/hand-to-bot/WorktreeHandToBotMenuItem'
-// Cachalote: feature groups.
-import { WorktreeGroupMenuItems } from '../../../../cachalote/worktree-groups/WorktreeGroupMenuItems'
+// Narwhal: feature groups.
+import { WorktreeGroupMenuItems } from '../../../../narwhal/worktree-groups/WorktreeGroupMenuItems'
 
 export function WorktreeContextMenuPopup({
   model,
@@ -174,7 +174,7 @@ export function WorktreeContextMenuPopup({
             onAssignWorkspaceStatus={handleAssignWorkspaceStatus}
             workspaceStatuses={workspaceStatuses}
           />
-          {/* Cachalote: feature groups, below the workspace status. */}
+          {/* Narwhal: feature groups, below the workspace status. */}
           <WorktreeGroupMenuItems targets={model.activeContextWorktrees} disabled={isDeleting} />
           {!isMultiContext && (
             <WorktreeHandToBotMenuItem worktree={worktree} disabled={isDeleting} />

@@ -25,9 +25,9 @@ type WorktreeDragUnitRow =
   | { type: 'new-external-worktrees-inbox' }
   | { type: 'pending-creation' }
   | { type: 'folder-workspace' }
-  // Cachalote: feature groups.
+  // Narwhal: feature groups.
   | {
-      type: 'cachalote-worktree-group'
+      type: 'narwhal-worktree-group'
       memberHostKeys: readonly string[]
       collapsed: boolean
     }
@@ -67,8 +67,8 @@ export function getWorktreeDragUnitGroups(
       }
       continue
     }
-    // Cachalote: a feature group drags as one unit; its depth-1 members attach to it below.
-    if (row.type === 'cachalote-worktree-group') {
+    // Narwhal: a feature group drags as one unit; its depth-1 members attach to it below.
+    if (row.type === 'narwhal-worktree-group') {
       if (!current) {
         current = { key: ALL_GROUP_KEY, units: [] }
         groups.push({

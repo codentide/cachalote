@@ -36,8 +36,8 @@ import type {
   UpdateInstallTrigger
 } from './updater-state'
 
-import { CACHALOTE_AUTO_UPDATE_DISABLED } from '../../cachalote/cachalote-flags'
-import { startCachaloteBackgroundChecks } from '../../cachalote/cachalote-self-update'
+import { NARWHAL_AUTO_UPDATE_DISABLED } from '../../narwhal/narwhal-flags'
+import { startNarwhalBackgroundChecks } from '../../narwhal/narwhal-self-update'
 export type UpdaterSetupOptions = {
   getMainWindow?: () => BrowserWindow | null
   getLastUpdateCheckAt?: () => number | null
@@ -176,9 +176,9 @@ export class UpdaterSetup extends UpdaterDownloadInstall {
       return
     }
 
-    // Cachalote: same early exit as an unpackaged build; see cachalote-flags.ts.
-    if (CACHALOTE_AUTO_UPDATE_DISABLED) {
-      startCachaloteBackgroundChecks()
+    // Narwhal: same early exit as an unpackaged build; see narwhal-flags.ts.
+    if (NARWHAL_AUTO_UPDATE_DISABLED) {
+      startNarwhalBackgroundChecks()
       return
     }
     const autoUpdater = this.getAutoUpdater()

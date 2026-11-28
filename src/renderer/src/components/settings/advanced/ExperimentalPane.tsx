@@ -24,13 +24,13 @@ import {
   getEffectiveAgentHibernationIdleMs
 } from '@/lib/agent-session/hibernation/agent-hibernation-planner'
 import { trackWorktreeCardStyleChanged } from '@/components/sidebar/workspace-card/template/worktree-card-style-telemetry'
-// Cachalote: card style
+// Narwhal: card style
 import {
   resolveCardStyleChoice,
-  useCachaloteCardStyleStore,
+  useNarwhalCardStyleStore,
   type CardStyleChoice
-} from '@/cachalote/card-style/card-style-store'
-import { cardStyleLabel } from '@/cachalote/card-style/card-style-labels'
+} from '@/narwhal/card-style/card-style-store'
+import { cardStyleLabel } from '@/narwhal/card-style/card-style-labels'
 
 const MS_PER_MINUTE = 60 * 1000
 
@@ -69,9 +69,9 @@ export function ExperimentalPane({
     getExperimentalSearchEntry().newWorktreeCardStyle
   ])
   const showAppRail = matchesSettingsSearch(searchQuery, [getExperimentalSearchEntry().appRail])
-  // Cachalote: card style
-  const cachaloteCards = useCachaloteCardStyleStore((s) => s.cachaloteCards)
-  const setCachaloteCards = useCachaloteCardStyleStore((s) => s.setCachaloteCards)
+  // Narwhal: card style
+  const narwhalCards = useNarwhalCardStyleStore((s) => s.narwhalCards)
+  const setNarwhalCards = useNarwhalCardStyleStore((s) => s.setNarwhalCards)
   const agentHibernationEnabled = settings.experimentalAgentHibernation === true
   // Use the planner’s clamped millisecond value/default while editing minutes.
   const agentHibernationIdleMinutes = Math.round(
@@ -302,15 +302,15 @@ export function ExperimentalPane({
                   )}
                 </p>
               </div>
-              {/* Cachalote: card style adds a third option over the experimental layout */}
+              {/* Narwhal: card style adds a third option over the experimental layout */}
               <SettingsSegmentedControl<CardStyleChoice>
                 size="sm"
                 value={resolveCardStyleChoice(
                   settings.experimentalNewWorktreeCardStyle === true,
-                  cachaloteCards
+                  narwhalCards
                 )}
                 onChange={(style) => {
-                  setCachaloteCards(style === 'cachalote')
+                  setNarwhalCards(style === 'narwhal')
                   const experimental = style !== 'classic'
                   void Promise.resolve(
                     updateSettings({ experimentalNewWorktreeCardStyle: experimental })
@@ -347,8 +347,8 @@ export function ExperimentalPane({
                       'Experimental'
                     )
                   },
-                  // Cachalote: card style
-                  { value: 'cachalote', label: cardStyleLabel('option') }
+                  // Narwhal: card style
+                  { value: 'narwhal', label: cardStyleLabel('option') }
                 ]}
               />
             </div>

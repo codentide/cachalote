@@ -1,8 +1,8 @@
-// Cachalote: name prompt for worktree groups.
-import { WorktreeGroupNameDialog } from '../../../../cachalote/worktree-groups/WorktreeGroupNameDialog'
+// Narwhal: name prompt for worktree groups.
+import { WorktreeGroupNameDialog } from '../../../../narwhal/worktree-groups/WorktreeGroupNameDialog'
 import { useAppStoreWithHostStatuses } from '@/store/slices/runtime-status/views/use-runtime-status-view'
-// Cachalote: which worktrees sit inside a group folder.
-import { usePublishWorktreeGroupFolderMembers } from '../../../../cachalote/worktree-groups/worktree-group-folder-members'
+// Narwhal: which worktrees sit inside a group folder.
+import { usePublishWorktreeGroupFolderMembers } from '../../../../narwhal/worktree-groups/worktree-group-folder-members'
 import React, { useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useAppStore } from '@/store'
@@ -162,7 +162,7 @@ const WorktreeList = React.memo(function WorktreeList({
     prCache,
     agentSendTargetWorktreeId
   })
-  // Cachalote: which worktrees sit inside a group folder.
+  // Narwhal: which worktrees sit inside a group folder.
   usePublishWorktreeGroupFolderMembers(rowModel.rows)
   const visibleProjectRepoIdsBySection = useMemo(
     () => new Map(rowModel.occurrencePlan.sections.map(({ key, group }) => [key, group.repoIds])),
@@ -305,7 +305,7 @@ const WorktreeList = React.memo(function WorktreeList({
             projectsCollapseTarget
           )
         : null}
-      {/* Cachalote */}
+      {/* Narwhal: group name dialog */}
       <WorktreeGroupNameDialog />
       <SidebarWorktreeListDialogs
         dialogs={projectGroupDialogs}
