@@ -111,8 +111,9 @@ export function appendWorktreeRows(
     options.folderPairByIdentity || options.hostContextLabelByWorktreeIdentity
   )
   // Narwhal: grouped worktrees render first, under their group; the loop below sees the rest.
-  spliceWorktreeGroupRows(result, occurrences, repoOf, options)
-  for (const occurrence of occurrences) {
+  const ungroupedOccurrences = spliceWorktreeGroupRows(result, occurrences, repoOf, options)
+  // Narwhal: loop only the worktrees no group took.
+  for (const occurrence of ungroupedOccurrences) {
     const worktree = occurrence.row
     const hostIdentity = needsHostIdentity ? getWorktreeHostIdentity(worktree) : undefined
     const folderPair = hostIdentity ? options.folderPairByIdentity?.get(hostIdentity) : undefined

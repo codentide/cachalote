@@ -65,13 +65,13 @@ function groupIdOf(
  */
 export function spliceWorktreeGroupRows(
   result: Row[],
-  occurrences: WorktreeOccurrence<Worktree>[],
+  occurrences: readonly WorktreeOccurrence<Worktree>[],
   repoOf: RepoOfWorktree,
   options: GroupRowOptions
-): void {
+): readonly WorktreeOccurrence<Worktree>[] {
   const view = options.worktreeGroups
   if (!view || Object.keys(view.membership).length === 0) {
-    return
+    return occurrences
   }
   const groupOf = new Map<WorktreeOccurrence<Worktree>, string>()
   const directMembers = new Map<string, number>()
@@ -99,9 +99,8 @@ export function spliceWorktreeGroupRows(
     membersByGroupId.set(groupId, members)
   }
   if (membersByGroupId.size === 0) {
-    return
+    return occurrences
   }
-  occurrences.splice(0, occurrences.length, ...kept)
 
   for (const [groupId, members] of membersByGroupId) {
     const collapsed = view.collapsed[groupId] === true
@@ -142,4 +141,5 @@ export function spliceWorktreeGroupRows(
       })
     }
   }
+  return kept
 }

@@ -41,12 +41,12 @@ const view: WorktreeGroupsRowView = {
 
 function run(occurrences: WorktreeOccurrence<Worktree>[], groupsView?: WorktreeGroupsRowView) {
   const result: Row[] = []
-  spliceWorktreeGroupRows(result, occurrences, () => undefined, {
+  const kept = spliceWorktreeGroupRows(result, occurrences, () => undefined, {
     groupDepth: 0,
     sectionKey: SECTION,
     worktreeGroups: groupsView
   })
-  return { result, kept: occurrences.map((item) => item.row.id) }
+  return { result, kept: kept.map((item) => item.row.id) }
 }
 
 describe('spliceWorktreeGroupRows', () => {
